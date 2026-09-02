@@ -1,0 +1,132 @@
+export const alojamientos = [
+  {
+    id: 'aloj1',
+    name: 'Habitación en Cerro Alegre',
+    price: '$280.000/mes',
+    address: 'Almirante Montt 256, Valparaíso',
+    stars: '★★★★☆',
+    rating: '4.2 · 11 reseñas',
+    badge: { text: 'Disponible', color: 'green' },
+    emoji: '🏠',
+    map: { top: '28%', left: '27%' },
+  },
+  {
+    id: 'aloj2',
+    name: 'Departamento compartido — Viña',
+    price: '$195.000/mes',
+    address: 'Av. Libertad 1050, Viña del Mar',
+    stars: '★★★★★',
+    rating: '4.8 · 7 reseñas',
+    badge: { text: '2 cupos', color: 'amber' },
+    emoji: '🏢',
+    map: { top: '54%', left: '52%' },
+  },
+  {
+    id: 'aloj3',
+    name: 'Pieza en casa familiar',
+    price: '$220.000/mes',
+    address: 'Ecuador 789, Valparaíso',
+    stars: '★★★☆☆',
+    rating: '3.5 · 4 reseñas',
+    badge: { text: 'Disponible', color: 'green' },
+    emoji: '🏠',
+    map: { top: '40%', left: '68%' },
+  },
+  {
+    id: 'aloj4',
+    name: 'Pension — Cerro Baron',
+    price: '$160.000/mes',
+    address: 'Carlos Condell 314, Valparaíso',
+    stars: '★★★★☆',
+    rating: '4.1 · 9 reseñas',
+    badge: { text: 'Disponible', color: 'green' },
+    emoji: '🏘',
+  },
+];
+
+export const comercios = [
+  {
+    id: 'com1',
+    name: 'Feria Cardonal',
+    address: 'Yungay s/n, Valparaíso · Mar, Jue, Sáb',
+    stars: '★★★★★',
+    rating: '4.7 · 23 reseñas',
+    badge: { text: 'Feria', color: 'green' },
+    emoji: '🛒',
+    map: { top: '62%', left: '35%' },
+  },
+  {
+    id: 'com2',
+    name: 'Panadería Don Juan',
+    address: 'Av. Argentina 432, Valparaíso',
+    stars: '★★★★☆',
+    rating: '4.3 · 15 reseñas',
+    badge: { text: 'Panadería', color: 'blue' },
+    emoji: '🥖',
+  },
+  {
+    id: 'com3',
+    name: 'Farmacia Popular Cruz',
+    address: 'Condell 88, Valparaíso',
+    stars: '★★★★☆',
+    rating: '4.0 · 8 reseñas',
+    badge: { text: 'Farmacia', color: 'purple' },
+    emoji: '💊',
+  },
+  {
+    id: 'com4',
+    name: 'Restaurant El Puerto',
+    address: 'Pedro Montt 2002, Valparaíso',
+    stars: '★★★★★',
+    rating: '4.9 · 31 reseñas',
+    badge: { text: 'Comida', color: 'amber' },
+    emoji: '🍜',
+    map: { top: '44%', left: '44%' },
+  },
+];
+
+export const zonas = [
+  {
+    id: 'zona1',
+    name: 'Cerro Alegre / Concepción',
+    address: 'Barrio turístico, muy transitado',
+    badge: { text: 'Segura', color: 'green' },
+    footer: '🌙 Segura hasta las 23:00 · 18 opiniones',
+    emoji: '🟢',
+    bg: '#D1FAE5',
+  },
+  {
+    id: 'zona2',
+    name: 'Puerto / Aduana',
+    address: 'Zona portuaria, activa de día',
+    badge: { text: 'Precaución nocturna', color: 'amber' },
+    footer: '🌙 Evitar después de las 21:00 · 24 opiniones',
+    emoji: '🟡',
+    bg: '#FEF3C7',
+  },
+  {
+    id: 'zona3',
+    name: 'Av. Argentina / Plaza Victoria',
+    address: 'Centro cívico y comercial',
+    badge: { text: 'Muy transitada', color: 'blue' },
+    footer: '🌙 Segura · 12 opiniones',
+    emoji: '🔵',
+    bg: '#DBEAFE',
+  },
+];
+
+export const mapPins = [
+  { id: 'aloj1', label: 'Habitación Cerro Alegre', top: '28%', left: '27%', emoji: '🏠', color: 'forest' },
+  { id: 'aloj2', label: 'Dpto compartido Viña', top: '54%', left: '52%', emoji: '🏢', color: 'forest' },
+  { id: 'aloj3', label: 'Pieza casa familiar', top: '40%', left: '68%', emoji: '🏠', color: 'forest' },
+  { id: 'com1', label: 'Feria Cardonal', top: '62%', left: '35%', emoji: '🛒', color: 'amber' },
+  { id: 'com4', label: 'Restaurant El Puerto', top: '44%', left: '44%', emoji: '🍜', color: 'amber' },
+  { id: 'zona1', label: 'Cerro Alegre — Segura', top: '72%', left: '60%', emoji: '🟢', color: 'green' },
+];
+
+export const mapLabels = [
+  { top: '18%', left: '22%', text: 'Cerro Alegre' },
+  { top: '50%', left: '47%', text: 'Viña del Mar' },
+  { top: '35%', left: '63%', text: 'Ecuador' },
+  { top: '60%', left: '58%', text: 'Av. Argentina' },
+];

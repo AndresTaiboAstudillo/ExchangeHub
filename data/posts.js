@@ -1,0 +1,76 @@
+export const posts = [
+  {
+    id: 'post1',
+    cat: 'arriendo',
+    badge: { text: '🏠 Arriendo', color: 'green' },
+    author: 'María J.',
+    country: 'España',
+    avatarColor: '#1B4332',
+    date: 'hace 2 horas',
+    title: '¿Alguien conoce arriendos cerca de la PUCV en Av. Brasil?',
+    body: 'Llego en agosto y estoy buscando una pieza, máximo $300.000. He visto ofertas en Facebook pero no sé si son confiables. ¿Alguien tiene experiencia reciente?',
+    repliesCount: 8,
+    likes: 12,
+    replies: [
+      { autor: 'Carlos P.', pais: 'Colombia · hace 1h', color: '#40916C', texto: 'Yo estuve en Av. Ecuador, a 10 min caminando. La señora del arriendo muy buena onda, $265.000. Te paso el contacto si quieres.' },
+      { autor: 'Sofía R.', pais: 'México · hace 45 min', color: '#2E74B5', texto: 'Evita los del Cerro Barón de noche. Para Av. Argentina hay bastante oferta y está bien ubicado.' },
+    ],
+  },
+  {
+    id: 'post2',
+    cat: 'hangout',
+    badge: { text: '🎉 Salidas / Planes', color: 'amber' },
+    author: 'Luca B.',
+    country: 'Italia',
+    avatarColor: '#D4A017',
+    date: 'hace 5 horas',
+    title: '¿Quién se apunta a subir el Cerro San Cristóbal este fin de semana?',
+    body: 'Soy nuevo en Santiago y quiero explorar. Tengo ganas de subir el cerro el sábado por la tarde. Si alguien quiere unirse somos bienvenidos, chilenos también 🙌',
+    repliesCount: 14,
+    likes: 31,
+    replies: [
+      { autor: 'Ana M.', pais: 'Chile · hace 4h', color: '#7C3AED', texto: 'Yo me apunto, vivo cerca y conozco bien el cerro. ¿A qué hora arrancan?' },
+    ],
+  },
+  {
+    id: 'post3',
+    cat: 'info',
+    badge: { text: 'ℹ️ Info universitaria', color: 'blue' },
+    author: 'Priya K.',
+    country: 'India',
+    avatarColor: '#0369A1',
+    date: 'ayer',
+    title: 'Guía rápida: cómo sacar el RUT siendo extranjero en Chile',
+    body: 'Estuve dos semanas tratando de entender el proceso. Te cuento paso a paso lo que funcionó: primero necesitas la visa de estudiante vigente, luego ir al SRCeI más cercano con tu pasaporte y…',
+    repliesCount: 22,
+    likes: 68,
+    replies: [],
+  },
+  {
+    id: 'post4',
+    cat: 'evento',
+    badge: { text: '🎓 Evento universitario', color: 'purple' },
+    author: 'Rania A.',
+    country: 'Marruecos',
+    avatarColor: '#9F1239',
+    date: 'hace 2 días',
+    title: 'Feria de Bienvenida Internacional — PUCV — 4 de agosto',
+    body: 'La Dirección de Internacionalización organiza la feria de bienvenida para intercambios del segundo semestre. Habrá stands por país, actividades y almuerzo. Traigan sus trajes típicos si quieren 🌍',
+    repliesCount: 5,
+    likes: 44,
+    replies: [],
+  },
+];
+
+export const forumFilters = [
+  { id: 'todos', label: 'Todos' },
+  { id: 'arriendo', label: '🏠 Arriendo' },
+  { id: 'hangout', label: '🎉 Salidas / Planes' },
+  { id: 'evento', label: '🎓 Evento universitario' },
+  { id: 'info', label: 'ℹ️ Info universitaria' },
+];
+
+export const friendSuggestions = [
+  { name: 'Juan C. — Colombia', career: 'Ingeniería · ES, PT', color: '#1B4332', initial: 'J' },
+  { name: 'Hana L. — Japón', career: 'Diseño · JA, ES, EN', color: '#7C3AED', initial: 'H' },
+];
