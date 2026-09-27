@@ -61,6 +61,13 @@
  # enlace al ambiente de staging
  # documentacion de la API
  # imagenes y diagramas
+ * Casos de uso
+<img width="728" height="712" alt="foro drawio" src="https://github.com/user-attachments/assets/26528e99-961e-43b0-8cca-0a7d0a7df40e" />
+<img width="698" height="592" alt="mapa drawio" src="https://github.com/user-attachments/assets/cfcd1941-e596-4368-ac56-224df8e0fd1b" />
+<img width="728" height="562" alt="seccionpersonal drawio" src="https://github.com/user-attachments/assets/4d219ce2-6420-4927-991a-aa38fedc263c" />
+<img width="547" height="522" alt="buscadoramigo drawio" src="https://github.com/user-attachments/assets/bff4f294-74b0-466d-9316-74e407d50589" />
+<img width="713" height="632" alt="admingeneral drawio" src="https://github.com/user-attachments/assets/5c6ce93a-850c-406b-8fbc-062fccf74626" />
+<img width="728" height="502" alt="universitaria drawio" src="https://github.com/user-attachments/assets/e9a50937-7a5b-42c2-8c64-46ee5e094309" />
  # enlace a prototipo figma
  # limitaciones conocidas
  # trabajo futuro
