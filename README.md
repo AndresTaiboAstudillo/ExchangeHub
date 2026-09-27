@@ -71,13 +71,18 @@
   <img width="2048" height="1867" alt="arquitectura" src="https://github.com/user-attachments/assets/d2d646fb-edfb-46d9-b8ab-be91dc798579" />
   
  * Casos de uso
-<img width="728" height="712" alt="foro drawio" src="https://github.com/user-attachments/assets/26528e99-961e-43b0-8cca-0a7d0a7df40e" />
-<img width="698" height="592" alt="mapa drawio" src="https://github.com/user-attachments/assets/cfcd1941-e596-4368-ac56-224df8e0fd1b" />
-<img width="728" height="562" alt="seccionpersonal drawio" src="https://github.com/user-attachments/assets/4d219ce2-6420-4927-991a-aa38fedc263c" />
-<img width="547" height="522" alt="buscadoramigo drawio" src="https://github.com/user-attachments/assets/bff4f294-74b0-466d-9316-74e407d50589" />
-<img width="713" height="632" alt="admingeneral drawio" src="https://github.com/user-attachments/assets/5c6ce93a-850c-406b-8fbc-062fccf74626" />
-<img width="728" height="502" alt="universitaria drawio" src="https://github.com/user-attachments/assets/e9a50937-7a5b-42c2-8c64-46ee5e094309" />
-
+  <img width="728" height="712" alt="foro drawio" src="https://github.com/user-attachments/assets/26528e99-961e-43b0-8cca-0a7d0a7df40e" />
+  <img width="698" height="592" alt="mapa drawio" src="https://github.com/user-attachments/assets/cfcd1941-e596-4368-ac56-224df8e0fd1b" />
+  <img width="728" height="562" alt="seccionpersonal drawio" src="https://github.com/user-attachments/assets/4d219ce2-6420-4927-991a-aa38fedc263c" />
+  <img width="547" height="522" alt="buscadoramigo drawio" src="https://github.com/user-attachments/assets/bff4f294-74b0-466d-9316-74e407d50589" />
+  <img width="713" height="632" alt="admingeneral drawio" src="https://github.com/user-attachments/assets/5c6ce93a-850c-406b-8fbc-062fccf74626" />
+  <img width="728" height="502" alt="universitaria drawio" src="https://github.com/user-attachments/assets/e9a50937-7a5b-42c2-8c64-46ee5e094309" />
+ * Diagramas de actividad
+  <img width="442" height="652" alt="agregaramigo drawio" src="https://github.com/user-attachments/assets/e9045de1-d945-48fd-8021-11ee34eddd15" />
+  <img width="402" height="652" alt="comentarforo drawio" src="https://github.com/user-attachments/assets/92d28d0a-99a9-4a0a-abe0-e800d6b23c76" />
+  <img width="402" height="652" alt="publicarforo drawio" src="https://github.com/user-attachments/assets/34684d22-afb2-475e-9d79-3e873c34f556" />
+  <img width="402" height="652" alt="reseñamapa drawio" src="https://github.com/user-attachments/assets/90a6abd8-49c1-427b-856f-1fe05b47ea61" />
+  
  # enlace a prototipo figma
  # limitaciones conocidas
  # trabajo futuro
