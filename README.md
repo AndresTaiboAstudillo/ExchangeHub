@@ -18,7 +18,7 @@
  * Chat en tiempo real
  * Perfil personal y amistades
  * Buscador de amigos
- # arquitectura general
+ # La arquitectura se organiza por sus tres capas, el cliente, servidor y datos. Sigue una relación del cliente con el servidor con separación clara de sus responsabilidades. Next.js gestiona todo lo que lleva la interfaz y rendering, Node.js maneja la API REST y autenticación, y finalmente PostgreSQL incorpora los datos. Los servicios externos usados como openstreetmap y SMTP se ilustran como módulos independientes para no juntar la lógica del sistema a un proveedor específico. 
  # tecnologias y herramientas utilizadas
  * Nodejs, postgres, express
  * Socket io
@@ -47,11 +47,19 @@
 * K. Schwaber and J. Sutherland, The Scrum Guide: The Definitive Guide to Scrum: The Rules of the Game. Scrum.org and ScrumGuides.org, Nov. 2020. [En línea]. Available: https://scrumguides.org/docs/scrumguide/v2020/2020-Scrum-Guide-US.pdf.[Accedido: 12-abr-2026]
 
  # El sistema generará recomendaciones de amistades dependiendo de los intereses del usuario
- # instrucciones de instalacion
+ # Requisitos
+ * npm 11.17.0+
+ * node 24.19.0+
+ * Python 3.11.9
+ * git 2.49.0.windows.1
+ * Docker 29.8.0
+
+ # Instrucciones de instalación
  * git clone https://github.com/AndresTaiboAstudillo/ExchangeHub
  * cd ExchangeHub
  * cd frontend
  * npm install
+
  # configuracion de variables de entorno
  # instrucciones de ejecucion
  # instrucciones de uso
@@ -77,6 +85,7 @@
   <img width="547" height="522" alt="buscadoramigo drawio" src="https://github.com/user-attachments/assets/bff4f294-74b0-466d-9316-74e407d50589" />
   <img width="713" height="632" alt="admingeneral drawio" src="https://github.com/user-attachments/assets/5c6ce93a-850c-406b-8fbc-062fccf74626" />
   <img width="728" height="502" alt="universitaria drawio" src="https://github.com/user-attachments/assets/e9a50937-7a5b-42c2-8c64-46ee5e094309" />
+  
  * Diagramas de actividad
   <img width="442" height="652" alt="agregaramigo drawio" src="https://github.com/user-attachments/assets/e9045de1-d945-48fd-8021-11ee34eddd15" />
   <img width="402" height="652" alt="comentarforo drawio" src="https://github.com/user-attachments/assets/92d28d0a-99a9-4a0a-abe0-e800d6b23c76" />
@@ -85,4 +94,4 @@
   
  # enlace a prototipo figma
  # limitaciones conocidas
- # trabajo futuro
+ # A futuro queda implementar el backend por completo.
