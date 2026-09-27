@@ -62,7 +62,10 @@
 
  # configuracion de variables de entorno
  # instrucciones de ejecucion
+ * npm run dev puerto 3000
  # instrucciones de uso
+ * El backend está en desarrollo, pero es posible navegar por las distintas secciones de la app para familiarizarse con el entorno.
+ * Se puede navegar por la pantalla principal del mapa, interactuar con los comercios, navegar por la pantalla principal del foro, el perfil y las sugerencias de amistad.
  # ejecucion de pruebas
  # proceso de construccion con docker
  # proceso de despliegue
