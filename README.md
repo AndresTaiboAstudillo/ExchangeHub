@@ -20,7 +20,7 @@
  * Buscador de amigos
  # La arquitectura se organiza por sus tres capas, el cliente, servidor y datos. Sigue una relación del cliente con el servidor con separación clara de sus responsabilidades. Next.js gestiona todo lo que lleva la interfaz y rendering, Node.js maneja la API REST y autenticación, y finalmente PostgreSQL incorpora los datos. Los servicios externos usados como openstreetmap y SMTP se ilustran como módulos independientes para no juntar la lógica del sistema a un proveedor específico. 
  # tecnologias y herramientas utilizadas
- * Nodejs, postgres, express
+ * Nodejs, postgres, Next js
  * Socket io
  * OpenStreetMap, Smtp
  # fuente o fuentes de info web
