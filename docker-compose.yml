@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: app_user
       POSTGRES_PASSWORD: app_password
-      POSTGRES_DB: app_db
+      POSTGRES_DB: exchangehubdb
     ports:
       - "5432:5432"
     volumes:
