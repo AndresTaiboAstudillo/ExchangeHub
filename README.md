@@ -87,7 +87,23 @@
  * El backend está en desarrollo, pero es posible navegar por las distintas secciones de la app para familiarizarse con el entorno.
  * Se puede navegar por la pantalla principal del mapa, interactuar con los comercios, navegar por la pantalla principal del foro, el perfil y las sugerencias de amistad.
  # ejecucion de pruebas
+ * En bash:
+ * cd backend
+ * npm test
  # proceso de construccion con docker
+ * Construir y levantar los servicios en segundo plano:
+ * docker-compose up -d --build
+   
+ * Aplicar las migraciones de la base de datos:
+ * docker-compose exec <servicio-backend> npx prisma migrate deploy
+   
+ * Verificar que todo está activo:
+ * docker-compose ps
+ * docker-compose logs -f <servicio-backend>
+ 
+ * Detener los servicios:
+ * docker-compose down
+   
  # proceso de despliegue
  # enlace al ambiente de staging
  # documentacion de la API
@@ -117,4 +133,12 @@
   
  # enlace a prototipo figma
  # limitaciones conocidas
+ - El único modelo de datos es `User` (solo `email`), un ejemplo de prueba.
+  El modelo real de la aplicación aún no está definido.
+- No hay autenticación ni autorización: todos los endpoints son públicos.
+- No hay validación de datos de entrada más allá de comprobar que `email`
+  exista. No se valida el formato del correo.
+- No existe ambiente de staging ni proceso de despliegue definido.
+- Las pruebas se limitan a las de ejemplo que genera NestJS.
+- No hay integración continua (CI).
  # A futuro queda implementar el backend por completo.
