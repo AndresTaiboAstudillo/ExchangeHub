@@ -67,21 +67,21 @@
  # instrucciones de ejecucion
  1. Levantar la base de datos:
  * en bash:
-   docker-compose up -d postgres
+ * docker-compose up -d postgres
    
  2. Backend:
  * en bash:
-   cd backend
-   npm install
-   npx prisma generate
-   npx prisma migrate dev
-   npm run start:dev
+ * cd backend
+ * npm install
+ * npx prisma generate
+ * npx prisma migrate dev
+ * npm run start:dev
 
  3. Frontend:
  * en bash:
-   cd frontend
-   npm install
-   npm run dev
+ * cd frontend
+ * npm install
+ * npm run dev
 
  # instrucciones de uso
  * El backend está en desarrollo, pero es posible navegar por las distintas secciones de la app para familiarizarse con el entorno.
