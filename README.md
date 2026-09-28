@@ -61,8 +61,28 @@
  * npm install
 
  # configuracion de variables de entorno
+ | `DATABASE_URL` | backend | Conexión a PostgreSQL | `postgresql://usuario:clave@localhost:5432/nombre_db` |
+ | `PORT` | backend | Puerto del backend | `8000` |
+ | `NEXT_PUBLIC_API_URL` | frontend | URL del backend | `http://localhost:8000` |
  # instrucciones de ejecucion
- * npm run dev puerto 3000
+ 1. Levantar la base de datos:
+ * en bash:
+   docker-compose up -d postgres
+   
+ 2. Backend:
+ * en bash:
+   cd backend
+   npm install
+   npx prisma generate
+   npx prisma migrate dev
+   npm run start:dev
+
+ 3. Frontend:
+ * en bash:
+   cd frontend
+   npm install
+   npm run dev
+
  # instrucciones de uso
  * El backend está en desarrollo, pero es posible navegar por las distintas secciones de la app para familiarizarse con el entorno.
  * Se puede navegar por la pantalla principal del mapa, interactuar con los comercios, navegar por la pantalla principal del foro, el perfil y las sugerencias de amistad.
