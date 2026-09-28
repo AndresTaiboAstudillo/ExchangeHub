@@ -18,9 +18,9 @@
  * Chat en tiempo real
  * Perfil personal y amistades
  * Buscador de amigos
- # arquitectura general
+ # La arquitectura se organiza por sus tres capas, el cliente, servidor y datos. Sigue una relación del cliente con el servidor con separación clara de sus responsabilidades. Next.js gestiona todo lo que lleva la interfaz y rendering, Node.js maneja la API REST y autenticación, y finalmente PostgreSQL incorpora los datos. Los servicios externos usados como openstreetmap y SMTP se ilustran como módulos independientes para no juntar la lógica del sistema a un proveedor específico. 
  # tecnologias y herramientas utilizadas
- * Nodejs, postgres, express
+ * Nodejs, postgres, Next js
  * Socket io
  * OpenStreetMap, Smtp
  # fuente o fuentes de info web
@@ -50,22 +50,51 @@
  # Requisitos
  * npm 11.17.0+
  * node 24.19.0+
- * 3.11.9
- 
+ * Python 3.11.9
+ * git 2.49.0.windows.1
+ * Docker 29.8.0
+
  # Instrucciones de instalación
  * git clone https://github.com/AndresTaiboAstudillo/ExchangeHub
  * cd ExchangeHub
  * cd frontend
  * npm install
+
  # configuracion de variables de entorno
  # instrucciones de ejecucion
+ * npm run dev puerto 3000
  # instrucciones de uso
+ * El backend está en desarrollo, pero es posible navegar por las distintas secciones de la app para familiarizarse con el entorno.
+ * Se puede navegar por la pantalla principal del mapa, interactuar con los comercios, navegar por la pantalla principal del foro, el perfil y las sugerencias de amistad.
  # ejecucion de pruebas
  # proceso de construccion con docker
  # proceso de despliegue
  # enlace al ambiente de staging
  # documentacion de la API
  # imagenes y diagramas
+ * Diagrama entidad relación
+  <img width="2048" height="1035" alt="diagrama" src="https://github.com/user-attachments/assets/9895b9b2-9800-4459-a35c-76d1af544b57" />
+  
+ * Diagrama UML
+   <img width="2048" height="1135" alt="diagramauml" src="https://github.com/user-attachments/assets/fa846219-cd93-4829-a54c-76ab0e4b29a3" />
+   
+ * Diagrama de arquitectura
+  <img width="2048" height="1867" alt="arquitectura" src="https://github.com/user-attachments/assets/d2d646fb-edfb-46d9-b8ab-be91dc798579" />
+  
+ * Casos de uso
+  <img width="728" height="712" alt="foro drawio" src="https://github.com/user-attachments/assets/26528e99-961e-43b0-8cca-0a7d0a7df40e" />
+  <img width="698" height="592" alt="mapa drawio" src="https://github.com/user-attachments/assets/cfcd1941-e596-4368-ac56-224df8e0fd1b" />
+  <img width="728" height="562" alt="seccionpersonal drawio" src="https://github.com/user-attachments/assets/4d219ce2-6420-4927-991a-aa38fedc263c" />
+  <img width="547" height="522" alt="buscadoramigo drawio" src="https://github.com/user-attachments/assets/bff4f294-74b0-466d-9316-74e407d50589" />
+  <img width="713" height="632" alt="admingeneral drawio" src="https://github.com/user-attachments/assets/5c6ce93a-850c-406b-8fbc-062fccf74626" />
+  <img width="728" height="502" alt="universitaria drawio" src="https://github.com/user-attachments/assets/e9a50937-7a5b-42c2-8c64-46ee5e094309" />
+  
+ * Diagramas de actividad
+  <img width="442" height="652" alt="agregaramigo drawio" src="https://github.com/user-attachments/assets/e9045de1-d945-48fd-8021-11ee34eddd15" />
+  <img width="402" height="652" alt="comentarforo drawio" src="https://github.com/user-attachments/assets/92d28d0a-99a9-4a0a-abe0-e800d6b23c76" />
+  <img width="402" height="652" alt="publicarforo drawio" src="https://github.com/user-attachments/assets/34684d22-afb2-475e-9d79-3e873c34f556" />
+  <img width="402" height="652" alt="reseñamapa drawio" src="https://github.com/user-attachments/assets/90a6abd8-49c1-427b-856f-1fe05b47ea61" />
+  
  # enlace a prototipo figma
  # limitaciones conocidas
- # trabajo futuro
+ # A futuro queda implementar el backend por completo.
