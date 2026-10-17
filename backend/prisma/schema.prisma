@@ -1,7 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// Esquema basado en el diagrama entidad-relación del proyecto.
+// En el código se usan nombres camelCase; en la base de datos, snake_case.
 
 datasource db {
   provider = "postgresql"
@@ -12,8 +10,197 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+// ───────────────────────── Usuarios ─────────────────────────
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  email            String   @unique
+  passwordHash     String   @map("password_hash")
+  role             String   @default("user")
+  countryOfOrigin  String?  @map("country_of_origin")
+  universityOrigin String?  @map("university_origin")
+  career           String?
+  bio              String?
+  isVisible        Boolean  @default(true) @map("is_visible")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  languages           UserLanguage[]
+  hobbies             UserHobby[]
+  friendshipsSent     Friendship[]   @relation("FriendshipRequester")
+  friendshipsReceived Friendship[]   @relation("FriendshipAddressee")
+  listings            Listing[]
+  posts               Post[]
+  postReplies         PostReply[]
+  postLikes           PostLike[]
+  reviews             Review[]
+
+  @@map("users")
+}
+
+model UserLanguage {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String @map("user_id") @db.Uuid
+  languageCode String @map("language_code")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, languageCode])
+  @@map("user_languages")
+}
+
+model UserHobby {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  hobby  String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, hobby])
+  @@map("user_hobbies")
+}
+
+model Friendship {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  requesterId String   @map("requester_id") @db.Uuid
+  addresseeId String   @map("addressee_id") @db.Uuid
+  status      String   @default("pending")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  requester User @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId])
+  @@map("friendships")
+}
+
+// ───────────────────── Lugares y reseñas ─────────────────────
+
+model Listing {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authorId    String   @map("author_id") @db.Uuid
+  type        String
+  name        String
+  address     String?
+  latitude    Float
+  longitude   Float
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@map("listings")
+}
+
+model Zone {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  safetyLevel String   @map("safety_level")
+  description String?
+  safeHours   String?  @map("safe_hours")
+  latCenter   Float    @map("lat_center")
+  lngCenter   Float    @map("lng_center")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("zones")
+}
+
+// Una reseña apunta a un listing o a una zona (target_type + target_id).
+// Al ser una referencia polimórfica no puede tener clave foránea en la
+// base de datos: la existencia del destino se valida en el servicio.
+model Review {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authorId   String   @map("author_id") @db.Uuid
+  targetType String   @map("target_type")
+  targetId   String   @map("target_id") @db.Uuid
+  rating     Int
+  body       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([targetType, targetId])
+  @@index([authorId])
+  @@map("reviews")
+}
+
+// ───────────────────────── Comunidad ─────────────────────────
+
+model Post {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authorId   String   @map("author_id") @db.Uuid
+  category   String
+  title      String
+  body       String
+  likesCount Int      @default(0) @map("likes_count")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  author  User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies PostReply[]
+  likes   PostLike[]
+
+  @@index([authorId])
+  @@map("posts")
+}
+
+model PostReply {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  postId    String   @map("post_id") @db.Uuid
+  authorId  String   @map("author_id") @db.Uuid
+  body      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("post_replies")
+}
+
+model PostLike {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  postId    String   @map("post_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([userId])
+  @@map("post_likes")
+}
+
+// ───────────────────────── Universidades ─────────────────────────
+
+model University {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  shortName String?  @map("short_name")
+  address   String?
+  phone     String?
+  website   String?
+  region    String?
+  colorHex  String?  @map("color_hex")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  links UniversityLink[]
+
+  @@map("universities")
+}
+
+model UniversityLink {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  universityId String  @map("university_id") @db.Uuid
+  label        String
+  url          String
+  category     String?
+
+  university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@index([universityId])
+  @@map("university_links")
 }
