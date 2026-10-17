@@ -1,0 +1,12 @@
+title = "ExchangeHub - configuración de gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Falsos positivos conocidos: datos ficticios de pruebas y de la plantilla de Nest"
+regexes = [
+  '''clave-segura-123''',
+  '''otra-clave-123''',
+  '''abc123def456''',
+]
