@@ -1,0 +1,254 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  PYTHON_VERSION: "3.11"
+  GITLEAKS_VERSION: "8.18.4"
+  TRIVY_VERSION: "0.74.0"
+
+jobs:
+  # ───────────────────────── Backend (NestJS) ─────────────────────────
+  backend:
+    name: Backend - lint, build y pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      # prisma generate solo necesita que la variable exista; no se conecta.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      # El package-lock.json se genera con npm 11; npm 10 (el de Node 22)
+      # rechaza `npm ci` si no coinciden.
+      - run: npm install -g npm@11
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Lint (TypeScript)
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Pruebas unitarias
+        run: npm test
+      - name: Pruebas e2e
+        run: npm run test:e2e
+
+  # ───────────────────────── Frontend (Next.js) ─────────────────────────
+  frontend:
+    name: Frontend - build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'http://localhost:8000' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm install -g npm@11
+      - run: npm ci
+      - name: Comprobación de tipos (si el proyecto usa TypeScript)
+        run: |
+          if [ -f tsconfig.json ]; then npx tsc --noEmit; else echo "Sin tsconfig.json: se omite"; fi
+      - name: Build
+        run: npm run build
+
+  # ───────────────────────── Servicio Python ─────────────────────────
+  python:
+    name: Python - lint y pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: pythonservice
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            pythonservice/requirements.txt
+            pythonservice/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Lint (ruff, incluye reglas de seguridad)
+        run: ruff check .
+      - name: Formato
+        run: ruff format --check .
+      - name: Pruebas
+        run: pytest -q
+
+  # ───────────────────────── Seguridad ─────────────────────────
+  secrets-scan:
+    name: Seguridad - detección de secretos
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # historial completo: un secreto borrado después sigue en el historial
+      - name: Instalar gitleaks (con verificación de checksum)
+        run: |
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          file="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSLO "${base}/${file}"
+          curl -sSLO "${base}/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          sha256sum --check --ignore-missing "gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          tar -xzf "${file}" gitleaks
+      - name: Escanear el repositorio
+        run: ./gitleaks detect --source . --config .gitleaks.toml --redact --no-banner --verbose
+
+  dependency-audit:
+    name: Seguridad - análisis de dependencias
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: npm audit backend (producción, bloquea desde nivel alto)
+        working-directory: backend
+        run: npm audit --omit=dev --audit-level=high
+      - name: npm audit frontend (producción, bloquea desde nivel alto)
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
+      - name: npm audit backend (herramientas de desarrollo, informativo)
+        working-directory: backend
+        run: npm audit --audit-level=high || echo "::warning::Hay avisos en dependencias de desarrollo del backend"
+      - name: pip-audit (Python)
+        working-directory: pythonservice
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements.txt
+
+  # ───────────────────────── Docker ─────────────────────────
+  docker:
+    name: Docker - build de imágenes y escaneo
+    runs-on: ubuntu-latest
+    needs: [backend, frontend, python]
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'http://localhost:8000' }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Construir imágenes
+        run: |
+          docker build -t exchangehub/backend:ci backend
+          docker build -t exchangehub/python-service:ci pythonservice
+          docker build --build-arg NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}" -t exchangehub/frontend:ci frontend
+      - name: Escanear imágenes con Trivy
+        run: |
+          for image in backend python-service frontend; do
+            echo "::group::Trivy - ${image} (informe HIGH y CRITICAL)"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "${{ runner.temp }}/trivy-cache:/root/.cache" \
+              "aquasec/trivy:${TRIVY_VERSION}" image --no-progress --ignore-unfixed \
+              --severity HIGH,CRITICAL --exit-code 0 "exchangehub/${image}:ci"
+            echo "::endgroup::"
+            echo "Trivy - ${image}: bloqueo si hay vulnerabilidades CRITICAL con corrección"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "${{ runner.temp }}/trivy-cache:/root/.cache" \
+              "aquasec/trivy:${TRIVY_VERSION}" image --no-progress --ignore-unfixed \
+              --severity CRITICAL --exit-code 1 "exchangehub/${image}:ci"
+          done
+
+  compose-smoke:
+    name: Docker Compose - prueba de integración
+    runs-on: ubuntu-latest
+    needs: [backend, python]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Crear .env a partir de Variables y Secrets
+        env:
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          FRONTEND_ORIGIN: ${{ vars.FRONTEND_ORIGIN }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          # Si no hay Variables/Secrets (p. ej. PR desde un fork) se usan valores
+          # de prueba generados al vuelo; nunca se escriben secretos en el repositorio.
+          {
+            printf 'POSTGRES_USER=%s\n' "${POSTGRES_USER:-ci_user}"
+            printf 'POSTGRES_DB=%s\n' "${POSTGRES_DB:-ci_db}"
+            printf 'POSTGRES_PASSWORD=%s\n' "${POSTGRES_PASSWORD:-$(openssl rand -hex 16)}"
+            printf 'JWT_SECRET=%s\n' "${JWT_SECRET:-$(openssl rand -hex 32)}"
+            printf 'FRONTEND_ORIGIN=%s\n' "${FRONTEND_ORIGIN:-http://localhost:3000}"
+            printf 'NEXT_PUBLIC_API_URL=%s\n' "${NEXT_PUBLIC_API_URL:-http://localhost:8000}"
+          } > .env
+      - name: Levantar base de datos, servicio Python y backend
+        run: docker compose up -d --build --wait --wait-timeout 240 postgres python-service backend
+      - name: Comprobar salud (backend, base de datos y Python)
+        run: |
+          curl -fsS http://localhost:8000/health
+          curl -fsS http://localhost:8000/health/ready
+      - name: Flujo básico de la API (registro, login, ruta protegida)
+        run: |
+          json='content-type: application/json'
+          curl -fsS -X POST http://localhost:8000/auth/register -H "$json" \
+            -d '{"name":"CI","email":"ci@example.com","password":"clave-segura-123"}'
+          token=$(curl -fsS -X POST http://localhost:8000/auth/login -H "$json" \
+            -d '{"email":"ci@example.com","password":"clave-segura-123"}' | jq -r .accessToken)
+          test -n "$token" && test "$token" != "null"
+          curl -fsS http://localhost:8000/users -H "Authorization: Bearer ${token}"
+          curl -fsS http://localhost:8000/python/status -H "Authorization: Bearer ${token}"
+      - name: Logs si algo falló
+        if: failure()
+        run: docker compose logs --tail=100
+      - name: Limpiar
+        if: always()
+        run: docker compose down -v
+
+  # Punto único para exigir en la protección de rama: falla si cualquier etapa falla.
+  ci-ok:
+    name: CI completo
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - backend
+      - frontend
+      - python
+      - secrets-scan
+      - dependency-audit
+      - docker
+      - compose-smoke
+    steps:
+      - name: Verificar resultados
+        run: |
+          echo '${{ toJSON(needs) }}'
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || \
+             [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ] || \
+             [ "${{ contains(needs.*.result, 'skipped') }}" = "true" ]; then
+            echo "Alguna etapa falló, se canceló o no se ejecutó."
+            exit 1
+          fi
