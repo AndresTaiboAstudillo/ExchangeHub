@@ -18,6 +18,7 @@ env:
   PYTHON_VERSION: "3.11"
   GITLEAKS_VERSION: "8.18.4"
   TRIVY_VERSION: "0.74.0"
+  TERRAFORM_VERSION: "1.9.8"
 
 jobs:
   # ───────────────────────── Backend (NestJS) ─────────────────────────
@@ -229,6 +230,46 @@ jobs:
         if: always()
         run: docker compose down -v
 
+  # ───────────────────────── Infraestructura (Terraform) ─────────────────────────
+  terraform:
+    name: Terraform - fmt, validate y plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: infra/terraform
+    steps:
+      - uses: actions/checkout@v6
+      - name: Instalar Terraform (con verificación de checksum)
+        working-directory: ${{ runner.temp }}
+        run: |
+          base="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}"
+          file="terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+          curl -sSLO "${base}/${file}"
+          curl -sSLO "${base}/terraform_${TERRAFORM_VERSION}_SHA256SUMS"
+          sha256sum --check --ignore-missing "terraform_${TERRAFORM_VERSION}_SHA256SUMS"
+          unzip -o "${file}" terraform
+          sudo mv terraform /usr/local/bin/terraform
+          terraform version
+      - name: Formato
+        run: terraform fmt -check -recursive -diff
+      - name: Init
+        run: terraform init -input=false
+      - name: Validate
+        run: terraform validate
+      - name: Construir imágenes (el plan las lee del Docker local)
+        working-directory: ${{ github.workspace }}
+        run: bash infra/build-images.sh
+      - name: Plan
+        run: |
+          # Secretos de un solo uso: el plan no crea nada, solo necesita valores válidos.
+          pw="$(openssl rand -hex 16)"
+          jwt="$(openssl rand -hex 32)"
+          echo "::add-mask::${pw}"
+          echo "::add-mask::${jwt}"
+          TF_VAR_postgres_password="${pw}" TF_VAR_jwt_secret="${jwt}" \
+            terraform plan -input=false -lock=false
+
   # Punto único para exigir en la protección de rama: falla si cualquier etapa falla.
   ci-ok:
     name: CI completo
@@ -242,6 +283,7 @@ jobs:
       - dependency-audit
       - docker
       - compose-smoke
+      - terraform
     steps:
       - name: Verificar resultados
         run: |

@@ -1,0 +1,10 @@
+# Copia este archivo como terraform.tfvars (git lo ignora) y completa los valores.
+
+# Windows con Docker Desktop. En Linux o macOS déjalo comentado.
+docker_host = "npipe:////./pipe/docker_engine"
+
+# Reemplaza los dos valores. Mientras digan "REEMPLAZAR", terraform plan falla a propósito
+# (la contraseña exige 12 caracteres y el secreto 32). Genera el secreto con:
+#   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+postgres_password = "REEMPLAZAR"
+jwt_secret        = "REEMPLAZAR"

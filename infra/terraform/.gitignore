@@ -1,0 +1,14 @@
+# Carpeta de proveedores descargados
+.terraform/
+
+# El estado contiene los secretos en texto plano: NUNCA debe subirse.
+*.tfstate
+*.tfstate.*
+
+# Valores reales de las variables (secretos)
+terraform.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+
+crash.log
+crash.*.log
