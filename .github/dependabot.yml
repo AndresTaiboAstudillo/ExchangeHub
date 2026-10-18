@@ -36,3 +36,13 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+
+  - package-ecosystem: terraform
+    directory: /infra/terraform
+    schedule:
+      interval: weekly
+    ignore:
+      # Desde la 3.7.0 el proveedor usa una clave de firma que el registro de
+      # HashiCorp no acepta (terraform init falla). Se mantiene la 3.6.2.
+      - dependency-name: "kreuzwerker/docker"
+        versions: [">=3.7.0"]
