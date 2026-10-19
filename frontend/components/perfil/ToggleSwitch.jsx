@@ -1,20 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-
-export default function ToggleSwitch({ defaultChecked = true }) {
-  const [checked, setChecked] = useState(defaultChecked);
-
+export default function ToggleSwitch({ checked, onChange, disabled = false, label }) {
   return (
-    <label className="relative inline-block w-[42px] h-6 cursor-pointer">
+    <label className={`relative inline-block w-[42px] h-6 flex-shrink-0 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
       <input
         type="checkbox"
+        role="switch"
+        aria-label={label}
         checked={checked}
-        onChange={() => setChecked((c) => !c)}
+        disabled={disabled}
+        onChange={(e) => onChange?.(e.target.checked)}
         className="opacity-0 w-0 h-0 peer"
       />
       <span
-        className={`absolute inset-0 rounded-full transition-colors ${
+        className={`absolute inset-0 rounded-full transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-forest-lt peer-focus-visible:ring-offset-2 ${
           checked ? 'bg-forest-mid' : 'bg-border'
         }`}
       />

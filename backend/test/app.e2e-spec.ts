@@ -53,8 +53,10 @@ function createFakePrisma() {
       findUnique: vi.fn(async ({ where }: { where: { email: string } }) =>
         users.find((u) => u.email === where.email) ?? null,
       ),
-      findMany: vi.fn(async () =>
-        users.filter((u) => u.isVisible).map(({ id, name }) => ({ id, name })),
+      findMany: vi.fn(async ({ where }: { where?: { id?: { not?: string } } } = {}) =>
+        users
+          .filter((u) => u.isVisible && u.id !== where?.id?.not)
+          .map(({ id, name }) => ({ id, name, languages: [], hobbies: [] })),
       ),
     },
     $queryRaw: vi.fn(async () => [{ '?column?': 1 }]),
@@ -204,13 +206,17 @@ describe('API (e2e)', () => {
       await request(app.getHttpServer()).get('/users').expect(401);
     });
 
-    it('GET /users con token lista usuarios sin contraseña', async () => {
+    it('GET /users con token lista a los demás usuarios sin contraseña', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({ name: 'Otro', email: 'otro@example.com', password: 'clave-segura-123' });
       const token = await loginToken();
       const res = await request(app.getHttpServer())
         .get('/users')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
       expect(res.body).toHaveLength(1);
+      expect(res.body[0].name).toBe('Otro'); // el propio usuario no aparece
       expect(res.body[0]).not.toHaveProperty('passwordHash');
       expect(res.body[0]).not.toHaveProperty('email');
     });

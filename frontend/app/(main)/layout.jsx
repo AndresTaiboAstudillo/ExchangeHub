@@ -13,13 +13,14 @@ export default function MainLayout({ children }) {
     if (hydrated && !loggedIn) router.replace('/login');
   }, [hydrated, loggedIn, router]);
 
-  // Avoid flashing protected content before we know the session state.
+  // Evita mostrar contenido protegido antes de saber si hay sesión.
   if (!hydrated || !loggedIn) return null;
 
   return (
     <div>
       <Navbar />
-      {children}
+      {/* Espacio para la barra de navegación inferior en móvil */}
+      <div className="pb-20 md:pb-0">{children}</div>
     </div>
   );
 }

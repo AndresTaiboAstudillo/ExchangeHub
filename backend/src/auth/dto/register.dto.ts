@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -22,6 +23,14 @@ export class RegisterDto {
   @IsEmail()
   @MaxLength(254)
   email!: string;
+
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString()
+  @MaxLength(150)
+  universityOrigin?: string;
 
   // bcrypt solo considera los primeros 72 bytes de la contraseña.
   @IsString()
