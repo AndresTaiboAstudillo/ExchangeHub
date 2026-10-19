@@ -30,8 +30,22 @@ jobs:
       run:
         working-directory: backend
     env:
-      # prisma generate solo necesita que la variable exista; no se conecta.
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+    services:
+      # Base de datos real para las pruebas de integración.
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -52,6 +66,10 @@ jobs:
         run: npm test
       - name: Pruebas e2e
         run: npm run test:e2e
+      - name: Aplicar migraciones a la base de pruebas
+        run: npx prisma migrate deploy
+      - name: Pruebas de integración (PostgreSQL real)
+        run: npm run test:integration
 
   # ───────────────────────── Frontend (Next.js) ─────────────────────────
   frontend:
@@ -72,6 +90,10 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm install -g npm@11
       - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Pruebas
+        run: npm test
       - name: Comprobación de tipos (si el proyecto usa TypeScript)
         run: |
           if [ -f tsconfig.json ]; then npx tsc --noEmit; else echo "Sin tsconfig.json: se omite"; fi

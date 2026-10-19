@@ -36,7 +36,12 @@ export class AuthService {
     try {
       return await this.prisma.user.create({
         // El rol nunca viene del cliente: se asigna el valor por defecto.
-        data: { name: dto.name, email: dto.email, passwordHash },
+        data: {
+          name: dto.name,
+          email: dto.email,
+          passwordHash,
+          universityOrigin: dto.universityOrigin || undefined,
+        },
         select: {
           id: true,
           name: true,
