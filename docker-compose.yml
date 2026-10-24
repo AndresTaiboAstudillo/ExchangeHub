@@ -31,6 +31,7 @@ services:
       MINEDUC_CATALOG_FILE: /data/ies_vigentes.xlsx
       PIPELINE_READ_TIMEOUT: "10"
       PIPELINE_RETRIES: "1"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     volumes:
       - ./datos/ies_vigentes.xlsx:/data/ies_vigentes.xlsx:ro
 
@@ -47,6 +48,7 @@ services:
       PYTHON_PIPELINE_TIMEOUT_MS: ${PYTHON_PIPELINE_TIMEOUT_MS:-120000}
       # 0 = solo manual. 168 = revisar las fuentes una vez por semana.
       INGESTION_INTERVAL_HOURS: ${INGESTION_INTERVAL_HOURS:-0}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
       - "8000:8000"
     depends_on:

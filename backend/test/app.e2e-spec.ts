@@ -5,6 +5,7 @@ import type { App } from 'supertest/types.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppModule } from '../src/app.module.js';
 import { configureApp } from '../src/app.setup.js';
+import { httpMetrics } from '../src/observability/http-metrics.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 import { PythonService } from '../src/python/python.service.js';
 
@@ -31,7 +32,9 @@ function createFakePrisma() {
           data: { name: string; email: string; passwordHash: string };
         }) => {
           if (users.some((u) => u.email === data.email)) {
-            throw Object.assign(new Error('Unique constraint'), { code: 'P2002' });
+            throw Object.assign(new Error('Unique constraint'), {
+              code: 'P2002',
+            });
           }
           const user: FakeUser = {
             id: `00000000-0000-4000-8000-${String(users.length + 1).padStart(12, '0')}`,
@@ -50,16 +53,21 @@ function createFakePrisma() {
           };
         },
       ),
-      findUnique: vi.fn(async ({ where }: { where: { email: string } }) =>
-        users.find((u) => u.email === where.email) ?? null,
+      findUnique: vi.fn(
+        async ({ where }: { where: { email?: string; id?: string } }) =>
+          users.find((u) =>
+            where.email ? u.email === where.email : u.id === where.id,
+          ) ?? null,
       ),
-      findMany: vi.fn(async ({ where }: { where?: { id?: { not?: string } } } = {}) =>
-        users
-          .filter((u) => u.isVisible && u.id !== where?.id?.not)
-          .map(({ id, name }) => ({ id, name, languages: [], hobbies: [] })),
+      findMany: vi.fn(
+        async ({ where }: { where?: { id?: { not?: string } } } = {}) =>
+          users
+            .filter((u) => u.isVisible && u.id !== where?.id?.not)
+            .map(({ id, name }) => ({ id, name, languages: [], hobbies: [] })),
       ),
     },
     $queryRaw: vi.fn(async () => [{ '?column?': 1 }]),
+    users,
   };
 }
 
@@ -76,7 +84,10 @@ describe('API (e2e)', () => {
     email: 'ana@example.com',
     password: 'clave-segura-123',
   };
-  const loginBody = { email: credentials.email, password: credentials.password };
+  const loginBody = {
+    email: credentials.email,
+    password: credentials.password,
+  };
 
   beforeEach(async () => {
     prisma = createFakePrisma();
@@ -98,7 +109,9 @@ describe('API (e2e)', () => {
 
   async function loginToken(): Promise<string> {
     await request(app.getHttpServer()).post('/auth/register').send(credentials);
-    const res = await request(app.getHttpServer()).post('/auth/login').send(loginBody);
+    const res = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send(loginBody);
     return res.body.accessToken as string;
   }
 
@@ -109,14 +122,75 @@ describe('API (e2e)', () => {
     });
 
     it('GET /health/ready responde ok si BD y Python están arriba', async () => {
-      const res = await request(app.getHttpServer()).get('/health/ready').expect(200);
+      const res = await request(app.getHttpServer())
+        .get('/health/ready')
+        .expect(200);
       expect(res.body.checks).toEqual({ database: 'up', python: 'up' });
     });
 
     it('GET /health/ready responde 503 si Python está caído', async () => {
       python.health.mockRejectedValue(new Error('caído'));
-      const res = await request(app.getHttpServer()).get('/health/ready').expect(503);
+      const res = await request(app.getHttpServer())
+        .get('/health/ready')
+        .expect(503);
       expect(res.body.checks.python).toBe('down');
+    });
+  });
+
+  describe('observabilidad', () => {
+    it('devuelve X-Request-Id en cada respuesta', async () => {
+      const res = await request(app.getHttpServer()).get('/health').expect(200);
+      expect(res.headers['x-request-id']).toMatch(/^[0-9a-f-]{36}$/);
+    });
+
+    it('conserva el identificador que envía el cliente', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/health')
+        .set('X-Request-Id', 'trazado-cliente-001')
+        .expect(200);
+      expect(res.headers['x-request-id']).toBe('trazado-cliente-001');
+    });
+
+    it('descarta un identificador malicioso o demasiado corto', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/health')
+        .set('X-Request-Id', 'corto')
+        .expect(200);
+      expect(res.headers['x-request-id']).not.toBe('corto');
+      expect(res.headers['x-request-id']).toMatch(/^[0-9a-f-]{36}$/);
+    });
+
+    it('registra las peticiones (sin la query string) y las cuenta en las métricas', async () => {
+      httpMetrics.reset();
+      await request(app.getHttpServer())
+        .get('/health/ready?secreto=1')
+        .expect(200);
+      await request(app.getHttpServer()).get('/no-existe').expect(404);
+      const { routes, total } = httpMetrics.snapshot();
+      expect(total).toBe(2);
+      expect(routes.map((r) => r.route).sort()).toEqual([
+        '/health/ready',
+        'no-encontrada',
+      ]);
+      expect(routes.find((r) => r.route === 'no-encontrada')?.errors4xx).toBe(
+        1,
+      );
+    });
+
+    it('GET /metrics/http exige token y rol de administrador', async () => {
+      await request(app.getHttpServer()).get('/metrics/http').expect(401);
+      const token = await loginToken();
+      await request(app.getHttpServer())
+        .get('/metrics/http')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(403);
+      prisma.users[0].role = 'admin';
+      const res = await request(app.getHttpServer())
+        .get('/metrics/http')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      expect(res.body.total).toBeGreaterThan(0);
+      expect(Array.isArray(res.body.routes)).toBe(true);
     });
   });
 
@@ -173,14 +247,22 @@ describe('API (e2e)', () => {
     });
 
     it('responde 409 si el email ya existe', async () => {
-      await request(app.getHttpServer()).post('/auth/register').send(credentials).expect(201);
-      await request(app.getHttpServer()).post('/auth/register').send(credentials).expect(409);
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(credentials)
+        .expect(201);
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(credentials)
+        .expect(409);
     });
   });
 
   describe('login', () => {
     it('devuelve un token con credenciales correctas', async () => {
-      await request(app.getHttpServer()).post('/auth/register').send(credentials);
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(credentials);
       const res = await request(app.getHttpServer())
         .post('/auth/login')
         .send(loginBody)
@@ -189,7 +271,9 @@ describe('API (e2e)', () => {
     });
 
     it('responde 401 con contraseña incorrecta', async () => {
-      await request(app.getHttpServer()).post('/auth/register').send(credentials);
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(credentials);
       await request(app.getHttpServer())
         .post('/auth/login')
         .send({ ...loginBody, password: 'otra-clave-123' })
@@ -197,7 +281,10 @@ describe('API (e2e)', () => {
     });
 
     it('responde 401 si el usuario no existe', async () => {
-      await request(app.getHttpServer()).post('/auth/login').send(loginBody).expect(401);
+      await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(loginBody)
+        .expect(401);
     });
   });
 
@@ -209,7 +296,11 @@ describe('API (e2e)', () => {
     it('GET /users con token lista a los demás usuarios sin contraseña', async () => {
       await request(app.getHttpServer())
         .post('/auth/register')
-        .send({ name: 'Otro', email: 'otro@example.com', password: 'clave-segura-123' });
+        .send({
+          name: 'Otro',
+          email: 'otro@example.com',
+          password: 'clave-segura-123',
+        });
       const token = await loginToken();
       const res = await request(app.getHttpServer())
         .get('/users')

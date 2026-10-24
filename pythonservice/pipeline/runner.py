@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import logging
 import time
 from collections.abc import Callable
 from datetime import UTC, datetime
@@ -24,9 +25,26 @@ from .models import (
 from .robots import RobotsChecker
 from .settings import Settings
 
+logger = logging.getLogger(__name__)
 SAMPLE_SIZE = 10
 XLSX_SIGNATURE = b"PK\x03\x04"  # un .xlsx es un ZIP
 ROBOTS_AGENT = "ExchangeHubBot"
+
+
+def _log_source(status: SourceStatus) -> None:
+    """Registra el resultado de cada fuente; el fallo de una fuente externa va como aviso."""
+    extra = {
+        "source": status.code,
+        "source_status": status.status,
+        "elapsed_ms": status.elapsed_ms,
+        "records_received": status.records_received,
+        "error": status.error,
+        "notes": status.notes,
+    }
+    if status.status == "ok":
+        logger.info("source_ok", extra=extra)
+    else:
+        logger.warning("source_problem", extra=extra)
 
 
 def _now() -> datetime:
@@ -211,6 +229,7 @@ def run_universities_pipeline(
 
     cat_status, cat = _retrieve_catalog(settings, client, clock, sleep)
     statuses = [cat_status]
+    _log_source(cat_status)
     if cat is None:
         if "wikidata" in sources:
             skipped = SourceStatus(code="wikidata", status="skipped")
@@ -237,6 +256,7 @@ def run_universities_pipeline(
     if "wikidata" in sources:
         wd_status, wd = _retrieve_wikidata(settings, client, clock, sleep)
         statuses.append(wd_status)
+        _log_source(wd_status)
         if wd is not None:
             result = match_entities(records, wd.entities)
             by_number = {r.registry_number: r for r in records}
@@ -283,6 +303,15 @@ def run_universities_pipeline(
     )
     wanted_wd = "wikidata" in sources
     status = "succeeded" if not wanted_wd or wd is not None else "partial"
+    logger.info(
+        "pipeline_finished",
+        extra={
+            "pipeline_status": status,
+            "universities": len(records),
+            "rejected": len(rejected),
+            "elapsed_ms": quality.elapsed_ms,
+        },
+    )
     return PipelineResult(
         status=status,
         started_at=started_at,

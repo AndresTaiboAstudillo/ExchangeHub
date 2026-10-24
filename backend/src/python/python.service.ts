@@ -5,6 +5,7 @@ import {
   Logger,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { currentRequestId } from '../observability/request-context.js';
 import type {
   PipelineResult,
   PipelineSource,
@@ -50,13 +51,16 @@ export class PythonService {
   private async request<T>(path: string, options: RequestOptions): Promise<T> {
     const { method = 'GET', body, timeoutMs } = options;
     let response: Response;
+    const startedAt = Date.now();
+    // El mismo identificador viaja a Python para poder seguir una petición entre los dos servicios.
+    const requestId = currentRequestId();
+    const headers: Record<string, string> = {};
+    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (requestId) headers['X-Request-Id'] = requestId;
     try {
       response = await fetch(`${this.baseUrl}${path}`, {
         method,
-        headers:
-          body === undefined
-            ? undefined
-            : { 'Content-Type': 'application/json' },
+        headers: Object.keys(headers).length > 0 ? headers : undefined,
         body: body === undefined ? undefined : JSON.stringify(body),
         signal: AbortSignal.timeout(timeoutMs),
       });
@@ -71,6 +75,13 @@ export class PythonService {
         'No se pudo contactar al servicio Python',
       );
     }
+    this.logger.log({
+      message: 'python_call',
+      method,
+      path,
+      status: response.status,
+      duration_ms: Date.now() - startedAt,
+    });
     if (!response.ok) {
       this.logger.error(`Python respondió ${response.status} en ${path}`);
       throw new BadGatewayException(

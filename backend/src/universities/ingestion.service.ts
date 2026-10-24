@@ -74,6 +74,19 @@ export class IngestionService {
       return this.finish(run.id, 'failed', null, null, errorMessage(error));
     }
 
+    for (const source of result.sources) {
+      if (source.status !== 'ok') {
+        this.logger.warn({
+          message: 'source_problem',
+          runId: run.id,
+          source: source.code,
+          status: source.status,
+          error: source.error,
+          elapsed_ms: source.elapsed_ms,
+        });
+      }
+    }
+
     if (result.status === 'failed') {
       const reason =
         result.sources.map((s) => s.error).find(Boolean) ?? 'El pipeline falló';
@@ -374,6 +387,16 @@ export class IngestionService {
       this.logger.warn(
         `Ingesta ${runId} falló: ${error ?? 'sin detalle'}. Se conservan los datos anteriores.`,
       );
+    } else {
+      this.logger.log({
+        message: 'ingestion_finished',
+        runId,
+        status,
+        created: counts?.created ?? 0,
+        updated: counts?.updated ?? 0,
+        unchanged: counts?.unchanged ?? 0,
+        deactivated: counts?.deactivated ?? 0,
+      });
     }
     return {
       id: row.id,

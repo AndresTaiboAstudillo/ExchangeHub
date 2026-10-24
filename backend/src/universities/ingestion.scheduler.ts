@@ -4,6 +4,7 @@ import {
   OnApplicationBootstrap,
   OnModuleDestroy,
 } from '@nestjs/common';
+import { runWithNewRequestId } from '../observability/request-context.js';
 import { IngestionService } from './ingestion.service.js';
 
 /**
@@ -24,7 +25,9 @@ export class IngestionScheduler
     if (!Number.isFinite(hours) || hours <= 0) return;
     this.logger.log(`Ingesta programada cada ${hours} h`);
     this.timer = setInterval(() => {
-      this.ingestion.runUniversities('schedule').catch((error: unknown) => {
+      runWithNewRequestId(() =>
+        this.ingestion.runUniversities('schedule'),
+      ).catch((error: unknown) => {
         this.logger.warn(`Ingesta programada omitida: ${String(error)}`);
       });
     }, hours * 3_600_000);

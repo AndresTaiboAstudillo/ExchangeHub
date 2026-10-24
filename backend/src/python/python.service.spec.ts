@@ -4,6 +4,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { runWithRequestId } from '../observability/request-context.js';
 import { PythonService } from './python.service.js';
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -71,6 +72,22 @@ describe('PythonService', () => {
       expect(JSON.parse(init.body as string)).toEqual({
         sources: ['mineduc_ies', 'wikidata'],
       });
+    });
+
+    it('reenvía el identificador de la petición a Python', async () => {
+      const fetchMock = vi
+        .fn()
+        .mockImplementation(async () => jsonResponse({}));
+      vi.stubGlobal('fetch', fetchMock);
+      await runWithRequestId('traza-0123456', () =>
+        new PythonService().health(),
+      );
+      await new PythonService().health();
+      const [first, second] = fetchMock.mock.calls.map(
+        ([, init]) => (init as RequestInit).headers,
+      );
+      expect(first).toEqual({ 'X-Request-Id': 'traza-0123456' });
+      expect(second).toBeUndefined(); // fuera de una petición no se inventa un identificador
     });
 
     it('usa un timeout propio, mucho mayor que el de las llamadas rápidas', async () => {

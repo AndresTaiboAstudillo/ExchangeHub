@@ -1,5 +1,7 @@
 import logging
-from collections.abc import Iterator
+import os
+from collections.abc import AsyncIterator, Iterator
+from contextlib import asynccontextmanager
 from typing import Annotated
 
 import httpx
@@ -9,17 +11,27 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from observability import RequestContextMiddleware, configure_logging
 from pipeline.models import PipelineResult, RunRequest
 from pipeline.runner import run_universities_pipeline
 from pipeline.settings import Settings
 
 logger = logging.getLogger("pythonservice")
 
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    configure_logging(os.environ.get("LOG_LEVEL", "INFO"))
+    yield
+
+
 app = FastAPI(
     title="ExchangeHub Python Service",
     description="Servicio Python para ExchangeHub",
     version="1.0.0",
+    lifespan=lifespan,
 )
+app.add_middleware(RequestContextMiddleware)
 
 
 def error_body(code: int, message: str, details=None) -> dict:
@@ -49,9 +61,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def unhandled_exception_handler(request: Request, exc: Exception):
     # El detalle va al log; al cliente solo se le da un mensaje genérico.
     logger.exception("Error no controlado en %s", request.url.path)
+    headers = {}
+    if request_id := getattr(request.state, "request_id", None):
+        # Esta respuesta la arma el middleware más externo, que no pasa por el nuestro.
+        headers["X-Request-Id"] = request_id
     return JSONResponse(
         status_code=500,
         content=error_body(500, "Error interno del servicio"),
+        headers=headers,
     )
 
 
