@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:25-alpine
 
 # Misma versión mayor de npm que se usa en desarrollo, para que `npm ci`
 # acepte el package-lock.json.
