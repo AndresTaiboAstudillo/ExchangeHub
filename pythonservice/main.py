@@ -1,11 +1,17 @@
 import logging
+from collections.abc import Iterator
+from typing import Annotated
 
-from fastapi import FastAPI, Request
+import httpx
+from fastapi import Depends, FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
+from pipeline.models import PipelineResult, RunRequest
+from pipeline.runner import run_universities_pipeline
+from pipeline.settings import Settings
 
 logger = logging.getLogger("pythonservice")
 
@@ -49,10 +55,6 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     )
 
 
-class EchoRequest(BaseModel):
-    message: str = Field(min_length=1, max_length=500)
-
-
 @app.get("/")
 def root():
     return {"message": "Python service funcionando"}
@@ -63,7 +65,37 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/echo")
-def echo(payload: EchoRequest):
-    """Endpoint de ejemplo con validación; reemplazar por la lógica real."""
-    return {"message": payload.message, "length": len(payload.message)}
+def get_settings() -> Settings:
+    return Settings.from_env()
+
+
+def get_http_client(settings: Annotated[Settings, Depends(get_settings)]) -> Iterator[httpx.Client]:
+    timeout = httpx.Timeout(settings.read_timeout, connect=settings.connect_timeout)
+    with httpx.Client(
+        timeout=timeout,
+        follow_redirects=True,
+        headers={"User-Agent": settings.user_agent},
+    ) as client:
+        yield client
+
+
+@app.post(
+    "/v1/pipeline/universities/run",
+    response_model=PipelineResult,
+    tags=["pipeline"],
+    summary="Recupera, limpia y cruza los datos de universidades de Chile",
+    description=(
+        "Descarga el catálogo oficial del Mineduc y, opcionalmente, enriquece las universidades "
+        "con datos estructurados de Wikidata. Valida, normaliza, deduplica y cruza los registros, "
+        "y devuelve además la procedencia de cada dato y un informe de calidad.\n\n"
+        "Las URL de las fuentes provienen de la configuración del servicio, nunca de la petición. "
+        "Si el catálogo no está disponible, `status` es `failed`; si solo falla Wikidata, "
+        "es `partial` y se devuelve igualmente el catálogo."
+    ),
+)
+def run_universities(
+    request: RunRequest,
+    settings: Annotated[Settings, Depends(get_settings)],
+    client: Annotated[httpx.Client, Depends(get_http_client)],
+) -> PipelineResult:
+    return run_universities_pipeline(request.sources, settings, client)

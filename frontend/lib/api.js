@@ -131,6 +131,11 @@ export const api = {
   like: (postId) => request(`/posts/${postId}/like`, { method: 'PUT' }),
   unlike: (postId) => request(`/posts/${postId}/like`, { method: 'DELETE' }),
 
+  // Universidades (catálogo oficial enriquecido, con procedencia de cada dato)
+  universities: ({ q, category, ownership, limit, offset } = {}) =>
+    request(`/universities${query({ q, category, ownership, limit, offset })}`),
+  universitiesSources: () => request('/universities/sources'),
+
   // Amistades
   friendships: (status) => request(`/friendships${query({ status })}`),
   requestFriendship: (addresseeId) =>

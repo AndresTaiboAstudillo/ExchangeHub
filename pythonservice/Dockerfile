@@ -9,6 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
+COPY pipeline/ pipeline/
 
 # Usuario sin privilegios
 RUN useradd --create-home appuser

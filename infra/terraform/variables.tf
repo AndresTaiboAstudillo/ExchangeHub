@@ -88,3 +88,20 @@ variable "jwt_expires_in_seconds" {
   type        = number
   default     = 3600
 }
+
+variable "pipeline_contact" {
+  description = "Contacto que se incluye en el User-Agent de las descargas (correo o URL del proyecto)."
+  type        = string
+  default     = "sin-contacto-configurado"
+}
+
+variable "ingestion_interval_hours" {
+  description = "Cada cuántas horas se revisan las fuentes de datos. 0 desactiva la revisión automática."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.ingestion_interval_hours >= 0
+    error_message = "ingestion_interval_hours no puede ser negativo."
+  }
+}

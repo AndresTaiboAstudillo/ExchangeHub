@@ -1,0 +1,289 @@
+{
+  "criterio": "Etiquetado a mano sobre el catálogo del Mineduc (mayo 2026). Consultas de nombre: es relevante toda institución cuyo nombre contiene el término (cualquier tipo). Consultas de tipo: toda institución de ese tipo. Consultas de sigla: la institución a la que la sigla se refiere. Una consulta 'navegacional' (nombre completo) tiene un solo relevante. Consultas 'semantica': relevante es toda institución con sede en el lugar (conocimiento externo, no derivable del catálogo, que solo trae nombre y tipo); miden un límite conocido, no un fallo.",
+  "consultas": [
+    {
+      "q": "universidad católica",
+      "tipo": "nombre",
+      "relevantes": ["B1", "B4", "B6", "B7", "B8", "B9", "C46", "E334"]
+    },
+    {
+      "q": "universidad estatal",
+      "tipo": "tipo",
+      "relevantes": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "A9",
+        "A10",
+        "A11",
+        "A12",
+        "A13",
+        "A14",
+        "A15",
+        "A16",
+        "A17",
+        "A18"
+      ]
+    },
+    {
+      "q": "universidad particular con aportes",
+      "tipo": "tipo",
+      "relevantes": ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9"]
+    },
+    {
+      "q": "universidad privada",
+      "tipo": "tipo",
+      "relevantes": [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C10",
+        "C12",
+        "C13",
+        "C14",
+        "C16",
+        "C19",
+        "C20",
+        "C22",
+        "C23",
+        "C25",
+        "C26",
+        "C29",
+        "C35",
+        "C38",
+        "C42",
+        "C43",
+        "C46",
+        "C49",
+        "C50",
+        "C52",
+        "C54",
+        "C58",
+        "C72",
+        "C74"
+      ]
+    },
+    {
+      "q": "instituto profesional",
+      "tipo": "tipo",
+      "relevantes": [
+        "D5",
+        "D6",
+        "D7",
+        "D9",
+        "D10",
+        "D12",
+        "D14",
+        "D17",
+        "D19",
+        "D22",
+        "D23",
+        "D26",
+        "D29",
+        "D35",
+        "D43",
+        "D45",
+        "D49",
+        "D50",
+        "D58",
+        "D61",
+        "D68",
+        "D71",
+        "D77",
+        "D82",
+        "D100",
+        "D108",
+        "D111",
+        "D119",
+        "D128",
+        "D144"
+      ]
+    },
+    {
+      "q": "centro de formación técnica",
+      "tipo": "tipo",
+      "relevantes": [
+        "E18",
+        "E22",
+        "E40",
+        "E45",
+        "E61",
+        "E64",
+        "E84",
+        "E116",
+        "E123",
+        "E132",
+        "E135",
+        "E171",
+        "E186",
+        "E194",
+        "E230",
+        "E231",
+        "E234",
+        "E239",
+        "E254",
+        "E260",
+        "E297",
+        "E307",
+        "E334",
+        "E336",
+        "E354",
+        "E355",
+        "E365",
+        "E419",
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8",
+        "G9",
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15"
+      ]
+    },
+    {
+      "q": "cft estatal",
+      "tipo": "tipo",
+      "relevantes": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8",
+        "G9",
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15"
+      ]
+    },
+    {
+      "q": "valparaíso",
+      "tipo": "nombre",
+      "relevantes": ["A3", "B4", "E334", "G6"]
+    },
+    {
+      "q": "santo tomás",
+      "tipo": "nombre",
+      "relevantes": ["C16", "D22", "E64"]
+    },
+    {
+      "q": "inacap",
+      "tipo": "nombre",
+      "relevantes": ["C58", "D6", "E234"]
+    },
+    {
+      "q": "duoc",
+      "tipo": "nombre",
+      "relevantes": ["D17"]
+    },
+    {
+      "q": "los lagos",
+      "tipo": "nombre",
+      "relevantes": ["A15", "D71", "E84", "G13"]
+    },
+    {
+      "q": "san sebastián",
+      "tipo": "nombre",
+      "relevantes": ["C43", "D68"]
+    },
+    {
+      "q": "diego portales",
+      "tipo": "nombre",
+      "relevantes": ["C3", "D26"]
+    },
+    {
+      "q": "universidad de concepción",
+      "tipo": "navegacional",
+      "relevantes": ["B2"]
+    },
+    {
+      "q": "universidad de chile",
+      "tipo": "navegacional",
+      "relevantes": ["A1"]
+    },
+    {
+      "q": "arturo prat",
+      "tipo": "navegacional",
+      "relevantes": ["A12"]
+    },
+    {
+      "q": "adolfo ibáñez",
+      "tipo": "navegacional",
+      "relevantes": ["C26"]
+    },
+    {
+      "q": "bío bío",
+      "tipo": "nombre",
+      "relevantes": ["A6", "G10"]
+    },
+    {
+      "q": "instituto profesional santiago",
+      "tipo": "mixta",
+      "relevantes": ["D10", "D77"]
+    },
+    {
+      "q": "universidad tecnológica",
+      "tipo": "nombre",
+      "relevantes": ["A16", "C58"]
+    },
+    {
+      "q": "pontificia",
+      "tipo": "nombre",
+      "relevantes": ["B1", "B4", "E334"]
+    },
+    {
+      "q": "usach",
+      "tipo": "sigla",
+      "relevantes": ["A2"]
+    },
+    {
+      "q": "utem",
+      "tipo": "sigla",
+      "relevantes": ["A16"]
+    },
+    {
+      "q": "usm",
+      "tipo": "sigla",
+      "relevantes": ["B3"]
+    },
+    {
+      "q": "puc",
+      "tipo": "sigla",
+      "relevantes": ["B1"]
+    },
+    {
+      "q": "udp",
+      "tipo": "sigla",
+      "relevantes": ["C3"]
+    },
+    {
+      "q": "universidad en valparaíso",
+      "tipo": "semantica",
+      "relevantes": ["A3", "A14", "B3", "B4"]
+    },
+    {
+      "q": "universidad en temuco",
+      "tipo": "semantica",
+      "relevantes": ["A7", "B9"]
+    }
+  ]
+}

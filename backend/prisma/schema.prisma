@@ -187,8 +187,32 @@ model University {
   colorHex  String?  @map("color_hex")
   createdAt DateTime @default(now()) @map("created_at")
 
-  links UniversityLink[]
+  // ── Catálogo oficial (Mineduc) ──
+  registryNumber  String? @unique @map("registry_number")
+  nameKey         String? @unique @map("name_key") // nombre normalizado: evita duplicados
+  institutionType String? @map("institution_type")
+  category        String? // universidad | instituto_profesional | centro_formacion_tecnica
+  ownership       String? // estatal | particular_con_aportes | privada | otra
+  operatingStatus String? @map("operating_status")
+  isVigente       Boolean @default(true) @map("is_vigente")
 
+  // ── Enriquecimiento (Wikidata) ──
+  wikidataId  String? @unique @map("wikidata_id")
+  latitude    Float?
+  longitude   Float?
+  foundedYear Int?    @map("founded_year")
+  matchMethod String? @map("match_method") // exact | prefix | fuzzy
+  matchScore  Float?  @map("match_score")
+
+  // ── Frescura ──
+  catalogFetchedAt DateTime? @map("catalog_fetched_at")
+  enrichedAt       DateTime? @map("enriched_at")
+  updatedAt        DateTime  @default(now()) @map("updated_at") // solo cambia si cambia el contenido
+
+  links         UniversityLink[]
+  sourceRecords SourceRecord[]
+
+  @@index([category])
   @@map("universities")
 }
 
@@ -203,4 +227,61 @@ model UniversityLink {
 
   @@index([universityId])
   @@map("university_links")
+}
+
+// ───────────────────────── Fuentes externas y procedencia ─────────────────────────
+
+model DataSource {
+  code        String  @id
+  name        String
+  url         String
+  license     String?
+  description String?
+
+  records SourceRecord[]
+
+  @@map("data_sources")
+}
+
+model IngestionRun {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status      String // running | succeeded | partial | failed
+  triggeredBy String    @map("triggered_by") // user:<id> | schedule
+  startedAt   DateTime  @default(now()) @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  created     Int       @default(0)
+  updated     Int       @default(0)
+  unchanged   Int       @default(0)
+  deactivated Int       @default(0)
+  sources     Json?
+  quality     Json?
+  rejected    Json?
+  error       String?
+
+  records SourceRecord[]
+
+  @@index([startedAt])
+  @@map("ingestion_runs")
+}
+
+model SourceRecord {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceCode   String   @map("source_code")
+  externalId   String   @map("external_id")
+  contentHash  String   @map("content_hash")
+  url          String?
+  payload      Json
+  universityId String?  @map("university_id") @db.Uuid
+  firstSeenAt  DateTime @default(now()) @map("first_seen_at")
+  fetchedAt    DateTime @map("fetched_at")
+  changedAt    DateTime @default(now()) @map("changed_at")
+  lastRunId    String?  @map("last_run_id") @db.Uuid
+
+  source     DataSource    @relation(fields: [sourceCode], references: [code])
+  university University?   @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  lastRun    IngestionRun? @relation(fields: [lastRunId], references: [id], onDelete: SetNull)
+
+  @@unique([sourceCode, externalId])
+  @@index([universityId])
+  @@map("source_records")
 }

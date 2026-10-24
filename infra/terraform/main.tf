@@ -23,6 +23,12 @@ resource "docker_network" "public" {
   name = "${var.name_prefix}-public"
 }
 
+# "egress": red NO interna, con salida a internet. Solo la usa python-service para descargar
+# las fuentes de datos (Mineduc y Wikidata). No publica puertos, así que nada entra por aquí.
+resource "docker_network" "egress" {
+  name = "${var.name_prefix}-egress"
+}
+
 resource "docker_volume" "postgres_data" {
   name = "${var.name_prefix}-postgres-data"
 }
@@ -96,10 +102,19 @@ resource "docker_container" "python_service" {
   image   = data.docker_image.python_service.id
   restart = "unless-stopped"
 
-  # Sin "ports": solo es alcanzable desde la red interna.
+  env = [
+    "PIPELINE_CONTACT=${var.pipeline_contact}",
+  ]
+
+  # Sin "ports": solo es alcanzable desde la red interna (la ve el backend, no el frontend).
   networks_advanced {
     name    = docker_network.internal.name
     aliases = ["python-service"]
+  }
+
+  # Salida a internet para recuperar las fuentes de datos.
+  networks_advanced {
+    name = docker_network.egress.name
   }
 
   wait         = true
@@ -126,6 +141,8 @@ resource "docker_container" "backend" {
     "JWT_EXPIRES_IN_SECONDS=${var.jwt_expires_in_seconds}",
     "FRONTEND_ORIGIN=${local.frontend_url}",
     "PYTHON_SERVICE_URL=http://python-service:8001",
+    "PYTHON_PIPELINE_TIMEOUT_MS=120000",
+    "INGESTION_INTERVAL_HOURS=${var.ingestion_interval_hours}",
   ]
 
   # El backend es el único servicio conectado a las dos redes.

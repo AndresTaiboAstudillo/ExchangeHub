@@ -1,0 +1,3338 @@
+{
+ "status": "succeeded",
+ "started_at": "2026-10-24T12:00:00Z",
+ "finished_at": "2026-10-24T12:00:00Z",
+ "sources": [
+  {
+   "code": "mineduc_ies",
+   "status": "ok",
+   "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+   "edition": "2026-05",
+   "fetched_at": "2026-10-24T12:00:00Z",
+   "content_hash": "886013448464478336767673e4d0f11853b37fd227c20e7170ea17faa6f792ad",
+   "records_received": 128,
+   "records_valid": 128,
+   "records_rejected": 0,
+   "duplicates_discarded": 0,
+   "elapsed_ms": 0,
+   "notes": [],
+   "error": null
+  },
+  {
+   "code": "wikidata",
+   "status": "ok",
+   "url": "https://query.wikidata.org/sparql",
+   "edition": null,
+   "fetched_at": "2026-10-24T12:00:00Z",
+   "content_hash": "9f319582b3df98e5c5062d4d326f196616019f8e00b6b9de342bbbe31613214b",
+   "records_received": 11,
+   "records_valid": 9,
+   "records_rejected": 0,
+   "duplicates_discarded": 0,
+   "elapsed_ms": 0,
+   "notes": [
+    "Q900002: coordenadas inválidas o fuera de Chile 'Point(-36.8 -73.0)'",
+    "Q900008: sin etiqueta, descartada",
+    "Q900009: sitio web inválido 'ftp://archivos.example.cl'",
+    "Q900009: año de fundación inválido '1200-01-01T00:00:00Z'"
+   ],
+   "error": null
+  }
+ ],
+ "universities": [
+  {
+   "registry_number": "A1",
+   "name": "Universidad de Chile",
+   "name_key": "universidad de chile",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": "Q900001",
+   "website": "https://uchile.cl",
+   "latitude": -33.4569,
+   "longitude": -70.6506,
+   "founded_year": 1842,
+   "match": {
+    "method": "exact",
+    "score": 1.0
+   },
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A1",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8d7ef63331ea0e63385f7cb625387377fb1302b5e17076f3bd85d194da74af8c"
+    },
+    {
+     "source": "wikidata",
+     "external_id": "Q900001",
+     "url": "https://www.wikidata.org/wiki/Q900001",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "6880b38c877578d573479d61f73173938a151eab81c0404216c221333108ce75"
+    }
+   ]
+  },
+  {
+   "registry_number": "A2",
+   "name": "Universidad de Santiago de Chile",
+   "name_key": "universidad de santiago de chile",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": "Q900003",
+   "website": "https://www.usach.cl",
+   "latitude": -33.4503,
+   "longitude": -70.6877,
+   "founded_year": 1849,
+   "match": {
+    "method": "prefix",
+    "score": 0.8364
+   },
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A2",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "07658351182288a5d0d0952f95682c9b236af4930517049fb17c247713772992"
+    },
+    {
+     "source": "wikidata",
+     "external_id": "Q900003",
+     "url": "https://www.wikidata.org/wiki/Q900003",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b4557a349160777fea8814270cf1741dfbc042172d915b3993fb8767bb8da34f"
+    }
+   ]
+  },
+  {
+   "registry_number": "A3",
+   "name": "Universidad de Valparaíso",
+   "name_key": "universidad de valparaiso",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A3",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "a28153a6c2aee0d3603eb6073ac09f28e4ad744884b683d41d9d7a274fa85465"
+    }
+   ]
+  },
+  {
+   "registry_number": "A4",
+   "name": "Universidad de Antofagasta",
+   "name_key": "universidad de antofagasta",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": "Q900004",
+   "website": "https://www.uantof.cl",
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": {
+    "method": "fuzzy",
+    "score": 0.9804
+   },
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A4",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "22ccfb2007b8d27fce24cf2b155641e205a3d61c714b554aa11c1a2c563b88a7"
+    },
+    {
+     "source": "wikidata",
+     "external_id": "Q900004",
+     "url": "https://www.wikidata.org/wiki/Q900004",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "d73cf78ce0e4c40fd22ae542096f25bea969b6adf51387ab094cd65a801272b9"
+    }
+   ]
+  },
+  {
+   "registry_number": "A5",
+   "name": "Universidad de la Serena",
+   "name_key": "universidad de la serena",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A5",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "9755df47615f10b16b7027a6f0370ecd7f58ba3573047f2963d11e8d91cfba7b"
+    }
+   ]
+  },
+  {
+   "registry_number": "A6",
+   "name": "Universidad del Bío-Bío",
+   "name_key": "universidad del bio bio",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": "Q900002",
+   "website": "https://www.ubiobio.cl",
+   "latitude": null,
+   "longitude": null,
+   "founded_year": 1947,
+   "match": {
+    "method": "exact",
+    "score": 1.0
+   },
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A6",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "31a7bcc78604fba41e606d4699945aed0ab07d4328892e696dcbe6e317833a25"
+    },
+    {
+     "source": "wikidata",
+     "external_id": "Q900002",
+     "url": "https://www.wikidata.org/wiki/Q900002",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "2567ae07e610943561fabf166a2f4c724512d4aacd57ccb331b2ad0224dd5fbf"
+    }
+   ]
+  },
+  {
+   "registry_number": "A7",
+   "name": "Universidad de la Frontera",
+   "name_key": "universidad de la frontera",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A7",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "1b8798ede65e37a94c5cb10697298c97d33df292b8da479fabdfdd0c78056e6b"
+    }
+   ]
+  },
+  {
+   "registry_number": "A8",
+   "name": "Universidad de Magallanes",
+   "name_key": "universidad de magallanes",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A8",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "f4c85b08845d33cd5e4d6f22c3d211aede9394e8813af0e13899d17f35475d52"
+    }
+   ]
+  },
+  {
+   "registry_number": "A9",
+   "name": "Universidad de Talca",
+   "name_key": "universidad de talca",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A9",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "0a162e2c6a823faf94b423ee9a7270a8bb97df79173ec0eea466ea7bf7163d61"
+    }
+   ]
+  },
+  {
+   "registry_number": "A10",
+   "name": "Universidad de Atacama",
+   "name_key": "universidad de atacama",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A10",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "040216e89323f1e08c7d6e1b464601cbed8608d9bb629c1f74c936ae56b41dad"
+    }
+   ]
+  },
+  {
+   "registry_number": "A11",
+   "name": "Universidad de Tarapacá",
+   "name_key": "universidad de tarapaca",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A11",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b79b6f73e8d97690f8dac5f353a6433a1c6471c3ecfee57e5bfc5f0919cda212"
+    }
+   ]
+  },
+  {
+   "registry_number": "A12",
+   "name": "Universidad Arturo Prat",
+   "name_key": "universidad arturo prat",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A12",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "3cc751a6601af5fe885ded1cffdef65b7cb55862a30e17a8b1d13b3e9f4c1aa1"
+    }
+   ]
+  },
+  {
+   "registry_number": "A13",
+   "name": "Universidad Metropolitana de Ciencias de la Educación",
+   "name_key": "universidad metropolitana de ciencias de la educacion",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A13",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b0550f24b96c9892d2c198096061868c03c42f3938197600f47ba592aced6cee"
+    }
+   ]
+  },
+  {
+   "registry_number": "A14",
+   "name": "Universidad de Playa Ancha de Ciencias de la Educación",
+   "name_key": "universidad de playa ancha de ciencias de la educacion",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A14",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ed643ee70e00dbe08c1b42001d8e04b5dbd3890b6a12f4aceae2e99f01fbadf7"
+    }
+   ]
+  },
+  {
+   "registry_number": "A15",
+   "name": "Universidad de los Lagos",
+   "name_key": "universidad de los lagos",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A15",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "e5b81daf09ed870a0c81a9fb2d808737b9b0541a9489c7790eb87d38d9339ab3"
+    }
+   ]
+  },
+  {
+   "registry_number": "A16",
+   "name": "Universidad Tecnológica Metropolitana",
+   "name_key": "universidad tecnologica metropolitana",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A16",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b0fa14e3100cf96d4c1d7c88d7ae4c397e7f2d523ca0af78da929b12859e2325"
+    }
+   ]
+  },
+  {
+   "registry_number": "A17",
+   "name": "Universidad de O'Higgins",
+   "name_key": "universidad de o higgins",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A17",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "1b77d4af118d52196255015eb0e2d91b9505d952d7221f7d4e4a4f75bff31063"
+    }
+   ]
+  },
+  {
+   "registry_number": "A18",
+   "name": "Universidad de Aysén",
+   "name_key": "universidad de aysen",
+   "institution_type": "UNIVERSIDAD ESTATAL",
+   "category": "universidad",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "A18",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "74c742837e6e554d874aebe33fd17b7300b7b1059d679eea7e5122d6a82a5b5d"
+    }
+   ]
+  },
+  {
+   "registry_number": "B1",
+   "name": "Pontificia Universidad Católica de Chile",
+   "name_key": "pontificia universidad catolica de chile",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B1",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "c057d9f08debc6f738b025f47c7ec8c164c85e0d8e291b5e6b14be7a57476fee"
+    }
+   ]
+  },
+  {
+   "registry_number": "B2",
+   "name": "Universidad de Concepción",
+   "name_key": "universidad de concepcion",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B2",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ac79e06fb6dd1a0849aef07bd3c8cb112ac7d1d5f6ec4120727f2f9e0f632cdb"
+    }
+   ]
+  },
+  {
+   "registry_number": "B3",
+   "name": "Universidad Técnica Federico Santa María",
+   "name_key": "universidad tecnica federico santa maria",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B3",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "9408e17d299fd046f69f1ca8b1f83801c2044e67c7c21e3d9410c4ba7aa5bf89"
+    }
+   ]
+  },
+  {
+   "registry_number": "B4",
+   "name": "Pontificia Universidad Católica de Valparaíso",
+   "name_key": "pontificia universidad catolica de valparaiso",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B4",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ee163ef314a2ce6915fa2ec53fcc53730cd4189514c9009929e42244e8dbd329"
+    }
+   ]
+  },
+  {
+   "registry_number": "B5",
+   "name": "Universidad Austral de Chile",
+   "name_key": "universidad austral de chile",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": "Q900005",
+   "website": "https://www.uach.cl",
+   "latitude": -39.8142,
+   "longitude": -73.2459,
+   "founded_year": 1954,
+   "match": {
+    "method": "exact",
+    "score": 1.0
+   },
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B5",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "609ddf36df52cdd8a38129dfb8bda8815dea4e03463562bd49b191e56981c951"
+    },
+    {
+     "source": "wikidata",
+     "external_id": "Q900005",
+     "url": "https://www.wikidata.org/wiki/Q900005",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "123c2d1aaa105c8075133ddc75646dab3881952bef3ee021133ec1ada4d5de54"
+    }
+   ]
+  },
+  {
+   "registry_number": "B6",
+   "name": "Universidad Católica del Norte",
+   "name_key": "universidad catolica del norte",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B6",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "befa2384200e14c81f6ced71f4f47f9c61160e8233bad57ec7ef828e2d24cf21"
+    }
+   ]
+  },
+  {
+   "registry_number": "B7",
+   "name": "Universidad Católica del Maule",
+   "name_key": "universidad catolica del maule",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B7",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "cb63bcbe3c0a37375d9a9e27ea35d99cb325b2225273e466cb5474d21a31943d"
+    }
+   ]
+  },
+  {
+   "registry_number": "B8",
+   "name": "Universidad Católica de la Santísima Concepción",
+   "name_key": "universidad catolica de la santisima concepcion",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B8",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "67d4732cb33a571c9c4d7d8c0bb60d6213321976f49388d2aa60f899bcc713c1"
+    }
+   ]
+  },
+  {
+   "registry_number": "B9",
+   "name": "Universidad Católica de Temuco",
+   "name_key": "universidad catolica de temuco",
+   "institution_type": "UNIVERSIDAD PARTICULAR CON APORTES",
+   "category": "universidad",
+   "ownership": "particular_con_aportes",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "B9",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8fa3bb3bd452b2b536a697f9e7fc649e6da483591e92b596a3b0525c46c177e1"
+    }
+   ]
+  },
+  {
+   "registry_number": "C1",
+   "name": "Universidad Gabriela Mistral",
+   "name_key": "universidad gabriela mistral",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C1",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "db59ebfb2512f1b62546afd7cfd6508cc4842da39e3f54499dd244d605eae1c9"
+    }
+   ]
+  },
+  {
+   "registry_number": "C2",
+   "name": "Universidad Finis Terrae",
+   "name_key": "universidad finis terrae",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C2",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "7c85f96e69c379c9131c9dfaef4fc6fb3e64e853a652a70f35e38b8fdd0550c7"
+    }
+   ]
+  },
+  {
+   "registry_number": "C3",
+   "name": "Universidad Diego Portales",
+   "name_key": "universidad diego portales",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C3",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8baff30beda58fd1525543ab29a595dea6b56aacf34fcb325ce41d13d83e3ec5"
+    }
+   ]
+  },
+  {
+   "registry_number": "C4",
+   "name": "Universidad Central de Chile",
+   "name_key": "universidad central de chile",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C4",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "00771ca5d8cda64cb8c0c36c1c174bd08f9f59b0161669211171b322b99035f8"
+    }
+   ]
+  },
+  {
+   "registry_number": "C10",
+   "name": "Universidad Bolivariana",
+   "name_key": "universidad bolivariana",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C10",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "00047c134a679566fe76101d757cd4ba3e31cdd7c9e4b6bc0c88b956dfa7bb17"
+    }
+   ]
+  },
+  {
+   "registry_number": "C12",
+   "name": "Universidad del Alba",
+   "name_key": "universidad del alba",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C12",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "2f0d7500b07c5a22a07bd37791072d68b3597be9c2a5bac943687e48bb16ce0b"
+    }
+   ]
+  },
+  {
+   "registry_number": "C13",
+   "name": "Universidad Mayor",
+   "name_key": "universidad mayor",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C13",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "6f9b64d52a73378371f97e531597966872fcfc10878fdc59ffc497d9b9bdc838"
+    }
+   ]
+  },
+  {
+   "registry_number": "C14",
+   "name": "Universidad Academia de Humanismo Cristiano",
+   "name_key": "universidad academia de humanismo cristiano",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C14",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "405c3e5d18c34695e987d2532235c4d3b959bc236282cdb695a2a39967f68ffd"
+    }
+   ]
+  },
+  {
+   "registry_number": "C16",
+   "name": "Universidad Santo Tomás",
+   "name_key": "universidad santo tomas",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C16",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "d33f98cd504e99bfa16393fadac3834d3ba275e6ae97c343713bff187ae9d8f7"
+    }
+   ]
+  },
+  {
+   "registry_number": "C19",
+   "name": "Universidad la República",
+   "name_key": "universidad la republica",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C19",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "5967bd28c76573cedc0b9f74ce7468df5cb69169326e8f8e77dd18b01cc05755"
+    }
+   ]
+  },
+  {
+   "registry_number": "C20",
+   "name": "Universidad Sek",
+   "name_key": "universidad sek",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C20",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ce40df48cc034cafc62d6727848d75f24010dfd2da45910f61b15b8e0bced9fd"
+    }
+   ]
+  },
+  {
+   "registry_number": "C22",
+   "name": "Universidad de las Américas",
+   "name_key": "universidad de las americas",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C22",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "a1f697b567432b0b560eac74a1a2dc1e6cea3e1c1556a4e252f29c35c40dc607"
+    }
+   ]
+  },
+  {
+   "registry_number": "C23",
+   "name": "Universidad Andrés Bello",
+   "name_key": "universidad andres bello",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C23",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8fce934c840803eacc47cdee920cf5512749c96312f4c632eecdef2d993d6c2b"
+    }
+   ]
+  },
+  {
+   "registry_number": "C25",
+   "name": "Universidad de Viña del Mar",
+   "name_key": "universidad de vina del mar",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C25",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "685126395597d614838ff81c1675fc46cda62dcff618c3df74caf952fe4d0d29"
+    }
+   ]
+  },
+  {
+   "registry_number": "C26",
+   "name": "Universidad Adolfo Ibáñez",
+   "name_key": "universidad adolfo ibanez",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": "Q611995",
+   "website": "https://www.uai.cl",
+   "latitude": -33.486,
+   "longitude": -70.518,
+   "founded_year": 1988,
+   "match": {
+    "method": "exact",
+    "score": 1.0
+   },
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C26",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "f095d71306729773a8261c8da12480dfb31aa7451b637fee5d27935335e1c282"
+    },
+    {
+     "source": "wikidata",
+     "external_id": "Q611995",
+     "url": "https://www.wikidata.org/wiki/Q611995",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "1c77776f62e0bdaa229666afcdcfd8b3a890fda90934b87f18478a40d18d1392"
+    }
+   ]
+  },
+  {
+   "registry_number": "C29",
+   "name": "Universidad de Artes, Ciencias y Comunicación - Uniacc",
+   "name_key": "universidad de artes ciencias y comunicacion uniacc",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C29",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "306b94fef83ecc32a019eb9ee645a000f24c4832a7b8fcbfd6ed5bfe3beb9eaf"
+    }
+   ]
+  },
+  {
+   "registry_number": "C35",
+   "name": "Universidad Autónoma de Chile",
+   "name_key": "universidad autonoma de chile",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C35",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8c5ef1700b99722da9cb416c5f5ea0dd74f01d98984ca9856ad04ac3c2b96149"
+    }
+   ]
+  },
+  {
+   "registry_number": "C38",
+   "name": "Universidad de los Andes",
+   "name_key": "universidad de los andes",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C38",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "cce85af0a669e705a4ae2360641fd8ba5269e9df9d8a0ab331c368ad8fd83dfc"
+    }
+   ]
+  },
+  {
+   "registry_number": "C42",
+   "name": "Universidad Adventista de Chile",
+   "name_key": "universidad adventista de chile",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C42",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "fdb82ebed96f24824a89f0787032b0d8c65b261b7a080d6c10db2959fc43d175"
+    }
+   ]
+  },
+  {
+   "registry_number": "C43",
+   "name": "Universidad San Sebastián",
+   "name_key": "universidad san sebastian",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C43",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "1c1e2afd1b8eaab5abb074157cb516a0b1a34a15339eebab6c339a41b8baf265"
+    }
+   ]
+  },
+  {
+   "registry_number": "C46",
+   "name": "Universidad Católica Cardenal Raúl Silva Henríquez",
+   "name_key": "universidad catolica cardenal raul silva henriquez",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C46",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ba154e21d508da17f5fb2f3f5d3167637a331f78ec372f752210d8fdeaf4e4cb"
+    }
+   ]
+  },
+  {
+   "registry_number": "C49",
+   "name": "Universidad del Desarrollo",
+   "name_key": "universidad del desarrollo",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C49",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "cdede143e8b1c4ceebdf8116bf243116c1fd82568e08deeaaba723de4e6a6f52"
+    }
+   ]
+  },
+  {
+   "registry_number": "C50",
+   "name": "Universidad de Aconcagua",
+   "name_key": "universidad de aconcagua",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C50",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "0a7a88e3b8e44a7f592193a0271b45c81befa6fc9eb78f33b4c4a2692f179889"
+    }
+   ]
+  },
+  {
+   "registry_number": "C52",
+   "name": "Universidad los Leones",
+   "name_key": "universidad los leones",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C52",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "9511da9dc19a3ae6b1022b8255ca4d24f1f897d8206b43fb3f30ae262852ffe9"
+    }
+   ]
+  },
+  {
+   "registry_number": "C54",
+   "name": "Universidad Bernardo O'Higgins",
+   "name_key": "universidad bernardo o higgins",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C54",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "5f3a9d33dbe9520dcd49f9cdddaf1b4cb0a17288cb1194ce0ec9769f2bc43d4e"
+    }
+   ]
+  },
+  {
+   "registry_number": "C58",
+   "name": "Universidad Tecnológica de Chile Inacap",
+   "name_key": "universidad tecnologica de chile inacap",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "en_proceso_de_cierre",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C58",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "f014648a07a160da89cdbafe570af9782cbd6e8edf372e7dfe1d5467dcdb7c5e"
+    }
+   ]
+  },
+  {
+   "registry_number": "C72",
+   "name": "Universidad Miguel de Cervantes",
+   "name_key": "universidad miguel de cervantes",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C72",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "a639c32b3cffb8421bdb7ac0328a7398b03f9bf995b94d2280b99d187f3ed078"
+    }
+   ]
+  },
+  {
+   "registry_number": "C74",
+   "name": "Universidad Alberto Hurtado",
+   "name_key": "universidad alberto hurtado",
+   "institution_type": "UNIVERSIDAD PRIVADA",
+   "category": "universidad",
+   "ownership": "privada",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "C74",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "87d3e88ba7cdaee95cb23c4fba131162f62dd973d6a8bca6708046cd0961e47e"
+    }
+   ]
+  },
+  {
+   "registry_number": "D23",
+   "name": "Instituto Profesional IACC",
+   "name_key": "instituto profesional iacc",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D23",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "26711e6c208909c482f9cdc5c8e04451119c15042156938f5851d8f4100795fb"
+    }
+   ]
+  },
+  {
+   "registry_number": "D5",
+   "name": "Instituto Profesional Agrario Adolfo Matthei",
+   "name_key": "instituto profesional agrario adolfo matthei",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D5",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "67c2f62a1137f0ff0e86b5c2c34f3a152a5611ca178e95be95c9df03ec49349f"
+    }
+   ]
+  },
+  {
+   "registry_number": "D49",
+   "name": "Instituto Profesional AIEP",
+   "name_key": "instituto profesional aiep",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D49",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "33c6f44bbd8f63fdb3d012928a1a1ec1a2f779e63880fbb6912320659ff779f2"
+    }
+   ]
+  },
+  {
+   "registry_number": "D50",
+   "name": "Instituto Profesional Arcos",
+   "name_key": "instituto profesional arcos",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D50",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "9f1c791203c71bd5e13e63df9e8d46250dab928b18150c7937d743336edfcf40"
+    }
+   ]
+  },
+  {
+   "registry_number": "D14",
+   "name": "Instituto Profesional Chileno Británico de Cultura",
+   "name_key": "instituto profesional chileno britanico de cultura",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D14",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "fd89a1e6a86085fe5d4a12ba4e32bccf7ec3b7de4df148635a19b5c5cea13392"
+    }
+   ]
+  },
+  {
+   "registry_number": "D144",
+   "name": "Instituto Profesional Cicerón",
+   "name_key": "instituto profesional ciceron",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D144",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "36dd1b9a1e6d3f60654b49ce250a091de0cdd31300ecbd37fb53cc6aa4dd9ffe"
+    }
+   ]
+  },
+  {
+   "registry_number": "D29",
+   "name": "Instituto Profesional de Chile",
+   "name_key": "instituto profesional de chile",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D29",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "d25440668fc12606e4c31bbc7f6314e3fff9e5e8fd3862f220844b549800bf69"
+    }
+   ]
+  },
+  {
+   "registry_number": "D82",
+   "name": "Instituto Profesional del Valle Central",
+   "name_key": "instituto profesional del valle central",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D82",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "c159873d7bafe65a01a4feb74ed96480d93130a6a30c536f3736646c984281c6"
+    }
+   ]
+  },
+  {
+   "registry_number": "D26",
+   "name": "Instituto Profesional Diego Portales",
+   "name_key": "instituto profesional diego portales",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D26",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "13c751609ee3a212fec165f57f72402fb28126cd06e2bdf78d1ef6609f596f44"
+    }
+   ]
+  },
+  {
+   "registry_number": "D45",
+   "name": "Instituto Profesional Dr. Virginio Gómez G.",
+   "name_key": "instituto profesional dr virginio gomez g",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D45",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "dbf12605c7cc9ea8a3509bfd7a9f355e871033ac3d3e6ebb2cd0165a6550b44c"
+    }
+   ]
+  },
+  {
+   "registry_number": "D17",
+   "name": "Instituto Profesional Duoc UC",
+   "name_key": "instituto profesional duoc uc",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D17",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "4e4a1187207640312acf9a765b11d4e58293a500a6e8e1eae6618038e1dd0629"
+    }
+   ]
+  },
+  {
+   "registry_number": "D43",
+   "name": "Instituto Profesional Eatri",
+   "name_key": "instituto profesional eatri",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D43",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "debdc9763e2443e4db48c84d24a4d2b166f3dff62da927fab99a39c9290cde8a"
+    }
+   ]
+  },
+  {
+   "registry_number": "D119",
+   "name": "Instituto Profesional Escuela de Cine de Chile",
+   "name_key": "instituto profesional escuela de cine de chile",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D119",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "9757c341c8f55d21b64fc51640af9bf0c4c402509ecf2ae4374943c59086632f"
+    }
+   ]
+  },
+  {
+   "registry_number": "D77",
+   "name": "Instituto Profesional Escuela de Comercio de Santiago",
+   "name_key": "instituto profesional escuela de comercio de santiago",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D77",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "0fd704226759ded0c1f6d26e10b7ad3422c49757f522c0ea494c46cae78f254b"
+    }
+   ]
+  },
+  {
+   "registry_number": "D10",
+   "name": "Instituto Profesional Escuela de Contadores Auditores de Santiago",
+   "name_key": "instituto profesional escuela de contadores auditores de santiago",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D10",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ac8f03cfa2d3d9f38f60282e1db8aa212456d440736458eb9ec88f6d45cd87d2"
+    }
+   ]
+  },
+  {
+   "registry_number": "D128",
+   "name": "Instituto Profesional Escuela de Marina Mercante Piloto Pardo",
+   "name_key": "instituto profesional escuela de marina mercante piloto pardo",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D128",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "7dc62f8e137cb3914614f757dddb1b853d241e17aa3c822605ba80fe870f29da"
+    }
+   ]
+  },
+  {
+   "registry_number": "D35",
+   "name": "Instituto Profesional Escuela Moderna de Música",
+   "name_key": "instituto profesional escuela moderna de musica",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D35",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "e9667f34cc03fff570ae65e543867995aea7a1c990f66b3ffe90e9eebe96b1cf"
+    }
+   ]
+  },
+  {
+   "registry_number": "D6",
+   "name": "Instituto Profesional Inacap",
+   "name_key": "instituto profesional inacap",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D6",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "d747ef05afb88ac9e1034bd5a7d22b8b45f9ecbbeda70bfd31afe6bd42fd611b"
+    }
+   ]
+  },
+  {
+   "registry_number": "D9",
+   "name": "Instituto Profesional Instituto de Estudios Bancarios Guillermo Subercaseaux",
+   "name_key": "instituto profesional instituto de estudios bancarios guillermo subercaseaux",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "en_proceso_de_revocacion",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D9",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8cff1a1026a4db064f06a4e30445db301c456c448934b73961f81e396c59917e"
+    }
+   ]
+  },
+  {
+   "registry_number": "D108",
+   "name": "Instituto Profesional Instituto Internacional de Artes Culinarias y Servicios",
+   "name_key": "instituto profesional instituto internacional de artes culinarias y servicios",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D108",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "72765b211b976ebda364d90476f407c5566091485a6ae573703b32318993233c"
+    }
+   ]
+  },
+  {
+   "registry_number": "D100",
+   "name": "Instituto Profesional Instituto Nacional del Fútbol",
+   "name_key": "instituto profesional instituto nacional del futbol",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D100",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "175ff568592f0280b242a64a8d13a7b4d281577340eaad68d0b96eeecba5d4ac"
+    }
+   ]
+  },
+  {
+   "registry_number": "D19",
+   "name": "Instituto Profesional IPG",
+   "name_key": "instituto profesional ipg",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D19",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "deca6807d861b3cfa764b768605e0a52533a65d18e6aab9446c6b49b03a3ddee"
+    }
+   ]
+  },
+  {
+   "registry_number": "D58",
+   "name": "Instituto Profesional Latinoamericano de Comercio Exterior - Iplacex",
+   "name_key": "instituto profesional latinoamericano de comercio exterior iplacex",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D58",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "fc4aaba15e1f249a9bf92967f30f03c69570e96afc2282dea0a7a1690abfcc45"
+    }
+   ]
+  },
+  {
+   "registry_number": "D7",
+   "name": "Instituto Profesional Libertador de los Andes",
+   "name_key": "instituto profesional libertador de los andes",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D7",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "2a36a9c6519aac98d84b7416c0434a7eb43f9046de5fec5105930e1e718d9d00"
+    }
+   ]
+  },
+  {
+   "registry_number": "D71",
+   "name": "Instituto Profesional los Lagos",
+   "name_key": "instituto profesional los lagos",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "en_proceso_de_cierre",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D71",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "c7c21da494e3b514c3d0f69f5970f5ac9e6e6556143e215dedb4ce62daa681b2"
+    }
+   ]
+  },
+  {
+   "registry_number": "D61",
+   "name": "Instituto Profesional los Leones",
+   "name_key": "instituto profesional los leones",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D61",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "e9b82d12d9bf2ed14e1eafd581bee3df6455100b3aacc6363635b34cd65c588e"
+    }
+   ]
+  },
+  {
+   "registry_number": "D111",
+   "name": "Instituto Profesional Projazz",
+   "name_key": "instituto profesional projazz",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D111",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b633d9a89a2978aaf3565d10ea7c41a3c050fc84fddf8b5ab2abd99d0aaba1fe"
+    }
+   ]
+  },
+  {
+   "registry_number": "D12",
+   "name": "Instituto Profesional Providencia",
+   "name_key": "instituto profesional providencia",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D12",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "d7c90911c2d1808409af0ad1d13e22b7bac5ec98ee65558a6c03b99cd5e384c0"
+    }
+   ]
+  },
+  {
+   "registry_number": "D68",
+   "name": "Instituto Profesional San Sebastián",
+   "name_key": "instituto profesional san sebastian",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D68",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "5f6c50394ded52e9675cd68b321f2feb37eef70bdbca9cc7226e5cf4fedcd4d9"
+    }
+   ]
+  },
+  {
+   "registry_number": "D22",
+   "name": "Instituto Profesional Santo Tomás",
+   "name_key": "instituto profesional santo tomas",
+   "institution_type": "INSTITUTO PROFESIONAL",
+   "category": "instituto_profesional",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "D22",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8bd2602a15dbe02a6853eeb5f12c82a72fe7dd56db38fae2ec3385ea759ec432"
+    }
+   ]
+  },
+  {
+   "registry_number": "E18",
+   "name": "Centro de Formación Técnica Instituto Central de Capacitación Educacional ICCE",
+   "name_key": "centro de formacion tecnica instituto central de capacitacion educacional icce",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E18",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "bbed164c1e12c8f54bb19bba95ffee66ecd270fd0be3f1716caa2ac2fc7166a1"
+    }
+   ]
+  },
+  {
+   "registry_number": "E22",
+   "name": "Centro de Formación Técnica de Enac o Centro de Formación Técnica de los Establecimientos Nacionales de Educación Cáritas-Chile",
+   "name_key": "centro de formacion tecnica de enac o centro de formacion tecnica de los establecimientos nacionales de educacion caritas chile",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E22",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "99557df7892040eca49f55447573785525101ed9fd831edcef0ecd833ab37009"
+    }
+   ]
+  },
+  {
+   "registry_number": "E40",
+   "name": "Centro de Formación Técnica Centro Tecnológico Superior Infomed",
+   "name_key": "centro de formacion tecnica centro tecnologico superior infomed",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E40",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8bfa3d3d7bec0feb0842bde1ed5329cad5e4952e653265418087cfcd18649f83"
+    }
+   ]
+  },
+  {
+   "registry_number": "E45",
+   "name": "Centro de Formación Técnica Instituto Superior Alemán de Comercio Insalco",
+   "name_key": "centro de formacion tecnica instituto superior aleman de comercio insalco",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E45",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "6f6941a3ba9766b393357d2c01b1f690230bb2a31fda2ca95fd784b052012209"
+    }
+   ]
+  },
+  {
+   "registry_number": "E61",
+   "name": "Centro de Formación Técnica Juan Bohon",
+   "name_key": "centro de formacion tecnica juan bohon",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E61",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "7636e83b25f4830e26790e68aefe7d65f9844c62f972d0e17da0a5b62d106100"
+    }
+   ]
+  },
+  {
+   "registry_number": "E64",
+   "name": "Centro de Formación Técnica Santo Tomás",
+   "name_key": "centro de formacion tecnica santo tomas",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E64",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "daf2763c8896f2ef1a7f18fc27474c41ee456177123ec409ff6ee6b0de439fe4"
+    }
+   ]
+  },
+  {
+   "registry_number": "E84",
+   "name": "Centro de Formación Técnica los Lagos",
+   "name_key": "centro de formacion tecnica los lagos",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "en_proceso_de_cierre",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E84",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "2ac74b023a6caa9dc0f327936a8a75ef99cec9e7fe1c98b9c052679c9640934e"
+    }
+   ]
+  },
+  {
+   "registry_number": "E116",
+   "name": "Centro de Formación Técnica Cenco",
+   "name_key": "centro de formacion tecnica cenco",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E116",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b071eda9807bd42ba2c5a23df229911c792d5f723be939c2dc54f42279843a23"
+    }
+   ]
+  },
+  {
+   "registry_number": "E123",
+   "name": "Centro de Formación Técnica Prodata",
+   "name_key": "centro de formacion tecnica prodata",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E123",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "4a389611c54f2a663ff114485ede1fdf28ec815bc02846c3b6dbc1734d0eed95"
+    }
+   ]
+  },
+  {
+   "registry_number": "E132",
+   "name": "Centro de Formación Técnica Instituto Superior de Estudios Jurídicos Canon",
+   "name_key": "centro de formacion tecnica instituto superior de estudios juridicos canon",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E132",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "eb9f8bba794ec0ffcc8232dea9100a0ef2856b23673233f64890beea747aaa32"
+    }
+   ]
+  },
+  {
+   "registry_number": "E135",
+   "name": "Centro de Formación Técnica Iprosec",
+   "name_key": "centro de formacion tecnica iprosec",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E135",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "53bf44b665beb7bc44d6923e7f185d22bcf0495e98865196b1e543526a8896da"
+    }
+   ]
+  },
+  {
+   "registry_number": "E171",
+   "name": "Centro de Formación Técnica San Agustín",
+   "name_key": "centro de formacion tecnica san agustin",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E171",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "6e52086bac3c5282ee18413149fdf1c565ceca9e429ebabbbf3f975ed3e402f9"
+    }
+   ]
+  },
+  {
+   "registry_number": "E186",
+   "name": "Centro de Formación Técnica Alpes",
+   "name_key": "centro de formacion tecnica alpes",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E186",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "97c0b1346dedb54098106d8e1b79b7cb20e761a1b0396b98e21c0e72bb91fce0"
+    }
+   ]
+  },
+  {
+   "registry_number": "E194",
+   "name": "Centro de Formación Técnica Instituto Tecnológico de Chile - I.t.c.",
+   "name_key": "centro de formacion tecnica instituto tecnologico de chile i t c",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "en_proceso_de_revocacion",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E194",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "f0ef008064ce0ba47c8719159459b18b766497e8808aa03500038df1af86a2e2"
+    }
+   ]
+  },
+  {
+   "registry_number": "E230",
+   "name": "Centro de Formación Técnica Escuela de Comercio",
+   "name_key": "centro de formacion tecnica escuela de comercio",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E230",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "9b35ce461c76ca6f3de3b7609728e5836fb71c69d06b183116370f7c5b53c222"
+    }
+   ]
+  },
+  {
+   "registry_number": "E231",
+   "name": "Centro de Formación Técnica Laplace o C.f.t. de Estudios Superiores y Capacitación Profesional Laplace",
+   "name_key": "centro de formacion tecnica laplace o c f t de estudios superiores y capacitacion profesional laplace",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E231",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b6c676711414433aaad594b5a8b4753add92f7bdd999ddac439e3eadff29f9bf"
+    }
+   ]
+  },
+  {
+   "registry_number": "E234",
+   "name": "Centro de Formación Técnica Inacap",
+   "name_key": "centro de formacion tecnica inacap",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E234",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "6d07b4ba7dcd42d68a550caefa44f59d121c11e3e823c51a94f0271efb13c4a1"
+    }
+   ]
+  },
+  {
+   "registry_number": "E239",
+   "name": "Centro de Formación Técnica del Medio Ambiente",
+   "name_key": "centro de formacion tecnica del medio ambiente",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E239",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "057a01388813d506d9f6bbcd351482673eb0d627f891138e9b1a17e88e052a80"
+    }
+   ]
+  },
+  {
+   "registry_number": "E254",
+   "name": "Centro de Formación Técnica Lota - Arauco",
+   "name_key": "centro de formacion tecnica lota arauco",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E254",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "0ea40f6755d930a398c0a6f7f74c68280c1d68b30ffeac13c10357956e631396"
+    }
+   ]
+  },
+  {
+   "registry_number": "E260",
+   "name": "Centro de Formación Técnica Ceduc - UCN",
+   "name_key": "centro de formacion tecnica ceduc ucn",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E260",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "017fb1c15bb9a0d2e593461dc53a8721bf87afdafc4ec38757b0abad8869e429"
+    }
+   ]
+  },
+  {
+   "registry_number": "E297",
+   "name": "Centro de Formación Técnica Asiste",
+   "name_key": "centro de formacion tecnica asiste",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E297",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "be951a6005193e32d6513630004367a716b8889c7b3644267efa052a9371add8"
+    }
+   ]
+  },
+  {
+   "registry_number": "E307",
+   "name": "Centro de Formación Técnica Protec",
+   "name_key": "centro de formacion tecnica protec",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E307",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "e843239fe070b0e656c5e0d483ab47a22b2ae36bb5c1dfc15fda0db885ab9504"
+    }
+   ]
+  },
+  {
+   "registry_number": "E334",
+   "name": "Centro de Formación Técnica de la Pontificia Universidad Católica de Valparaíso o CFT PUCV",
+   "name_key": "centro de formacion tecnica de la pontificia universidad catolica de valparaiso o cft pucv",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E334",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "fe3302e9de6c1b759058bd55a54340cce0b0fe7b2ed4c2dcdc4939f28fffacd7"
+    }
+   ]
+  },
+  {
+   "registry_number": "E336",
+   "name": "Centro de Formación Técnica Teodoro Wickel Kluwen",
+   "name_key": "centro de formacion tecnica teodoro wickel kluwen",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E336",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b9189e734b12f1f248f66dd61a84b68669720b17af54c9c1af98bfe314e38275"
+    }
+   ]
+  },
+  {
+   "registry_number": "E354",
+   "name": "Centro de Formación Técnica Profasoc",
+   "name_key": "centro de formacion tecnica profasoc",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E354",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "6820a292e9889c5922f7396fd01e8d9fc20a1d942e1202af39d77b1fe1057e9a"
+    }
+   ]
+  },
+  {
+   "registry_number": "E355",
+   "name": "Centro de Formación Técnica Manpower",
+   "name_key": "centro de formacion tecnica manpower",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E355",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "0cbe4f1b6a80f801b56918b7a51a5725e1f2895874f369ffc002c63afbdce2d0"
+    }
+   ]
+  },
+  {
+   "registry_number": "E365",
+   "name": "Centro de Formación Técnica Escuela Culinaria Francesa",
+   "name_key": "centro de formacion tecnica escuela culinaria francesa",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E365",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "dc5109e7b4e5bc3aa6bb996f82ccfd24dcf050a44990961a89d744b9c76fcdbe"
+    }
+   ]
+  },
+  {
+   "registry_number": "E419",
+   "name": "Centro de Formación Técnica Academia Chilena de Yoga",
+   "name_key": "centro de formacion tecnica academia chilena de yoga",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA",
+   "category": "centro_formacion_tecnica",
+   "ownership": "otra",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "E419",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "56c36e5a77758fa62973424e6cbb19a96a81b6532f419c6fab826dba8e54c929"
+    }
+   ]
+  },
+  {
+   "registry_number": "G1",
+   "name": "Centro de Formación Técnica de la Región de Arica y Parinacota",
+   "name_key": "centro de formacion tecnica de la region de arica y parinacota",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G1",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ca8551d4c69451ac07963767208bf996c86ec14facfb42856df49573d353bc8c"
+    }
+   ]
+  },
+  {
+   "registry_number": "G2",
+   "name": "Centro de Formación Técnica de la Región de Tarapacá",
+   "name_key": "centro de formacion tecnica de la region de tarapaca",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G2",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "a51a36fd7588a0e4c270d6034896e3af8e3a11127925d577e228569bbc547eb0"
+    }
+   ]
+  },
+  {
+   "registry_number": "G3",
+   "name": "Centro de Formación Técnica de la Región de Antofagasta",
+   "name_key": "centro de formacion tecnica de la region de antofagasta",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G3",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "f19dffbd6be095eb0283e984d525328c8dd7825782f9dc1f6f8d780a6c7f5242"
+    }
+   ]
+  },
+  {
+   "registry_number": "G4",
+   "name": "Centro de Formación Técnica de la Región de Atacama",
+   "name_key": "centro de formacion tecnica de la region de atacama",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G4",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "eb47bc427b19130395bd1b5d80d23bd5e0b28e0009884716c93af50c7b524b24"
+    }
+   ]
+  },
+  {
+   "registry_number": "G5",
+   "name": "Centro de Formación Técnica de la Región de Coquimbo",
+   "name_key": "centro de formacion tecnica de la region de coquimbo",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G5",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "8f0fcfc89b5a64bf068ffed92df34dbcd1c0c3329ba521ee8169bd3e9d1e651a"
+    }
+   ]
+  },
+  {
+   "registry_number": "G6",
+   "name": "Centro de Formación Técnica de la Región de Valparaíso",
+   "name_key": "centro de formacion tecnica de la region de valparaiso",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G6",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "72d35119c3e9384093f0495de1aa95d9ba15299913dc2349a54ef87b673cd9e5"
+    }
+   ]
+  },
+  {
+   "registry_number": "G7",
+   "name": "Centro de Formación Técnica de la Región Metropolitana de Santiago",
+   "name_key": "centro de formacion tecnica de la region metropolitana de santiago",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G7",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "842a91a2df4645db83b60a283193513a996f24952e0627dfada6a1840a66dae7"
+    }
+   ]
+  },
+  {
+   "registry_number": "G8",
+   "name": "Centro de Formación Técnica de la Región del Libertador General Bernardo O'Higgins",
+   "name_key": "centro de formacion tecnica de la region del libertador general bernardo o higgins",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G8",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ac99260bd8bb65a589ce7a8132d6db8b8df1cb8d9af3ab695ce0f4f2c8bdf332"
+    }
+   ]
+  },
+  {
+   "registry_number": "G9",
+   "name": "Centro de Formación Técnica de la Región del Maule",
+   "name_key": "centro de formacion tecnica de la region del maule",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G9",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "ee593885643bba9b77b2540ee6ba5b41cf3812aba0999af7f1c2d076784bcd95"
+    }
+   ]
+  },
+  {
+   "registry_number": "G10",
+   "name": "Centro de Formación Técnica de la Región del Bío Bio",
+   "name_key": "centro de formacion tecnica de la region del bio bio",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G10",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "15985c4acadafbd2a365d5f84bf5cbf1ba6fe5bad20944cf98375096fc69e2bc"
+    }
+   ]
+  },
+  {
+   "registry_number": "G11",
+   "name": "Centro de Formación Técnica de la Región de la Araucanía",
+   "name_key": "centro de formacion tecnica de la region de la araucania",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G11",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "b2b1caae1032848901fba41d32024ce016b7269cf8aaa4064321201da2ccf799"
+    }
+   ]
+  },
+  {
+   "registry_number": "G12",
+   "name": "Centro de Formación Técnica de la Región de los Ríos",
+   "name_key": "centro de formacion tecnica de la region de los rios",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G12",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "04d916af93917677eee39456712c9b5b62500ea72d616c3646f9d3baec5a7854"
+    }
+   ]
+  },
+  {
+   "registry_number": "G13",
+   "name": "Centro de Formación Técnica de la Región de los Lagos",
+   "name_key": "centro de formacion tecnica de la region de los lagos",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G13",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "bc1483ab2fe26624f2326428110f503688576d20d354b7cfd0c0e6c0972f7861"
+    }
+   ]
+  },
+  {
+   "registry_number": "G14",
+   "name": "Centro de Formación Técnica de la Región de Aysén del General Carlos Ibáñez del Campo",
+   "name_key": "centro de formacion tecnica de la region de aysen del general carlos ibanez del campo",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G14",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "efe6e2ab70fb0048986e16b72935f9e202741747a7c85adf197ed6eff780896e"
+    }
+   ]
+  },
+  {
+   "registry_number": "G15",
+   "name": "Centro de Formación Técnica de la Región de Magallanes y Antártica Chilena",
+   "name_key": "centro de formacion tecnica de la region de magallanes y antartica chilena",
+   "institution_type": "CENTRO DE FORMACIÓN TÉCNICA ESTATAL",
+   "category": "centro_formacion_tecnica",
+   "ownership": "estatal",
+   "operating_status": "funcionando",
+   "is_vigente": true,
+   "wikidata_id": null,
+   "website": null,
+   "latitude": null,
+   "longitude": null,
+   "founded_year": null,
+   "match": null,
+   "provenance": [
+    {
+     "source": "mineduc_ies",
+     "external_id": "G15",
+     "url": "https://www.ayudamineduc.cl/sites/default/files/ies_vig_may_26.xlsx",
+     "fetched_at": "2026-10-24T12:00:00Z",
+     "content_hash": "c703b280fba3ae6181df504bfed9791fa233062966195d44e7d1220c49311f6a"
+    }
+   ]
+  }
+ ],
+ "rejected": [],
+ "quality": {
+  "catalog_rows": 128,
+  "catalog_valid": 128,
+  "catalog_rejected": 0,
+  "duplicates_discarded": 0,
+  "pct_valid": 1.0,
+  "universities_in_catalog": 55,
+  "wikidata_entities": 9,
+  "matched": 6,
+  "match_rate": 0.1091,
+  "with_website": 6,
+  "with_coordinates": 4,
+  "coverage_website": 0.1091,
+  "coverage_coordinates": 0.0727,
+  "unmatched_catalog_sample": [
+   "Universidad de Valparaíso",
+   "Universidad de la Serena",
+   "Universidad de la Frontera",
+   "Universidad de Magallanes",
+   "Universidad de Talca",
+   "Universidad de Atacama",
+   "Universidad de Tarapacá",
+   "Universidad Arturo Prat",
+   "Universidad Metropolitana de Ciencias de la Educación",
+   "Universidad de Playa Ancha de Ciencias de la Educación"
+  ],
+  "unmatched_entities_sample": [
+   "Universidad de Talca",
+   "Universidad de Talca",
+   "Universidad Imaginaria del Sur"
+  ],
+  "elapsed_ms": 0
+ }
+}

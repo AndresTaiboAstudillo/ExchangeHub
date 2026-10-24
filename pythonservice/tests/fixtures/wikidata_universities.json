@@ -1,0 +1,240 @@
+{
+ "head": {
+  "vars": [
+   "item",
+   "itemLabel",
+   "website",
+   "coord",
+   "inception"
+  ]
+ },
+ "results": {
+  "bindings": [
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q611995"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad Adolfo Ibáñez"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://www.uai.cl"
+    },
+    "coord": {
+     "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+     "type": "literal",
+     "value": "Point(-70.518 -33.486)"
+    },
+    "inception": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1988-01-01T00:00:00Z"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900001"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad de Chile"
+    },
+    "website": {
+     "type": "uri",
+     "value": "http://www.uchile.cl/"
+    },
+    "coord": {
+     "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+     "type": "literal",
+     "value": "Point(-70.6506 -33.4569)"
+    },
+    "inception": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1842-11-19T00:00:00Z"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900001"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad de Chile"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://uchile.cl"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900002"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad del Bío-Bío"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://www.ubiobio.cl"
+    },
+    "coord": {
+     "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+     "type": "literal",
+     "value": "Point(-36.8 -73.0)"
+    },
+    "inception": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1947-01-01T00:00:00Z"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900003"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad de Santiago"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://www.usach.cl"
+    },
+    "coord": {
+     "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+     "type": "literal",
+     "value": "Point(-70.6877 -33.4503)"
+    },
+    "inception": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1849-01-01T00:00:00Z"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900004"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad de Antofagasa"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://www.uantof.cl"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900005"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad Austral de Chile"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://www.uach.cl"
+    },
+    "coord": {
+     "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+     "type": "literal",
+     "value": "Point(-73.2459 -39.8142)"
+    },
+    "inception": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1954-09-07T00:00:00Z"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900006"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad de Talca"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://www.utalca.cl"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900007"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad de Talca"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://talca.example.org"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900008"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Q900008"
+    },
+    "website": {
+     "type": "uri",
+     "value": "https://sin-etiqueta.example.cl"
+    }
+   },
+   {
+    "item": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q900009"
+    },
+    "itemLabel": {
+     "xml:lang": "es",
+     "type": "literal",
+     "value": "Universidad Imaginaria del Sur"
+    },
+    "website": {
+     "type": "uri",
+     "value": "ftp://archivos.example.cl"
+    },
+    "coord": {
+     "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+     "type": "literal",
+     "value": "Point(-70.0 -33.0)"
+    },
+    "inception": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1200-01-01T00:00:00Z"
+    }
+   }
+  ]
+ }
+}

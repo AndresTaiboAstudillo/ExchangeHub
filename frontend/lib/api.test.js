@@ -116,3 +116,31 @@ describe('api', () => {
     expect(JSON.parse(lastCall().init.body)).toEqual({ body: 'Hola' });
   });
 });
+
+describe('universidades', () => {
+  it('arma la consulta sin enviar parámetros vacíos', async () => {
+    fetchMock.mockReturnValue(respond(200, { items: [], total: 0 }));
+    await api.universities({ q: 'usach', category: 'universidad', ownership: '', limit: 24, offset: 0 });
+    const { url } = lastCall();
+    expect(url).toMatch(/\/universities\?/);
+    const params = new URL(url).searchParams;
+    expect(params.get('q')).toBe('usach');
+    expect(params.get('category')).toBe('universidad');
+    expect(params.get('limit')).toBe('24');
+    expect(params.get('offset')).toBe('0');
+    expect(params.has('ownership')).toBe(false);
+  });
+
+  it('sin filtros pide el listado completo', async () => {
+    fetchMock.mockReturnValue(respond(200, { items: [], total: 0 }));
+    await api.universities();
+    expect(lastCall().url).toMatch(/\/universities$/);
+  });
+
+  it('consulta el estado de las fuentes', async () => {
+    fetchMock.mockReturnValue(respond(200, { sources: [] }));
+    await api.universitiesSources();
+    expect(lastCall().url).toMatch(/\/universities\/sources$/);
+  });
+});
+
