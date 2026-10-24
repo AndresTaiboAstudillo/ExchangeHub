@@ -29,13 +29,19 @@ conectado como lo estará en producción, antes de publicar cambios.
 |---|---|---|---|
 | frontend | `exchangehub-staging/frontend:local`, construida desde `frontend/` | `127.0.0.1:3100` | public |
 | backend (NestJS) | `exchangehub-staging/backend:local`, construida desde `backend/` | `127.0.0.1:8100` | public + internal |
-| python-service (FastAPI) | `exchangehub-staging/python-service:local`, construida desde `pythonservice/` | no | internal |
+| python-service (FastAPI) | `exchangehub-staging/python-service:local`, construida desde `pythonservice/` | no | internal + egress |
 | postgres | `postgres:16` | no | internal |
 
 **Aislamiento.** La red `internal` está marcada como interna en Docker, por lo que ningún
 contenedor de esa red es alcanzable desde fuera. Solo el backend pertenece a ambas redes:
 el frontend no puede llegar a la base de datos ni al servicio Python, y el backend es el
 único punto de acceso, tal como exige la arquitectura.
+
+**Salida a internet de Python.** La red `internal` no tiene salida, pero el pipeline de datos
+necesita descargar el catálogo del Mineduc y consultar Wikidata. Por eso `python-service`
+también se conecta a la red `egress` (con salida, sin puertos publicados). El backend y el
+frontend no están en esa red. Opcionalmente, `pipeline_contact` agrega un contacto al
+`User-Agent` de las descargas e `ingestion_interval_hours` activa la revisión automática.
 
 **Datos.** PostgreSQL usa el volumen `exchangehub-staging-postgres-data`, que sobrevive a
 `terraform destroy` solo si no se elimina a mano; al destruir el ambiente el volumen también

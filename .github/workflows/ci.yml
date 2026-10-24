@@ -124,6 +124,12 @@ jobs:
         run: ruff format --check .
       - name: Pruebas
         run: pytest -q
+      - name: El contrato con NestJS sigue alineado
+        # Regenera la respuesta de ejemplo del pipeline (fuentes simuladas) y exige que coincida
+        # con la que usan las pruebas del backend. Si cambia el contrato, hay que actualizar ambos.
+        run: |
+          python -m scripts.export_contract_fixture
+          git diff --exit-code -- ../backend/test/fixtures/pipeline-result.json
 
   # ───────────────────────── Seguridad ─────────────────────────
   secrets-scan:

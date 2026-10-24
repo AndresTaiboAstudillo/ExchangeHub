@@ -17,14 +17,8 @@ def test_health():
     assert response.json() == {"status": "ok"}
 
 
-def test_echo_ok():
-    response = client.post("/echo", json={"message": "hola"})
-    assert response.status_code == 200
-    assert response.json() == {"message": "hola", "length": 4}
-
-
-def test_echo_validation_error_has_consistent_shape():
-    response = client.post("/echo", json={"message": ""})
+def test_pipeline_validation_error_has_consistent_shape():
+    response = client.post("/v1/pipeline/universities/run", json={"sources": ["wikidata"]})
     assert response.status_code == 422
     error = response.json()["error"]
     assert error["code"] == 422

@@ -1,19 +1,37 @@
 import logging
+import os
+from collections.abc import AsyncIterator, Iterator
+from contextlib import asynccontextmanager
+from typing import Annotated
 
-from fastapi import FastAPI, Request
+import httpx
+from fastapi import Depends, FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from observability import RequestContextMiddleware, configure_logging
+from pipeline.models import PipelineResult, RunRequest
+from pipeline.runner import run_universities_pipeline
+from pipeline.settings import Settings
+
 logger = logging.getLogger("pythonservice")
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    configure_logging(os.environ.get("LOG_LEVEL", "INFO"))
+    yield
+
 
 app = FastAPI(
     title="ExchangeHub Python Service",
     description="Servicio Python para ExchangeHub",
     version="1.0.0",
+    lifespan=lifespan,
 )
+app.add_middleware(RequestContextMiddleware)
 
 
 def error_body(code: int, message: str, details=None) -> dict:
@@ -43,14 +61,15 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def unhandled_exception_handler(request: Request, exc: Exception):
     # El detalle va al log; al cliente solo se le da un mensaje genérico.
     logger.exception("Error no controlado en %s", request.url.path)
+    headers = {}
+    if request_id := getattr(request.state, "request_id", None):
+        # Esta respuesta la arma el middleware más externo, que no pasa por el nuestro.
+        headers["X-Request-Id"] = request_id
     return JSONResponse(
         status_code=500,
         content=error_body(500, "Error interno del servicio"),
+        headers=headers,
     )
-
-
-class EchoRequest(BaseModel):
-    message: str = Field(min_length=1, max_length=500)
 
 
 @app.get("/")
@@ -63,7 +82,37 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/echo")
-def echo(payload: EchoRequest):
-    """Endpoint de ejemplo con validación; reemplazar por la lógica real."""
-    return {"message": payload.message, "length": len(payload.message)}
+def get_settings() -> Settings:
+    return Settings.from_env()
+
+
+def get_http_client(settings: Annotated[Settings, Depends(get_settings)]) -> Iterator[httpx.Client]:
+    timeout = httpx.Timeout(settings.read_timeout, connect=settings.connect_timeout)
+    with httpx.Client(
+        timeout=timeout,
+        follow_redirects=True,
+        headers={"User-Agent": settings.user_agent},
+    ) as client:
+        yield client
+
+
+@app.post(
+    "/v1/pipeline/universities/run",
+    response_model=PipelineResult,
+    tags=["pipeline"],
+    summary="Recupera, limpia y cruza los datos de universidades de Chile",
+    description=(
+        "Descarga el catálogo oficial del Mineduc y, opcionalmente, enriquece las universidades "
+        "con datos estructurados de Wikidata. Valida, normaliza, deduplica y cruza los registros, "
+        "y devuelve además la procedencia de cada dato y un informe de calidad.\n\n"
+        "Las URL de las fuentes provienen de la configuración del servicio, nunca de la petición. "
+        "Si el catálogo no está disponible, `status` es `failed`; si solo falla Wikidata, "
+        "es `partial` y se devuelve igualmente el catálogo."
+    ),
+)
+def run_universities(
+    request: RunRequest,
+    settings: Annotated[Settings, Depends(get_settings)],
+    client: Annotated[httpx.Client, Depends(get_http_client)],
+) -> PipelineResult:
+    return run_universities_pipeline(request.sources, settings, client)

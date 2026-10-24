@@ -8,3 +8,9 @@ docker_host = "npipe:////./pipe/docker_engine"
 #   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 postgres_password = "REEMPLAZAR"
 jwt_secret        = "REEMPLAZAR"
+
+# Opcional. Se incluye en el User-Agent de las descargas a Mineduc y Wikidata (buena práctica).
+# pipeline_contact = "tu-correo@ejemplo.cl"
+
+# Opcional. 168 = revisar las fuentes una vez por semana. 0 (por defecto) = solo manual.
+# ingestion_interval_hours = 168
