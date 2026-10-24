@@ -47,8 +47,8 @@ jobs:
           --health-timeout 3s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -82,8 +82,8 @@ jobs:
     env:
       NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'http://localhost:8000' }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -109,8 +109,8 @@ jobs:
       run:
         working-directory: pythonservice
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # historial completo: un secreto borrado después sigue en el historial
       - name: Instalar gitleaks (con verificación de checksum)
@@ -150,11 +150,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: npm audit backend (producción, bloquea desde nivel alto)
@@ -181,7 +181,7 @@ jobs:
     env:
       NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'http://localhost:8000' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Construir imágenes
         run: |
           docker build -t exchangehub/backend:ci backend
@@ -209,7 +209,7 @@ jobs:
     needs: [backend, python]
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Crear .env a partir de Variables y Secrets
         env:
           POSTGRES_USER: ${{ vars.POSTGRES_USER }}
@@ -261,7 +261,7 @@ jobs:
       run:
         working-directory: infra/terraform
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Instalar Terraform (con verificación de checksum)
         working-directory: ${{ runner.temp }}
         run: |
