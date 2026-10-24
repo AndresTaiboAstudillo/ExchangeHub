@@ -1,19 +1,9 @@
-import { Inter, DM_Serif_Display } from 'next/font/google';
+// Tipografías propias (paquetes npm) en vez de next/font/google: el build no depende de internet
+// ni de Google Fonts, y la app funciona igual sin conexión (útil para la versión móvil).
+import '@fontsource-variable/inter';
+import '@fontsource/dm-serif-display';
 import './globals.css';
 import { AppProvider } from './providers';
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-inter',
-});
-
-const dmSerif = DM_Serif_Display({
-  subsets: ['latin'],
-  weight: ['400'],
-  style: ['normal', 'italic'],
-  variable: '--font-dm-serif',
-});
 
 export const metadata = {
   title: 'ExchangeHub',
@@ -24,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body className={`${inter.variable} ${dmSerif.variable} font-sans`}>
+      <body className="font-sans">
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

@@ -29,8 +29,8 @@ module.exports = {
         border: '#D9D8D4',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'sans-serif'],
-        serif: ['var(--font-dm-serif)', 'serif'],
+        sans: ['"Inter Variable"', 'sans-serif'],
+        serif: ['"DM Serif Display"', 'serif'],
       },
       borderRadius: {
         DEFAULT: '10px',
