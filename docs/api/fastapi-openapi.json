@@ -1,0 +1,679 @@
+{
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "MatchInfo": {
+        "properties": {
+          "method": {
+            "enum": [
+              "exact",
+              "prefix",
+              "fuzzy"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "method",
+          "score"
+        ],
+        "title": "MatchInfo",
+        "type": "object"
+      },
+      "PipelineResult": {
+        "properties": {
+          "finished_at": {
+            "format": "date-time",
+            "title": "Finished At",
+            "type": "string"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/QualityReport"
+          },
+          "rejected": {
+            "items": {
+              "$ref": "#/components/schemas/Rejected"
+            },
+            "title": "Rejected",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceStatus"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "succeeded",
+              "partial",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "universities": {
+            "items": {
+              "$ref": "#/components/schemas/UniversityRecord"
+            },
+            "title": "Universities",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "started_at",
+          "finished_at",
+          "sources",
+          "universities",
+          "rejected",
+          "quality"
+        ],
+        "title": "PipelineResult",
+        "type": "object"
+      },
+      "Provenance": {
+        "properties": {
+          "content_hash": {
+            "description": "SHA-256 del registro tal como se recibió",
+            "title": "Content Hash",
+            "type": "string"
+          },
+          "external_id": {
+            "title": "External Id",
+            "type": "string"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "mineduc_ies",
+              "wikidata"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "source",
+          "external_id",
+          "fetched_at",
+          "content_hash"
+        ],
+        "title": "Provenance",
+        "type": "object"
+      },
+      "QualityReport": {
+        "properties": {
+          "catalog_rejected": {
+            "title": "Catalog Rejected",
+            "type": "integer"
+          },
+          "catalog_rows": {
+            "title": "Catalog Rows",
+            "type": "integer"
+          },
+          "catalog_valid": {
+            "title": "Catalog Valid",
+            "type": "integer"
+          },
+          "coverage_coordinates": {
+            "title": "Coverage Coordinates",
+            "type": "number"
+          },
+          "coverage_website": {
+            "title": "Coverage Website",
+            "type": "number"
+          },
+          "duplicates_discarded": {
+            "title": "Duplicates Discarded",
+            "type": "integer"
+          },
+          "elapsed_ms": {
+            "title": "Elapsed Ms",
+            "type": "integer"
+          },
+          "match_rate": {
+            "title": "Match Rate",
+            "type": "number"
+          },
+          "matched": {
+            "title": "Matched",
+            "type": "integer"
+          },
+          "pct_valid": {
+            "title": "Pct Valid",
+            "type": "number"
+          },
+          "universities_in_catalog": {
+            "title": "Universities In Catalog",
+            "type": "integer"
+          },
+          "unmatched_catalog_sample": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unmatched Catalog Sample",
+            "type": "array"
+          },
+          "unmatched_entities_sample": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unmatched Entities Sample",
+            "type": "array"
+          },
+          "wikidata_entities": {
+            "title": "Wikidata Entities",
+            "type": "integer"
+          },
+          "with_coordinates": {
+            "title": "With Coordinates",
+            "type": "integer"
+          },
+          "with_website": {
+            "title": "With Website",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "catalog_rows",
+          "catalog_valid",
+          "catalog_rejected",
+          "duplicates_discarded",
+          "pct_valid",
+          "universities_in_catalog",
+          "wikidata_entities",
+          "matched",
+          "match_rate",
+          "with_website",
+          "with_coordinates",
+          "coverage_website",
+          "coverage_coordinates",
+          "elapsed_ms"
+        ],
+        "title": "QualityReport",
+        "type": "object"
+      },
+      "Rejected": {
+        "properties": {
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "row": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row"
+          },
+          "source": {
+            "enum": [
+              "mineduc_ies",
+              "wikidata"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "reason"
+        ],
+        "title": "Rejected",
+        "type": "object"
+      },
+      "RunRequest": {
+        "properties": {
+          "sources": {
+            "description": "Fuentes a consultar. `mineduc_ies` es obligatoria (es el catálogo base).",
+            "items": {
+              "enum": [
+                "mineduc_ies",
+                "wikidata"
+              ],
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "title": "RunRequest",
+        "type": "object"
+      },
+      "SourceStatus": {
+        "properties": {
+          "code": {
+            "enum": [
+              "mineduc_ies",
+              "wikidata"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "content_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "SHA-256 del contenido descargado",
+            "title": "Content Hash"
+          },
+          "duplicates_discarded": {
+            "default": 0,
+            "title": "Duplicates Discarded",
+            "type": "integer"
+          },
+          "edition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Edición publicada, p. ej. 2026-05",
+            "title": "Edition"
+          },
+          "elapsed_ms": {
+            "default": 0,
+            "title": "Elapsed Ms",
+            "type": "integer"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "fetched_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetched At"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "records_received": {
+            "default": 0,
+            "title": "Records Received",
+            "type": "integer"
+          },
+          "records_rejected": {
+            "default": 0,
+            "title": "Records Rejected",
+            "type": "integer"
+          },
+          "records_valid": {
+            "default": 0,
+            "title": "Records Valid",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "unavailable",
+              "invalid_format",
+              "skipped"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "code",
+          "status"
+        ],
+        "title": "SourceStatus",
+        "type": "object"
+      },
+      "UniversityRecord": {
+        "properties": {
+          "category": {
+            "enum": [
+              "universidad",
+              "instituto_profesional",
+              "centro_formacion_tecnica"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "founded_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Founded Year"
+          },
+          "institution_type": {
+            "description": "Tipo tal como lo publica el Ministerio",
+            "title": "Institution Type",
+            "type": "string"
+          },
+          "is_vigente": {
+            "title": "Is Vigente",
+            "type": "boolean"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
+          "match": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MatchInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "name_key": {
+            "title": "Name Key",
+            "type": "string"
+          },
+          "operating_status": {
+            "title": "Operating Status",
+            "type": "string"
+          },
+          "ownership": {
+            "enum": [
+              "estatal",
+              "particular_con_aportes",
+              "privada",
+              "otra"
+            ],
+            "title": "Ownership",
+            "type": "string"
+          },
+          "provenance": {
+            "items": {
+              "$ref": "#/components/schemas/Provenance"
+            },
+            "title": "Provenance",
+            "type": "array"
+          },
+          "registry_number": {
+            "title": "Registry Number",
+            "type": "string"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          },
+          "wikidata_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wikidata Id"
+          }
+        },
+        "required": [
+          "registry_number",
+          "name",
+          "name_key",
+          "institution_type",
+          "category",
+          "ownership",
+          "operating_status",
+          "is_vigente"
+        ],
+        "title": "UniversityRecord",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Servicio Python para ExchangeHub",
+    "title": "ExchangeHub Python Service",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mensaje de bienvenida del servicio",
+        "tags": [
+          "salud"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "El proceso está vivo",
+        "tags": [
+          "salud"
+        ]
+      }
+    },
+    "/v1/pipeline/universities/run": {
+      "post": {
+        "description": "Descarga el catálogo oficial del Mineduc y, opcionalmente, enriquece las universidades con datos estructurados de Wikidata. Valida, normaliza, deduplica y cruza los registros, y devuelve además la procedencia de cada dato y un informe de calidad.\n\nLas URL de las fuentes provienen de la configuración del servicio, nunca de la petición. Si el catálogo no está disponible, `status` es `failed`; si solo falla Wikidata, es `partial` y se devuelve igualmente el catálogo.",
+        "operationId": "run_universities_v1_pipeline_universities_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipelineResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recupera, limpia y cruza los datos de universidades de Chile",
+        "tags": [
+          "pipeline"
+        ]
+      }
+    }
+  }
+}

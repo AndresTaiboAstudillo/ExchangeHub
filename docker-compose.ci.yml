@@ -1,0 +1,11 @@
+# Ajustes SOLO para la prueba de integración de CI (se combina con docker-compose.yml).
+# Hace que la ingesta sea reproducible: si las fuentes públicas no responden o no permiten la
+# descarga, el servicio Python usa el Excel de pruebas del repositorio en vez de fallar.
+services:
+  python-service:
+    environment:
+      MINEDUC_CATALOG_FILE: /data/ies_vigentes.xlsx
+      PIPELINE_READ_TIMEOUT: "10"
+      PIPELINE_RETRIES: "1"
+    volumes:
+      - ./pythonservice/tests/fixtures/ies_vig_may_26.xlsx:/data/ies_vigentes.xlsx:ro

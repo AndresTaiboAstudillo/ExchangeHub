@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -32,15 +33,18 @@ export class ListUniversitiesDto {
   @MaxLength(100)
   q?: string;
 
+  @ApiPropertyOptional({ enum: CATEGORIES })
   @IsOptional()
   @IsIn(CATEGORIES)
   category?: (typeof CATEGORIES)[number];
 
+  @ApiPropertyOptional({ enum: OWNERSHIPS })
   @IsOptional()
   @IsIn(OWNERSHIPS)
   ownership?: (typeof OWNERSHIPS)[number];
 
   /** Por defecto solo se listan instituciones vigentes. */
+  @ApiPropertyOptional({ default: false })
   @IsOptional()
   @Transform(
     ({ value }: { value: unknown }) => value === 'true' || value === true,
@@ -48,6 +52,7 @@ export class ListUniversitiesDto {
   @IsBoolean()
   includeInactive: boolean = false;
 
+  @ApiPropertyOptional({ default: 20, minimum: 1, maximum: 100 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -55,6 +60,7 @@ export class ListUniversitiesDto {
   @Max(100)
   limit: number = 20;
 
+  @ApiPropertyOptional({ default: 0, minimum: 0 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

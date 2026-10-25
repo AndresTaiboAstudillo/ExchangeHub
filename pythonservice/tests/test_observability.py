@@ -63,7 +63,7 @@ def test_health_checks_are_logged_only_at_debug(caplog):
 def test_unhandled_error_is_logged_and_still_returns_the_id(caplog):
     caplog.set_level(logging.DEBUG)
 
-    @app.get("/boom-obs")
+    @app.get("/boom-obs", include_in_schema=False)
     def boom():
         raise RuntimeError("secreto interno")
 

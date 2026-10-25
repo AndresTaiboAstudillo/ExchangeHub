@@ -1,7 +1,9 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 
 export class PaginationDto {
+  @ApiPropertyOptional({ default: 20, minimum: 1, maximum: 50 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -21,7 +23,10 @@ export interface Page<T> {
 }
 
 /** Recibe `limit + 1` filas y arma la página con su cursor. */
-export function toPage<T extends { id: string }>(rows: T[], limit: number): Page<T> {
+export function toPage<T extends { id: string }>(
+  rows: T[],
+  limit: number,
+): Page<T> {
   const hasMore = rows.length > limit;
   const items = hasMore ? rows.slice(0, limit) : rows;
   return { items, nextCursor: hasMore ? items[items.length - 1].id : null };
