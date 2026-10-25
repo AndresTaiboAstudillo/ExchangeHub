@@ -72,12 +72,12 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     )
 
 
-@app.get("/")
+@app.get("/", tags=["salud"], summary="Mensaje de bienvenida del servicio")
 def root():
     return {"message": "Python service funcionando"}
 
 
-@app.get("/health")
+@app.get("/health", tags=["salud"], summary="El proceso está vivo")
 def health():
     return {"status": "ok"}
 

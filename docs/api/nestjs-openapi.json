@@ -1,0 +1,1074 @@
+{
+  "components": {
+    "schemas": {
+      "CreateFriendshipDto": {
+        "properties": {
+          "addresseeId": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "addresseeId"
+        ],
+        "type": "object"
+      },
+      "CreatePostDto": {
+        "properties": {
+          "body": {
+            "maxLength": 10000,
+            "type": "string"
+          },
+          "category": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "title",
+          "body"
+        ],
+        "type": "object"
+      },
+      "CreateReplyDto": {
+        "properties": {
+          "body": {
+            "maxLength": 5000,
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "type": "object"
+      },
+      "LoginDto": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 72,
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object"
+      },
+      "RegisterDto": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 72,
+            "minLength": 8,
+            "type": "string"
+          },
+          "universityOrigin": {
+            "maxLength": 150,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "type": "object"
+      },
+      "RespondFriendshipDto": {
+        "properties": {
+          "status": {
+            "enum": [
+              "accepted",
+              "rejected"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "UpdateProfileDto": {
+        "properties": {
+          "bio": {
+            "maxLength": 1000,
+            "nullable": true,
+            "type": "string"
+          },
+          "career": {
+            "maxLength": 100,
+            "nullable": true,
+            "type": "string"
+          },
+          "countryOfOrigin": {
+            "maxLength": 100,
+            "nullable": true,
+            "type": "string"
+          },
+          "hobbies": {
+            "description": "Reemplaza la lista completa.",
+            "items": {
+              "maxLength": 50,
+              "type": "string"
+            },
+            "maxItems": 20,
+            "type": "array"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "languageCodes": {
+            "description": "Reemplaza la lista completa. Códigos como \"es\", \"en\" o \"pt-br\".",
+            "items": {
+              "pattern": "^[a-z]{2,3}(-[a-z0-9]{2,8})?$",
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": "array"
+          },
+          "name": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "universityOrigin": {
+            "maxLength": 150,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "API de ExchangeHub, la plataforma para estudiantes internacionales en Chile. El frontend solo habla con esta API; NestJS es el único que llama al servicio Python y a la base de datos. Las rutas protegidas exigen `Authorization: Bearer <token>` (token de `POST /auth/login`). Cada respuesta incluye `X-Request-Id`, que también se puede enviar para seguir una petición en los registros.",
+    "title": "ExchangeHub API",
+    "version": "1.0"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Iniciar sesión y obtener un token JWT",
+        "tags": [
+          "Autenticación"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Usuario del token actual",
+        "tags": [
+          "Autenticación"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Registrar un usuario",
+        "tags": [
+          "Autenticación"
+        ]
+      }
+    },
+    "/friendships": {
+      "get": {
+        "operationId": "FriendshipsController_list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "pending",
+                "accepted",
+                "rejected"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar mis amistades y solicitudes",
+        "tags": [
+          "Amistades"
+        ]
+      },
+      "post": {
+        "operationId": "FriendshipsController_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFriendshipDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enviar una solicitud de amistad",
+        "tags": [
+          "Amistades"
+        ]
+      }
+    },
+    "/friendships/{id}": {
+      "delete": {
+        "operationId": "FriendshipsController_remove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una amistad o cancelar una solicitud",
+        "tags": [
+          "Amistades"
+        ]
+      },
+      "patch": {
+        "operationId": "FriendshipsController_respond",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespondFriendshipDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Aceptar o rechazar una solicitud",
+        "tags": [
+          "Amistades"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "El proceso está vivo",
+        "tags": [
+          "Salud"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "HealthController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Comprueba PostgreSQL y el servicio Python",
+        "tags": [
+          "Salud"
+        ]
+      }
+    },
+    "/metrics/http": {
+      "get": {
+        "operationId": "ObservabilityController_http",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Tiempos de respuesta HTTP por ruta (solo administradores)",
+        "tags": [
+          "Observabilidad"
+        ]
+      }
+    },
+    "/posts": {
+      "get": {
+        "operationId": "PostsController_list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Id del último elemento de la página anterior (el `nextCursor` recibido).",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar publicaciones",
+        "tags": [
+          "Comunidad"
+        ]
+      },
+      "post": {
+        "operationId": "PostsController_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePostDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear una publicación",
+        "tags": [
+          "Comunidad"
+        ]
+      }
+    },
+    "/posts/{id}": {
+      "delete": {
+        "operationId": "PostsController_remove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una publicación propia",
+        "tags": [
+          "Comunidad"
+        ]
+      },
+      "get": {
+        "operationId": "PostsController_findOne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver una publicación con sus respuestas",
+        "tags": [
+          "Comunidad"
+        ]
+      }
+    },
+    "/posts/{id}/like": {
+      "delete": {
+        "operationId": "PostsController_unlike",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quitar «me gusta»",
+        "tags": [
+          "Comunidad"
+        ]
+      },
+      "put": {
+        "operationId": "PostsController_like",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dar «me gusta»",
+        "tags": [
+          "Comunidad"
+        ]
+      }
+    },
+    "/posts/{id}/replies": {
+      "post": {
+        "operationId": "PostsController_createReply",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReplyDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Responder una publicación",
+        "tags": [
+          "Comunidad"
+        ]
+      }
+    },
+    "/posts/{id}/replies/{replyId}": {
+      "delete": {
+        "operationId": "PostsController_removeReply",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "replyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una respuesta propia",
+        "tags": [
+          "Comunidad"
+        ]
+      }
+    },
+    "/python/status": {
+      "get": {
+        "operationId": "PythonController_status",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Estado del servicio Python",
+        "tags": [
+          "Servicio Python"
+        ]
+      }
+    },
+    "/universities": {
+      "get": {
+        "operationId": "UniversitiesController_list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "enum": [
+                "universidad",
+                "instituto_profesional",
+                "centro_formacion_tecnica"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ownership",
+            "required": false,
+            "schema": {
+              "enum": [
+                "estatal",
+                "particular_con_aportes",
+                "privada",
+                "otra"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Por defecto solo se listan instituciones vigentes.",
+            "in": "query",
+            "name": "includeInactive",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Texto de búsqueda. Con texto, los resultados se ordenan por relevancia (BM25).",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Buscar instituciones (búsqueda BM25 con filtros) o listarlas",
+        "tags": [
+          "Universidades"
+        ]
+      }
+    },
+    "/universities/ingestion": {
+      "post": {
+        "operationId": "UniversitiesController_run",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ejecutar la ingesta desde las fuentes web (solo administradores)",
+        "tags": [
+          "Universidades"
+        ]
+      }
+    },
+    "/universities/ingestion-runs": {
+      "get": {
+        "operationId": "UniversitiesController_runs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Historial de ingestas (solo administradores)",
+        "tags": [
+          "Universidades"
+        ]
+      }
+    },
+    "/universities/metrics": {
+      "get": {
+        "operationId": "UniversitiesController_getMetrics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Métricas de calidad de los datos y de la recuperación",
+        "tags": [
+          "Universidades"
+        ]
+      }
+    },
+    "/universities/resolve": {
+      "get": {
+        "operationId": "UniversitiesController_resolve",
+        "parameters": [
+          {
+            "description": "Nombre escrito por una persona (p. ej. el campo \"universidad de origen\" de su perfil).",
+            "in": "query",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Resolver el nombre de una universidad escrito por el usuario",
+        "tags": [
+          "Universidades"
+        ]
+      }
+    },
+    "/universities/sources": {
+      "get": {
+        "operationId": "UniversitiesController_sources",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Frescura y procedencia de las fuentes de datos",
+        "tags": [
+          "Universidades"
+        ]
+      }
+    },
+    "/universities/{id}": {
+      "get": {
+        "operationId": "UniversitiesController_findOne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ficha de una institución con su procedencia",
+        "tags": [
+          "Universidades"
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "UsersController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar usuarios visibles",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "operationId": "UsersController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mi perfil",
+        "tags": [
+          "Usuarios"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_updateMe",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar mi perfil",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver el perfil de un usuario",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    }
+  },
+  "servers": [],
+  "tags": []
+}
