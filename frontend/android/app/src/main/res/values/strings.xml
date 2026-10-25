@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ExchangeHub</string>
+    <string name="title_activity_main">ExchangeHub</string>
+    <string name="package_name">cl.exchangehub.app</string>
+    <string name="custom_url_scheme">cl.exchangehub.app</string>
+</resources>

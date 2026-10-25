@@ -137,6 +137,40 @@ describe('API (e2e)', () => {
     });
   });
 
+  describe('CORS', () => {
+    it('permite el origen de la app Android (https://localhost) cuando está configurado', async () => {
+      const previous = process.env.FRONTEND_ORIGIN;
+      process.env.FRONTEND_ORIGIN = 'http://localhost:3000,https://localhost';
+      try {
+        const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
+          .overrideProvider(PrismaService)
+          .useValue(createFakePrisma())
+          .overrideProvider(PythonService)
+          .useValue(python)
+          .compile();
+        const multi = moduleRef.createNestApplication<INestApplication<App>>();
+        configureApp(multi);
+        await multi.init();
+        for (const origin of ['https://localhost', 'http://localhost:3000']) {
+          const res = await request(multi.getHttpServer())
+            .options('/universities')
+            .set('Origin', origin)
+            .set('Access-Control-Request-Method', 'GET')
+            .set('Access-Control-Request-Headers', 'authorization');
+          expect(res.headers['access-control-allow-origin']).toBe(origin);
+        }
+        const denied = await request(multi.getHttpServer())
+          .get('/health')
+          .set('Origin', 'https://otro.ejemplo');
+        expect(denied.headers['access-control-allow-origin']).toBeUndefined();
+        await multi.close();
+      } finally {
+        if (previous === undefined) delete process.env.FRONTEND_ORIGIN;
+        else process.env.FRONTEND_ORIGIN = previous;
+      }
+    });
+  });
+
   describe('observabilidad', () => {
     it('devuelve X-Request-Id en cada respuesta', async () => {
       const res = await request(app.getHttpServer()).get('/health').expect(200);
