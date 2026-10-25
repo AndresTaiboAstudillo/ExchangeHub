@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Solo para compilaciones de depuración: permite hablar con la API de desarrollo por http
+  (p. ej. http://10.0.2.2:8000 desde el emulador). Las compilaciones de producción (release)
+  NO incluyen este archivo y Android bloquea todo el tráfico http.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application
+        android:usesCleartextTraffic="true"
+        tools:replace="android:usesCleartextTraffic" />
+</manifest>
