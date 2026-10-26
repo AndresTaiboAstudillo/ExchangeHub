@@ -1,7 +1,5 @@
 # Pipeline de datos de universidades
 
-Cubre los requisitos 3 (recuperación y preparación), 4 (procesamiento en Python), 5 (persistencia e indexación)
-y 6 (recuperación de información). Las fuentes están en `fuentes-de-datos.md` y las métricas en `evaluacion.md`.
 
 ## 1. Vista general
 
@@ -198,6 +196,3 @@ También: `GET /universities/sources` (frescura por fuente), `GET /universities/
 | **Resultados** | Ordenados por puntaje, con el puntaje y los metadatos: tipo, estado, sitio, coordenadas, fuentes y fechas |
 | **Sinónimos** | El tipo se indexa también con sus siglas (`cft`, `ip`) y hay una tabla pequeña de siglas **curadas a mano** (USACH, PUCV, UAI…). No provienen de ninguna fuente; están en `search/aliases.ts` |
 
-Limitación conocida: el catálogo no trae ubicación, así que «universidades en Valparaíso» solo encuentra las que
-lo dicen en su nombre. Agregar región o comuna (por ejemplo, desde Wikidata) es el siguiente paso natural.
-El corpus de textos (F3) no existe todavía; el buscador funciona con nombres, tipos y siglas.
