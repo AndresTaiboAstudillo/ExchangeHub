@@ -1,8 +1,5 @@
 # Evidencia de pruebas
 
-Resultados de la última ejecución completa (25 de octubre de 2026), obtenidos con los comandos de la
-sección 4. El pipeline de CI (`.github/workflows/ci.yml`) ejecuta las mismas pruebas en cada Pull
-Request y en cada push a `main`; el historial de ejecuciones está en la pestaña *Actions* del repositorio.
 
 ## 1. Resumen
 
@@ -94,13 +91,4 @@ inaccesibles desde ese entorno y el Excel del Ministerio como archivo local:
 | Pruebas posteriores al despliegue (`post-deploy-check.sh`) | 13 comprobaciones correctas; con fallos forzados (CORS, backend caído) el script termina con error |
 | Prueba de integración de CI | Los pasos del job `compose-smoke` se ejecutaron contra los servicios reales y pasaron |
 
-## 6. Lo que esta evidencia no demuestra
 
-- El despliegue automático a staging (job `staging`) está validado de forma estática, con `actionlint`;
-  su primera ejecución real ocurre en GitHub al fusionar a `main`.
-- La cobertura real de Wikidata, los tiempos de las fuentes públicas y la tasa de errores operativa solo
-  se miden ejecutando `python -m scripts.run_pipeline` con acceso a esas fuentes.
-- No hay pruebas de navegador de extremo a extremo (el frontend se prueba por componentes) ni medición
-  del porcentaje de cobertura de código.
-- La evaluación de la búsqueda es fácil por construcción (el corpus tiene 128 documentos y las
-  etiquetas las hizo el propio equipo); sirve para detectar regresiones, no para afirmar calidad general.

@@ -1,9 +1,5 @@
 # Evaluación
 
-Cubre el requisito 7. Hay dos tipos de medición: la **calidad de la búsqueda** (se mide con consultas
-etiquetadas, sin base de datos) y la **calidad de los datos y de la recuperación** (se mide en vivo con
-`GET /universities/metrics`).
-
 ## 1. Qué se mide y dónde
 
 | Métrica pedida | Cómo se calcula | Dónde se ve |
@@ -25,12 +21,6 @@ cd backend
 npx vitest run test/eval                                   # verifica etiquetas y umbrales mínimos
 EVAL_REPORT_PATH=informe.md npx vitest run test/eval       # además escribe el informe completo
 ```
-
-### Cómo se etiquetó
-
-Las relevancias están en `backend/test/eval/relevance.json`, hechas a mano sobre el catálogo de mayo de 2026.
-Para que no dependan de mi opinión, **la prueba verifica las etiquetas contra los datos**: las consultas por nombre
-deben coincidir con «el nombre contiene el término», y las de tipo con la categoría publicada por el Ministerio.
 
 ### Cómo leer las métricas
 
@@ -136,29 +126,3 @@ Construcción del índice: 7.2 ms. Consulta: promedio 0.075 ms, máximo 0.242 ms
   "freshness": [ { "source": "mineduc_ies", "ageDays": 0, "stale": false } ]
 }
 ```
-
-> **Importante:** este ejemplo se obtuvo con fuentes **locales de prueba** (los archivos de ejemplo servidos desde mi
-> equipo) y con dos fallas provocadas a propósito. Los tiempos y la cobertura de Wikidata **no son los reales**.
-
-### Lo que sí es real y lo que falta medir
-
-| Métrica | Valor | Base |
-|---|---|---|
-| Registros válidos del catálogo | **128 de 128 (100 %)** | Excel real de mayo de 2026 |
-| Duplicados en el catálogo | **0 (0 %)** | Excel real |
-| Duplicados en la base | **0**, garantizado por restricciones `UNIQUE` | Esquema |
-| Universidades en el catálogo | 55 | Excel real |
-| Cobertura de Wikidata (cruce, sitio web, coordenadas) | **Sin medir** | Hay que ejecutarlo con la red real |
-| Tiempo de recuperación por fuente | **Sin medir** | Ídem |
-| Tasa de error en operación | **Sin medir** | Requiere ejecuciones reales a lo largo del tiempo |
-
-Para completar la tabla, en tu máquina:
-
-```bash
-cd pythonservice
-PIPELINE_CONTACT="tu-correo@ejemplo.cl" python -m scripts.run_pipeline --json resultado.json
-```
-
-Imprime el estado de cada fuente, los tiempos, la cobertura y una muestra de lo que no se pudo cruzar. Luego,
-con el sistema levantado, `POST /universities/ingestion` y `GET /universities/metrics` dan las cifras
-acumuladas.

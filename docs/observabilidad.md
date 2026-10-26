@@ -1,8 +1,5 @@
 # Observabilidad inicial
 
-Cubre el punto 10 de la entrega: registros estructurados, identificador de correlación, registro de
-errores de la fuente externa, endpoints de salud y una métrica básica de tiempo de respuesta.
-
 ## Registros estructurados
 
 NestJS y FastAPI escriben **una línea JSON por evento** en la salida estándar (la recoge
@@ -54,9 +51,4 @@ proceso: `count`, `errors4xx`, `errors5xx`, `avg_ms`, `p50_ms`, `p95_ms` y `max_
 se calculan sobre las últimas 200 muestras de cada ruta. Las rutas inexistentes se agrupan como
 `no-encontrada` y hay un tope de 200 rutas para que la métrica no crezca sin límite.
 
-## Limitaciones
 
-- Las métricas viven en memoria: se reinician con el contenedor y no se agregan entre réplicas.
-- No hay recolección centralizada ni alertas; los registros se leen con `docker compose logs`.
-- El tiempo de las llamadas de NestJS a Python y el del pipeline completo quedan en los registros
-  (`python_call`, `pipeline_finished`) y en `ingestion_runs`, no en `/metrics/http`.

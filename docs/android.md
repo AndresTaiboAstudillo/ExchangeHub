@@ -68,11 +68,3 @@ estático contra el backend y PostgreSQL reales:
 - Sin desbordamiento horizontal, y la URL de la API incrustada en la compilación es la configurada.
 - CORS permite `https://localhost` y `http://localhost:3000`, y rechaza otros orígenes (prueba e2e).
 
-## 6. Lo que no se verificó
-
-- **No se compiló el APK ni se ejecutó en un emulador**: el entorno de desarrollo no tiene el SDK de
-  Android. La primera compilación en Android Studio es la prueba real; si falla, el mensaje de Gradle
-  indica la causa (normalmente la versión del JDK o del SDK).
-- El comportamiento propio del WebView (teclado, botón «atrás», barra de estado y áreas seguras) no se
-  ha revisado. Es el siguiente paso natural si la app se va a mostrar en un dispositivo.
-- No hay iconos ni pantalla de bienvenida propios: se usan los de Capacitor.

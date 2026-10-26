@@ -48,65 +48,251 @@
 
  # El sistema generará recomendaciones de amistades dependiendo de los intereses del usuario
  # Requisitos
- * npm 11.17.0+
- * node 24.19.0+
- * Python 3.11.9
- * git 2.49.0.windows.1
- * Docker 29.8.0
 
- # Instrucciones de instalación
- * git clone https://github.com/AndresTaiboAstudillo/ExchangeHub
- * cd ExchangeHub
- * cd frontend
- * npm install
+* Node.js 22 o superior (el CI usa 22) y npm 11 o superior
+* Python 3.11 o superior
+* Git
+* Docker con Compose (se usa `docker compose`; en instalaciones antiguas el comando es `docker-compose`)
+* Opcional, para la app Android: Android Studio con el SDK de Android 16 (API 36) y JDK 21
+* Opcional, para el despliegue a staging a mano: Terraform 1.9 o superior
 
- # configuracion de variables de entorno
- | `DATABASE_URL` | backend | Conexión a PostgreSQL | `postgresql://usuario:clave@localhost:5432/nombre_db` |
- | `PORT` | backend | Puerto del backend | `8000` |
- | `NEXT_PUBLIC_API_URL` | frontend | URL del backend | `http://localhost:8000` |
- # instrucciones de ejecucion
- 1. Levantar la base de datos:
- * en bash:
- * docker-compose up -d postgres
-   
- 2. Backend:
- * en bash:
- * cd backend
- * npm install
- * npx prisma generate
- * npx prisma migrate dev
- * npm run start:dev
+# Instrucciones de instalación
 
- 3. Frontend:
- * en bash:
- * cd frontend
- * npm install
- * npm run dev
+```bash
+git clone https://github.com/AndresTaiboAstudillo/ExchangeHub
+cd ExchangeHub
+cp .env.example .env        # completa POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB y JWT_SECRET
+```
 
- # instrucciones de uso
- * El backend está en desarrollo, pero es posible navegar por las distintas secciones de la app para familiarizarse con el entorno.
- * Se puede navegar por la pantalla principal del mapa, interactuar con los comercios, navegar por la pantalla principal del foro, el perfil y las sugerencias de amistad.
- # ejecucion de pruebas
- * En bash:
- * cd backend
- * npm test
- # proceso de construccion con docker
- * Construir y levantar los servicios en segundo plano:
- * docker-compose up -d --build
-   
- * Aplicar las migraciones de la base de datos:
- * docker-compose exec <servicio-backend> npx prisma migrate deploy
-   
- * Verificar que todo está activo:
- * docker-compose ps
- * docker-compose logs -f <servicio-backend>
- 
- * Detener los servicios:
- * docker-compose down
-   
- # proceso de despliegue
- # enlace al ambiente de staging
- # documentacion de la API
+Después instala las dependencias de cada parte (solo si vas a ejecutar el código fuera de Docker):
+
+```bash
+cd backend && npm install && cd ..
+cd frontend && npm install && cd ..
+cd pythonservice && python -m venv .venv && source .venv/bin/activate && pip install -r requirements-dev.txt && cd ..
+```
+
+En Windows con Git Bash, la activación del entorno virtual es `source .venv/Scripts/activate`.
+
+# Configuración de variables de entorno
+
+Hay tres lugares donde se definen, según cómo ejecutes el proyecto:
+
+* `.env` en la raíz: lo usa Docker Compose (copia de `.env.example`).
+* `backend/.env`: lo usa el backend cuando lo ejecutas con `npm run start:dev` (copia de `backend/.env.example`).
+* `frontend/.env.local`: solo si ejecutas el frontend con `npm run dev` y la API no está en `http://localhost:8000`.
+
+| Variable | Dónde | Descripción | Ejemplo |
+|---|---|---|---|
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | `.env` | Credenciales de la base de datos | `exchangehub`, `una-clave-segura`, `exchangehubdb` |
+| `DATABASE_URL` | backend | Conexión a PostgreSQL (solo en ejecución local) | `postgresql://usuario:clave@localhost:5432/nombre_db` |
+| `PORT` | backend | Puerto del backend | `8000` |
+| `JWT_SECRET` | `.env` y backend | Firma de los tokens (mínimo 32 caracteres) | genera uno con `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
+| `JWT_EXPIRES_IN_SECONDS` | `.env` y backend | Duración del token | `3600` |
+| `FRONTEND_ORIGIN` | `.env` y backend | Orígenes permitidos por CORS, separados por comas | `http://localhost:3000,https://localhost` |
+| `PYTHON_SERVICE_URL` | backend | Dirección del servicio Python (en Docker se define sola) | `http://localhost:8001` |
+| `NEXT_PUBLIC_API_URL` | `.env` y frontend | URL del backend; se incorpora al compilar | `http://localhost:8000` |
+| `PIPELINE_CONTACT` | `.env` | Contacto incluido en el User-Agent de las descargas | `tu-correo@ejemplo.cl` |
+| `INGESTION_INTERVAL_HOURS` | `.env` | Revisión periódica de las fuentes (`0` = solo manual) | `168` |
+| `MINEDUC_CATALOG_FILE` | servicio Python | Excel local del catálogo, si la descarga falla | `/data/ies_vigentes.xlsx` |
+| `LOG_LEVEL` | `.env` | `debug`, `info`, `warn` o `error` | `info` |
+| `API_DOCS_ENABLED` | backend | `false` desactiva la documentación `/docs` | `true` |
+| `MOBILE_API_URL` | al compilar la app Android | URL de la API para el móvil | `http://10.0.2.2:8000` |
+
+Los archivos `.env` no se suben a Git.
+
+# Instrucciones de ejecución
+
+1. Levantar la base de datos:
+   * en bash: `docker compose up -d postgres`
+
+2. Servicio Python (puerto 8001):
+   * en bash:
+   * `cd pythonservice`
+   * `source .venv/bin/activate`
+   * `uvicorn main:app --reload --port 8001`
+
+3. Backend (puerto 8000):
+   * en bash:
+   * `cd backend`
+   * `npm install`
+   * `npx prisma generate`
+   * `npx prisma migrate dev` (en un ambiente que no sea de desarrollo, `npx prisma migrate deploy`)
+   * `npm run start:dev`
+
+4. Frontend (puerto 3000):
+   * en bash:
+   * `cd frontend`
+   * `npm install`
+   * `npm run dev`
+
+Para ejecutar todo junto con Docker, ver «Proceso de construcción con Docker».
+
+# Cargar las universidades
+
+La tabla de universidades está vacía hasta que un administrador lanza la ingesta:
+
+1. Regístrate en la aplicación.
+2. Hazte administrador (el rol se guarda en la base de datos):
+   ```bash
+   docker compose exec postgres sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "update users set role = '"'"'admin'"'"' where email = '"'"'tu@correo.com'"'"';"'
+   ```
+3. Obtén un token y lanza la ingesta:
+   ```bash
+   curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json" \
+     -d '{"email":"tu@correo.com","password":"tu-contraseña"}'
+   curl -X POST http://localhost:8000/universities/ingestion -H "Authorization: Bearer TU_TOKEN"
+   ```
+
+La respuesta indica `succeeded`, `partial` (falló solo Wikidata) o `failed`, y cuántas instituciones se crearon,
+actualizaron o quedaron igual.
+
+**Si el sitio del Ministerio no está disponible**, descarga el Excel a mano y guárdalo como
+`datos/ies_vigentes.xlsx`. Luego, en el servicio `python-service` de `docker-compose.yml`, agrega la variable
+`MINEDUC_CATALOG_FILE: /data/ies_vigentes.xlsx` y el volumen `./datos/ies_vigentes.xlsx:/data/ies_vigentes.xlsx:ro`.
+El pipeline lo usa cuando la descarga falla.
+
+# Instrucciones de uso
+
+* Regístrate o inicia sesión desde la pantalla de bienvenida. Las secciones de la barra de navegación son
+  Inicio, Universidades, Comunidad y Perfil.
+* **Inicio:** mapa con alojamientos, comercios y zonas. Por ahora usa datos de ejemplo incluidos en el frontend;
+  aún no se leen del backend.
+* **Universidades:** instituciones de educación superior de Chile (por defecto, las universidades), con búsqueda
+  por relevancia, filtros por tipo y propiedad, y sitio web, año de fundación y ubicación cuando están disponibles.
+  Estos datos sí vienen del backend.
+* **Comunidad:** el foro (publicaciones, respuestas y «me gusta») y las sugerencias y solicitudes de amistad
+  funcionan con el backend.
+* **Perfil:** datos del estudiante.
+
+# Ejecución de pruebas
+
+* En bash:
+  ```bash
+  cd backend
+  npm test                  # unitarias (incluye la evaluación de la búsqueda)
+  npm run test:e2e          # API con la base de datos simulada
+  npx prisma migrate deploy && npm run test:integration   # requiere PostgreSQL y DATABASE_URL
+
+  cd ../pythonservice
+  ruff check . && ruff format --check . && pytest -q
+
+  cd ../frontend
+  npm run lint && npm test
+  ```
+
+Resultados de la última ejecución y qué cubre cada suite: [`docs/evidencia-de-pruebas.md`](docs/evidencia-de-pruebas.md).
+
+# Proceso de construcción con Docker
+
+* Construir y levantar los servicios en segundo plano (`postgres`, `python-service`, `backend` y `frontend`):
+  `docker compose up -d --build`
+
+* Las migraciones de la base de datos se aplican solas cuando arranca el backend. Si necesitas aplicarlas a mano:
+  `docker compose exec backend npx prisma migrate deploy`
+
+* Verificar que todo está activo:
+  * `docker compose ps`
+  * `docker compose logs -f backend`
+  * `curl http://localhost:8000/health/ready` (comprueba PostgreSQL y el servicio Python)
+
+* Detener los servicios: `docker compose down`  (con `-v` también borra los datos de la base)
+
+| Servicio | Dirección |
+|---|---|
+| Frontend | http://localhost:3000 |
+| API (NestJS) | http://localhost:8000 |
+| Documentación de la API | http://localhost:8000/docs |
+
+El servicio Python no se publica fuera de Docker.
+
+# Proceso de despliegue
+
+El despliegue a staging es automático y se hace con Terraform sobre Docker:
+
+1. Cada Pull Request ejecuta el CI: pruebas, lint, análisis estático (CodeQL y ruff), detección de secretos
+   (gitleaks), dependencias vulnerables (`npm audit` y `pip-audit`), escaneo de las imágenes con Trivy, validación
+   de Terraform y una prueba de integración con Docker Compose.
+2. Al fusionar a `main`, el job **staging** construye las imágenes, aplica Terraform y ejecuta las pruebas de salud
+   posteriores (`infra/scripts/post-deploy-check.sh`).
+3. La configuración no sensible se guarda como *Variables* de GitHub Actions y la sensible (`POSTGRES_PASSWORD`,
+   `JWT_SECRET`) como *Secrets*.
+
+A mano, desde la raíz del proyecto:
+
+```bash
+bash infra/build-images.sh
+cd infra/terraform
+cp terraform.tfvars.example terraform.tfvars    # reemplaza las contraseñas
+terraform init && terraform apply
+cd ../.. && bash infra/scripts/post-deploy-check.sh
+```
+
+Detalle, variables y cómo dejar un staging permanente: [`docs/despliegue-staging.md`](docs/despliegue-staging.md)
+e [`infra/README.md`](infra/README.md).
+
+# Enlace al ambiente de staging
+
+El staging corre en Docker local, no hay una dirección pública:
+
+* Frontend: http://localhost:3100
+* Backend: http://localhost:8100 (salud: http://localhost:8100/health/ready)
+
+Con el ejecutor de GitHub, el ambiente existe solo mientras dura el job de despliegue. Para tenerlo siempre
+disponible en tu computador, registra un ejecutor propio y define las Variables `STAGING_RUNNER` y
+`STAGING_KEEP=true` (ver `docs/despliegue-staging.md`).
+
+# Documentación de la API
+
+* Interfaz interactiva de NestJS: http://localhost:8000/docs (especificación JSON en `/docs-json`). Las rutas
+  protegidas exigen `Authorization: Bearer <token>`: pulsa *Authorize* y pega el token de `POST /auth/login`.
+  En un despliegue público conviene desactivarla con `API_DOCS_ENABLED=false`.
+* Especificaciones versionadas: [`docs/api/nestjs-openapi.json`](docs/api/nestjs-openapi.json) y
+  [`docs/api/fastapi-openapi.json`](docs/api/fastapi-openapi.json).
+* El servicio Python solo es accesible dentro de Docker; su ruta principal es `POST /v1/pipeline/universities/run`.
+
+---
+
+# Arquitectura
+
+```
+ Navegador / app Android ──▶ Frontend (Next.js) ──▶ Backend (NestJS) ──▶ PostgreSQL
+                                                          │
+                                                          └──▶ Servicio Python (FastAPI) ──▶ Mineduc, Wikidata
+```
+
+Regla de diseño: el frontend solo habla con NestJS. NestJS es el único que llama al servicio Python y a la base
+de datos.
+
+# Datos de universidades y recuperación de información
+
+El servicio Python recupera el catálogo oficial del Ministerio de Educación y lo cruza con Wikidata; NestJS lo
+guarda con su procedencia (fuente, URL, fecha y huella SHA-256), evita duplicados y lo ofrece con un buscador por
+relevancia (BM25). Si una fuente falla, se conserva el último dato válido.
+
+* Fuentes, licencias y restricciones: [`docs/fuentes-de-datos.md`](docs/fuentes-de-datos.md)
+* Recuperación, limpieza y persistencia: [`docs/pipeline-de-datos.md`](docs/pipeline-de-datos.md)
+* Métricas y evaluación (Precision@K, Recall@K, MRR): [`docs/evaluacion.md`](docs/evaluacion.md)
+
+# Observabilidad
+
+Registros JSON en backend y servicio Python con un `X-Request-Id` que viaja entre ambos, salud con comprobación de
+PostgreSQL y Python, y tiempos de respuesta por ruta en `GET /metrics/http` (solo administradores). Para seguir una
+petición: `docker compose logs backend python-service | grep <id>`. Detalle en
+[`docs/observabilidad.md`](docs/observabilidad.md).
+
+# App Android
+
+```bash
+cd frontend
+npm run mobile:sync:dev     # compila la web móvil y la sincroniza con el proyecto de Android
+npm run mobile:open         # abre Android Studio; ejecuta sobre un emulador o un teléfono
+```
+
+El backend debe permitir el origen de la app: `FRONTEND_ORIGIN=http://localhost:3000,https://localhost`.
+Requisitos, configuración de producción y límites: [`docs/android.md`](docs/android.md).
+
+
  # imagenes y diagramas
  * Diagrama entidad relación
   <img width="2048" height="1035" alt="diagrama" src="https://github.com/user-attachments/assets/9895b9b2-9800-4459-a35c-76d1af544b57" />
@@ -131,14 +317,13 @@
   <img width="402" height="652" alt="publicarforo drawio" src="https://github.com/user-attachments/assets/34684d22-afb2-475e-9d79-3e873c34f556" />
   <img width="402" height="652" alt="reseñamapa drawio" src="https://github.com/user-attachments/assets/90a6abd8-49c1-427b-856f-1fe05b47ea61" />
   
- # enlace a prototipo figma
- # limitaciones conocidas
- - El único modelo de datos es `User` (solo `email`), un ejemplo de prueba.
-  El modelo real de la aplicación aún no está definido.
-- No hay autenticación ni autorización: todos los endpoints son públicos.
-- No hay validación de datos de entrada más allá de comprobar que `email`
-  exista. No se valida el formato del correo.
-- No existe ambiente de staging ni proceso de despliegue definido.
-- Las pruebas se limitan a las de ejemplo que genera NestJS.
-- No hay integración continua (CI).
- # A futuro queda implementar el backend por completo.
+# Limitaciones conocidas
+
+* Falta confirmar el `robots.txt` y la licencia del archivo del Ministerio; mientras tanto el pipeline funciona con
+  un Excel local.
+* La cobertura real de Wikidata (sitio web, coordenadas) aún no está medida.
+* Los alojamientos, comercios y zonas del mapa usan datos de ejemplo del frontend, aún no del backend.
+* La capacidad adaptativa está especificada, no implementada, y la universidad de destino todavía no se guarda en
+  el perfil.
+* El despliegue a staging es local; no hay entorno de producción.
+ # Falta implementar el chat en tiempo real, las notificaciones y el mapa, ya que por ahora este aparece fuera de la aplicación.

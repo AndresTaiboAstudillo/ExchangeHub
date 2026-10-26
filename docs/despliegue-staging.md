@@ -1,7 +1,3 @@
-# Despliegue en staging y pipeline DevSecOps
-
-Cubre el punto 9 de la entrega y las instrucciones de despliegue en staging del punto 11.
-
 ## 1. Qué ejecuta el pipeline
 
 El flujo de trabajo `.github/workflows/ci.yml` corre en cada Pull Request y en cada push a `main`;

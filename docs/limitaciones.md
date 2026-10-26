@@ -1,6 +1,5 @@
 # Limitaciones identificadas
 
-Resumen de los límites conocidos del proyecto. El detalle de cada uno está en el documento indicado.
 
 ## Fuentes y datos (`docs/fuentes-de-datos.md`)
 - **Permisos de la fuente principal por confirmar.** El `robots.txt` del sitio del Ministerio de Educación
