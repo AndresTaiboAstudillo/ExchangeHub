@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../../components/Navbar';
+import ChatWindow from '../../components/chat/ChatWindow';
+import { ChatProvider } from '../../components/chat/ChatProvider';
 import { useApp } from '../providers';
 
 export default function MainLayout({ children }) {
@@ -17,10 +19,11 @@ export default function MainLayout({ children }) {
   if (!hydrated || !loggedIn) return null;
 
   return (
-    <div>
+    <ChatProvider>
       <Navbar />
       {/* Espacio para la barra de navegación inferior en móvil */}
       <div className="pb-20 md:pb-0">{children}</div>
-    </div>
+      <ChatWindow />
+    </ChatProvider>
   );
 }

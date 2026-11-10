@@ -245,6 +245,105 @@
         ]
       }
     },
+    "/chat/conversations": {
+      "get": {
+        "operationId": "ChatController_conversations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mis amigos con último mensaje, no leídos y presencia",
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/chat/conversations/{friendId}/messages": {
+      "get": {
+        "operationId": "ChatController_history",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "friendId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Id del último elemento de la página anterior (el `nextCursor` recibido).",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Historial con un amigo (más recientes primero, paginado)",
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/chat/conversations/{friendId}/read": {
+      "post": {
+        "operationId": "ChatController_read",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "friendId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Marcar como leídos los mensajes de un amigo",
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
     "/friendships": {
       "get": {
         "operationId": "FriendshipsController_list",
@@ -420,6 +519,97 @@
         "summary": "Tiempos de respuesta HTTP por ruta (solo administradores)",
         "tags": [
           "Observabilidad"
+        ]
+      }
+    },
+    "/notifications": {
+      "get": {
+        "operationId": "NotificationsController_list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Id del último elemento de la página anterior (el `nextCursor` recibido).",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mis notificaciones (más recientes primero)",
+        "tags": [
+          "Notificaciones"
+        ]
+      }
+    },
+    "/notifications/read-all": {
+      "post": {
+        "operationId": "NotificationsController_readAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Marcar todas como leídas",
+        "tags": [
+          "Notificaciones"
+        ]
+      }
+    },
+    "/notifications/{id}/read": {
+      "post": {
+        "operationId": "NotificationsController_read",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Marcar una notificación como leída",
+        "tags": [
+          "Notificaciones"
         ]
       }
     },

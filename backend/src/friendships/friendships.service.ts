@@ -4,7 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { isForeignKeyViolation, isUniqueViolation } from '../common/pagination.dto.js';
+import {
+  isForeignKeyViolation,
+  isUniqueViolation,
+} from '../common/pagination.dto.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ListFriendshipsDto } from './dto/list-friendships.dto.js';
 
@@ -12,11 +16,16 @@ const person = { select: { id: true, name: true } } as const;
 
 @Injectable()
 export class FriendshipsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   async create(requesterId: string, addresseeId: string) {
     if (requesterId === addresseeId) {
-      throw new BadRequestException('No puedes enviarte una solicitud a ti mismo');
+      throw new BadRequestException(
+        'No puedes enviarte una solicitud a ti mismo',
+      );
     }
 
     const existing = await this.prisma.friendship.findFirst({
@@ -32,7 +41,8 @@ export class FriendshipsService {
       throw new ConflictException(
         existing.status === 'accepted'
           ? 'Ya son amigos'
-          : existing.requesterId === addresseeId && existing.status === 'pending'
+          : existing.requesterId === addresseeId &&
+              existing.status === 'pending'
             ? 'Esa persona ya te envió una solicitud: acéptala'
             : 'No se puede enviar la solicitud',
       );
@@ -43,6 +53,11 @@ export class FriendshipsService {
         data: { requesterId, addresseeId },
         select: { id: true, status: true, createdAt: true, addressee: person },
       });
+      await this.notifications.notify(
+        addresseeId,
+        requesterId,
+        'friend_request',
+      );
       return {
         id: friendship.id,
         status: friendship.status,
@@ -51,7 +66,8 @@ export class FriendshipsService {
         user: friendship.addressee,
       };
     } catch (error) {
-      if (isForeignKeyViolation(error)) throw new NotFoundException('El usuario no existe');
+      if (isForeignKeyViolation(error))
+        throw new NotFoundException('El usuario no existe');
       if (isUniqueViolation(error)) {
         throw new ConflictException('No se puede enviar la solicitud');
       }
@@ -95,7 +111,7 @@ export class FriendshipsService {
   async respond(userId: string, id: string, status: 'accepted' | 'rejected') {
     const friendship = await this.prisma.friendship.findUnique({
       where: { id },
-      select: { addresseeId: true, status: true },
+      select: { requesterId: true, addresseeId: true, status: true },
     });
     // Para quien no es el destinatario, la solicitud "no existe".
     if (!friendship || friendship.addresseeId !== userId) {
@@ -110,7 +126,15 @@ export class FriendshipsService {
       where: { id, status: 'pending' },
       data: { status },
     });
-    if (count === 0) throw new ConflictException('La solicitud ya fue respondida');
+    if (count === 0)
+      throw new ConflictException('La solicitud ya fue respondida');
+    if (status === 'accepted') {
+      await this.notifications.notify(
+        friendship.requesterId,
+        userId,
+        'friend_accepted',
+      );
+    }
     return { id, status };
   }
 

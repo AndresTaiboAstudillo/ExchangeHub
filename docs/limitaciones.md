@@ -1,5 +1,6 @@
 # Limitaciones identificadas
 
+Resumen de los límites conocidos del proyecto. El detalle de cada uno está en el documento indicado.
 
 ## Fuentes y datos (`docs/fuentes-de-datos.md`)
 - **Permisos de la fuente principal por confirmar.** El `robots.txt` del sitio del Ministerio de Educación
@@ -39,6 +40,18 @@
 - La documentación interactiva de la API (`/docs`) está activa por defecto; en un despliegue público
   conviene desactivarla con `API_DOCS_ENABLED=false`.
 
+## Chat y notificaciones (`docs/chat.md`)
+- El chat es **solo 1 a 1 y entre amigos aceptados**; no hay grupos, archivos, imágenes ni "escribiendo…".
+- La presencia, el límite de envío y la lista de conectados viven en la memoria de **una sola instancia**
+  del backend. Para escalar a varias instancias hace falta el adaptador Redis de Socket.IO y mover estos
+  contadores a Redis.
+- No hay notificaciones push con la app cerrada: los avisos llegan solo mientras hay una sesión abierta.
+- Las notificaciones cubren solicitudes de amistad, aceptaciones, likes y respuestas. Los avisos de
+  "evento universitario" y "votos útiles en reseñas" del diseño original no existen porque la plataforma
+  no tiene esos datos.
+- Los mensajes no se cifran de extremo a extremo y no se borran: si dos personas dejan de ser amigas
+  se conserva el historial, pero ninguna puede leerlo ni escribir. Falta definir una política de retención.
+
 ## Despliegue (`docs/despliegue-staging.md`)
 - Staging usa el Docker del ejecutor (local); con el ejecutor de GitHub no permanece disponible tras el job.
 - No hay entorno de producción ni despliegue remoto.
@@ -47,4 +60,3 @@
 - La **universidad de destino** del estudiante aún no se guarda en el perfil (solo existe la de
   procedencia); es requisito de la capacidad adaptativa.
 - La capacidad adaptativa está **especificada** (`docs/capacidad-adaptativa.md`), no implementada.
-- La adaptación a móvil (Capacitor/Android) está pendiente.

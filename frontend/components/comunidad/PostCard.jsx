@@ -1,10 +1,24 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { api } from '../../lib/api';
 import { categoryById } from '../../lib/categories';
-import { colorFor, initialOf, shortName, timeAgo } from '../../lib/format';
+import { colorFor, initialOf, profileHref, shortName, timeAgo } from '../../lib/format';
 import Badge from '../Badge';
+
+/** Enlace al perfil de quien escribió (el propio va a "Mi perfil"). */
+function AuthorLink({ author, meId, className, children }) {
+  return (
+    <Link
+      href={author.id === meId ? '/perfil' : profileHref(author.id)}
+      aria-label={`Ver perfil de ${author.name}`}
+      className={className}
+    >
+      {children}
+    </Link>
+  );
+}
 
 export default function PostCard({ post, meId, onToast, onUpdate, onRemove }) {
   const [showReplies, setShowReplies] = useState(false);
@@ -81,13 +95,12 @@ export default function PostCard({ post, meId, onToast, onUpdate, onRemove }) {
     }
   };
 
-  const linkButton =
-    'flex items-center gap-1 text-[13px] text-muted hover:text-forest-mid transition-colors';
+  const linkButton = 'flex items-center gap-1 text-[13px] text-muted hover:text-forest-mid transition-colors';
 
   return (
     <article className="bg-white rounded-lg p-5 shadow-card mb-3.5 border-[1.5px] border-transparent hover:border-forest-lt transition-colors">
       <div className="flex justify-between items-start mb-2.5 gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
+        <AuthorLink author={post.author} meId={meId} className="flex items-center gap-2.5 min-w-0 hover:opacity-90">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
             style={{ background: colorFor(post.author.id) }}
@@ -103,7 +116,7 @@ export default function PostCard({ post, meId, onToast, onUpdate, onRemove }) {
             </div>
             <div className="text-xs text-muted">{timeAgo(post.createdAt)}</div>
           </div>
-        </div>
+        </AuthorLink>
         <Badge text={`${category.emoji} ${category.label}`} color={category.color} className="flex-shrink-0" />
       </div>
 
@@ -140,13 +153,15 @@ export default function PostCard({ post, meId, onToast, onUpdate, onRemove }) {
           {replies?.map((r) => (
             <div key={r.id} className="py-2.5 border-b border-border last:border-b-0">
               <div className="flex items-center gap-2 mb-1">
-                <div
-                  className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[11px] font-bold text-white"
-                  style={{ background: colorFor(r.author.id) }}
-                >
-                  {initialOf(r.author.name)}
-                </div>
-                <strong className="text-[13px]">{shortName(r.author.name)}</strong>
+                <AuthorLink author={r.author} meId={meId} className="flex items-center gap-2 hover:opacity-90">
+                  <div
+                    className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[11px] font-bold text-white"
+                    style={{ background: colorFor(r.author.id) }}
+                  >
+                    {initialOf(r.author.name)}
+                  </div>
+                  <strong className="text-[13px]">{shortName(r.author.name)}</strong>
+                </AuthorLink>
                 <span className="text-xs text-muted">
                   {[r.author.countryOfOrigin, timeAgo(r.createdAt)].filter(Boolean).join(' · ')}
                 </span>

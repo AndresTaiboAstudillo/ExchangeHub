@@ -577,10 +577,18 @@ describe('Universidades: ingesta y búsqueda (PostgreSQL real)', () => {
         new ServiceUnavailableException('caído'),
       );
       await ingest().expect(200); // una ejecución fallida más, para la tasa de error
-      const res = await api()
-        .get('/universities/metrics')
-        .set(member)
-        .expect(200);
+      // La fecha del catálogo de prueba es fija: se fija "hoy" un día después para que la
+      // frescura no dependa de cuándo se ejecute la prueba.
+      vi.useFakeTimers({
+        toFake: ['Date'],
+        now: new Date('2026-10-25T12:00:00Z'),
+      });
+      let res;
+      try {
+        res = await api().get('/universities/metrics').set(member).expect(200);
+      } finally {
+        vi.useRealTimers();
+      }
       const m = res.body;
       expect(m.ingestion).toMatchObject({
         succeeded: 1,

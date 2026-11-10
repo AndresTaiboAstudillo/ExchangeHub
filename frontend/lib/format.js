@@ -54,3 +54,6 @@ export function emptyToNull(value) {
   const text = (value ?? '').trim();
   return text === '' ? null : text;
 }
+
+/** Ruta del perfil de otra persona. Va por query string porque la app móvil se exporta estática. */
+export const profileHref = (userId) => `/estudiante?id=${encodeURIComponent(userId)}`;

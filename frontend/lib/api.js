@@ -1,6 +1,6 @@
 // Cliente de la API de ExchangeHub (NestJS). Todas las pantallas hablan con el backend por aquí.
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 const TOKEN_KEY = 'exchangehub_token';
 
 export class ApiError extends Error {
@@ -117,6 +117,7 @@ export const api = {
   me: () => request('/users/me'),
   updateMe: (data) => request('/users/me', { method: 'PATCH', body: data }),
   users: () => request('/users'),
+  user: (id) => request(`/users/${id}`),
 
   // Comunidad
   posts: ({ category, cursor, limit } = {}) =>
@@ -135,6 +136,17 @@ export const api = {
   universities: ({ q, category, ownership, limit, offset } = {}) =>
     request(`/universities${query({ q, category, ownership, limit, offset })}`),
   universitiesSources: () => request('/universities/sources'),
+
+  // Chat 1:1 (el envío y la lectura en vivo van por Socket.IO; esto es el historial)
+  conversations: () => request('/chat/conversations'),
+  chatHistory: (friendId, { cursor, limit } = {}) =>
+    request(`/chat/conversations/${friendId}/messages${query({ cursor, limit })}`),
+  markChatRead: (friendId) => request(`/chat/conversations/${friendId}/read`, { method: 'POST' }),
+
+  // Notificaciones
+  notifications: ({ cursor, limit } = {}) => request(`/notifications${query({ cursor, limit })}`),
+  markNotificationRead: (id) => request(`/notifications/${id}/read`, { method: 'POST' }),
+  markAllNotificationsRead: () => request('/notifications/read-all', { method: 'POST' }),
 
   // Amistades
   friendships: (status) => request(`/friendships${query({ status })}`),

@@ -104,7 +104,10 @@ export class UsersService {
     const { languageCodes, hobbies, ...fields } = dto;
 
     await this.prisma.$transaction(async (tx) => {
-      const exists = await tx.user.findUnique({ where: { id: userId }, select: { id: true } });
+      const exists = await tx.user.findUnique({
+        where: { id: userId },
+        select: { id: true },
+      });
       if (!exists) throw new NotFoundException('Usuario no encontrado');
 
       if (Object.keys(fields).length > 0) {
@@ -113,7 +116,10 @@ export class UsersService {
       if (languageCodes !== undefined) {
         await tx.userLanguage.deleteMany({ where: { userId } });
         await tx.userLanguage.createMany({
-          data: unique(languageCodes).map((languageCode) => ({ userId, languageCode })),
+          data: unique(languageCodes).map((languageCode) => ({
+            userId,
+            languageCode,
+          })),
         });
       }
       if (hobbies !== undefined) {
@@ -128,14 +134,57 @@ export class UsersService {
   }
 
   async findPublic(id: string, requesterId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-      select: publicProfileSelect,
-    });
-    // Un perfil oculto solo lo ve su dueño; para los demás "no existe".
-    if (!user || (!user.isVisible && user.id !== requesterId)) {
+    const [user, friendship] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { id },
+        select: {
+          ...publicProfileSelect,
+          _count: { select: { posts: true } },
+        },
+      }),
+      id === requesterId
+        ? null
+        : this.prisma.friendship.findFirst({
+            where: {
+              OR: [
+                { requesterId, addresseeId: id },
+                { requesterId: id, addresseeId: requesterId },
+              ],
+            },
+            select: { id: true, status: true, requesterId: true },
+          }),
+    ]);
+
+    // Las solicitudes rechazadas no cuentan: quien envía no debe enterarse.
+    const relation =
+      friendship && friendship.status !== 'rejected'
+        ? {
+            id: friendship.id,
+            status: friendship.status,
+            direction:
+              friendship.requesterId === requesterId ? 'sent' : 'received',
+          }
+        : null;
+
+    // Un perfil oculto solo lo ve su dueño y quienes ya tienen una relación con él
+    // (amigos o solicitud pendiente: así se puede abrir desde el chat o una notificación).
+    // Para los demás "no existe".
+    if (!user || (!user.isVisible && user.id !== requesterId && !relation)) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    return flattenLists(user);
+
+    const friendsCount = await this.prisma.friendship.count({
+      where: {
+        status: 'accepted',
+        OR: [{ requesterId: id }, { addresseeId: id }],
+      },
+    });
+    const { _count, ...profile } = flattenLists(user);
+    return {
+      ...profile,
+      postsCount: _count.posts,
+      friendsCount,
+      relation,
+    };
   }
 }
