@@ -1,4 +1,5 @@
-import { colorFor, initialOf } from '../../lib/format';
+import Link from 'next/link';
+import { colorFor, initialOf, profileHref } from '../../lib/format';
 import { isLocal } from '../../lib/students';
 import Badge from '../Badge';
 
@@ -11,12 +12,16 @@ const primary =
  * `relation` es la relación con esta persona: null (ninguna) o { id, status, direction }.
  * El estado "rechazada" no llega aquí: quien envía no la ve (lo decide el backend).
  */
-export default function FriendCard({ person, relation, busy = false, onAdd, onAccept, onReject, onRemove }) {
+export default function FriendCard({ person, relation, busy = false, onAdd, onAccept, onReject, onRemove, onMessage }) {
   const careerLine = [person.career, person.countryOfOrigin].filter(Boolean).join(' · ');
 
   return (
     <div className="flex flex-col items-start gap-2.5 bg-white rounded-lg p-4 shadow-card border-[1.5px] border-transparent hover:border-forest-lt transition-colors">
-      <div className="flex gap-3 items-center w-full">
+      <Link
+        href={profileHref(person.id)}
+        aria-label={`Ver perfil de ${person.name}`}
+        className="flex gap-3 items-center w-full rounded-lg hover:opacity-90"
+      >
         <div
           className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-base text-white flex-shrink-0"
           style={{ background: colorFor(person.id) }}
@@ -30,7 +35,7 @@ export default function FriendCard({ person, relation, busy = false, onAdd, onAc
             {isLocal(person) && <Badge text="Local" color="green" className="!text-[10px] !py-0" />}
           </div>
         </div>
-      </div>
+      </Link>
 
       {person.languages.length > 0 && (
         <div className="flex gap-1 flex-wrap">
@@ -83,9 +88,15 @@ export default function FriendCard({ person, relation, busy = false, onAdd, onAc
 
         {relation?.status === 'accepted' && (
           <>
-            <button type="button" className={primary} disabled>
-              ✓ Amigos
-            </button>
+            {onMessage ? (
+              <button type="button" className={primary} onClick={onMessage}>
+                💬 Mensaje
+              </button>
+            ) : (
+              <button type="button" className={primary} disabled>
+                ✓ Amigos
+              </button>
+            )}
             <button type="button" className={secondary} disabled={busy} onClick={onRemove}>
               Quitar
             </button>

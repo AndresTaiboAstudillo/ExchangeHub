@@ -28,10 +28,20 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
 
   async function newUser(name: string): Promise<Session> {
     const email = `${randomUUID()}${DOMAIN}`;
-    const reg = await api().post('/auth/register').send({ name, email, password: PASSWORD }).expect(201);
-    const login = await api().post('/auth/login').send({ email, password: PASSWORD }).expect(200);
+    const reg = await api()
+      .post('/auth/register')
+      .send({ name, email, password: PASSWORD })
+      .expect(201);
+    const login = await api()
+      .post('/auth/login')
+      .send({ email, password: PASSWORD })
+      .expect(200);
     const token = login.body.accessToken as string;
-    return { id: reg.body.id as string, token, auth: { Authorization: `Bearer ${token}` } };
+    return {
+      id: reg.body.id as string,
+      token,
+      auth: { Authorization: `Bearer ${token}` },
+    };
   }
 
   async function newPost(author: Session, extra: Record<string, string> = {}) {
@@ -79,9 +89,17 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       const email = `${randomUUID()}${DOMAIN}`;
       await api()
         .post('/auth/register')
-        .send({ name: 'Eva', email, password: PASSWORD, universityOrigin: ' Universidad de Barcelona ' })
+        .send({
+          name: 'Eva',
+          email,
+          password: PASSWORD,
+          universityOrigin: ' Universidad de Barcelona ',
+        })
         .expect(201);
-      const login = await api().post('/auth/login').send({ email, password: PASSWORD }).expect(200);
+      const login = await api()
+        .post('/auth/login')
+        .send({ email, password: PASSWORD })
+        .expect(200);
       const auth = { Authorization: `Bearer ${login.body.accessToken}` };
 
       const me = await api().get('/users/me').set(auth).expect(200);
@@ -99,12 +117,24 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       await newPost(ana);
       await newPost(ana);
 
-      const sent = await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(201);
-      await api().post('/friendships').set(otra.auth).send({ addresseeId: ana.id }).expect(201); // pendiente
+      const sent = await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201);
+      await api()
+        .post('/friendships')
+        .set(otra.auth)
+        .send({ addresseeId: ana.id })
+        .expect(201); // pendiente
       let me = await api().get('/users/me').set(ana.auth).expect(200);
       expect(me.body).toMatchObject({ postsCount: 2, friendsCount: 0 }); // las pendientes no cuentan
 
-      await api().patch(`/friendships/${sent.body.id}`).set(luis.auth).send({ status: 'accepted' }).expect(200);
+      await api()
+        .patch(`/friendships/${sent.body.id}`)
+        .set(luis.auth)
+        .send({ status: 'accepted' })
+        .expect(200);
       me = await api().get('/users/me').set(ana.auth).expect(200);
       expect(me.body.friendsCount).toBe(1);
       const meLuis = await api().get('/users/me').set(luis.auth).expect(200);
@@ -114,13 +144,21 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
     it('el directorio excluye al propio usuario e incluye idiomas e intereses', async () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
-      await api().patch('/users/me').set(luis.auth).send({ languageCodes: ['ja', 'es'], hobbies: ['Fotografía'] }).expect(200);
+      await api()
+        .patch('/users/me')
+        .set(luis.auth)
+        .send({ languageCodes: ['ja', 'es'], hobbies: ['Fotografía'] })
+        .expect(200);
 
       const list = await api().get('/users').set(ana.auth).expect(200);
       const ids = list.body.map((u: { id: string }) => u.id);
       expect(ids).not.toContain(ana.id);
       const entry = list.body.find((u: { id: string }) => u.id === luis.id);
-      expect(entry).toMatchObject({ name: 'Luis', languages: ['es', 'ja'], hobbies: ['Fotografía'] });
+      expect(entry).toMatchObject({
+        name: 'Luis',
+        languages: ['es', 'ja'],
+        hobbies: ['Fotografía'],
+      });
       expect(entry).not.toHaveProperty('email');
     });
 
@@ -176,7 +214,10 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
     it('un perfil público no muestra email ni rol', async () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
-      const res = await api().get(`/users/${ana.id}`).set(luis.auth).expect(200);
+      const res = await api()
+        .get(`/users/${ana.id}`)
+        .set(luis.auth)
+        .expect(200);
       expect(res.body.name).toBe('Ana');
       expect(res.body).not.toHaveProperty('email');
       expect(res.body).not.toHaveProperty('role');
@@ -185,12 +226,91 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
     it('un perfil oculto solo lo ve su dueño y sale del directorio', async () => {
       const ana = await newUser('Ana Oculta');
       const luis = await newUser('Luis');
-      await api().patch('/users/me').set(ana.auth).send({ isVisible: false }).expect(200);
+      await api()
+        .patch('/users/me')
+        .set(ana.auth)
+        .send({ isVisible: false })
+        .expect(200);
 
       await api().get(`/users/${ana.id}`).set(luis.auth).expect(404);
       await api().get(`/users/${ana.id}`).set(ana.auth).expect(200);
       const list = await api().get('/users').set(luis.auth).expect(200);
       expect(list.body.map((u: { id: string }) => u.id)).not.toContain(ana.id);
+    });
+
+    it('un perfil oculto sí lo ven sus amigos y quien tiene una solicitud pendiente con él', async () => {
+      const ana = await newUser('Ana Oculta');
+      const luis = await newUser('Luis');
+      const eva = await newUser('Eva');
+      await api()
+        .patch('/users/me')
+        .set(ana.auth)
+        .send({ isVisible: false })
+        .expect(200);
+
+      // Luis le envía una solicitud: puede ver su perfil (y ella el de él).
+      const sent = await api()
+        .post('/friendships')
+        .set(luis.auth)
+        .send({ addresseeId: ana.id })
+        .expect(201);
+      const asLuis = await api()
+        .get(`/users/${ana.id}`)
+        .set(luis.auth)
+        .expect(200);
+      expect(asLuis.body.relation).toEqual({
+        id: sent.body.id,
+        status: 'pending',
+        direction: 'sent',
+      });
+      await api().get(`/users/${ana.id}`).set(eva.auth).expect(404);
+
+      // Si ella rechaza, Luis vuelve a no verla.
+      await api()
+        .patch(`/friendships/${sent.body.id}`)
+        .set(ana.auth)
+        .send({ status: 'rejected' })
+        .expect(200);
+      await api().get(`/users/${ana.id}`).set(luis.auth).expect(404);
+    });
+
+    it('el perfil de otra persona incluye relación y contadores, sin email ni rol', async () => {
+      const ana = await newUser('Ana');
+      const luis = await newUser('Luis');
+      await newPost(luis);
+      const none = await api()
+        .get(`/users/${luis.id}`)
+        .set(ana.auth)
+        .expect(200);
+      expect(none.body).toMatchObject({
+        relation: null,
+        postsCount: 1,
+        friendsCount: 0,
+      });
+
+      const sent = await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201);
+      await api()
+        .patch(`/friendships/${sent.body.id}`)
+        .set(luis.auth)
+        .send({ status: 'accepted' })
+        .expect(200);
+      const friends = await api()
+        .get(`/users/${luis.id}`)
+        .set(ana.auth)
+        .expect(200);
+      expect(friends.body.relation).toMatchObject({
+        status: 'accepted',
+        direction: 'sent',
+      });
+      expect(friends.body.friendsCount).toBe(1);
+      expect(friends.body).not.toHaveProperty('email');
+      expect(friends.body).not.toHaveProperty('role');
+      const own = await api().get(`/users/${ana.id}`).set(ana.auth).expect(200);
+      expect(own.body.relation).toBeNull();
     });
 
     it('valida el id y requiere token', async () => {
@@ -205,12 +325,25 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
     it('crea y lista publicaciones con contadores y likedByMe', async () => {
       const ana = await newUser('Ana');
       const post = await newPost(ana, { category: `cat-${randomUUID()}` });
-      const found = await api().get(`/posts/${post.id}`).set(ana.auth).expect(200);
-      expect(found.body).toMatchObject({ likesCount: 0, likedByMe: false, replies: [] });
-      expect(found.body.author).toEqual({ id: ana.id, name: 'Ana', countryOfOrigin: null });
+      const found = await api()
+        .get(`/posts/${post.id}`)
+        .set(ana.auth)
+        .expect(200);
+      expect(found.body).toMatchObject({
+        likesCount: 0,
+        likedByMe: false,
+        replies: [],
+      });
+      expect(found.body.author).toEqual({
+        id: ana.id,
+        name: 'Ana',
+        countryOfOrigin: null,
+      });
 
       const list = await api().get('/posts').set(ana.auth).expect(200);
-      const item = list.body.items.find((p: { id: string }) => p.id === post.id);
+      const item = list.body.items.find(
+        (p: { id: string }) => p.id === post.id,
+      );
       expect(item).toMatchObject({ repliesCount: 0, likedByMe: false });
     });
 
@@ -218,9 +351,14 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       const ana = await newUser('Ana');
       const category = `cat-${randomUUID()}`;
       const ids: string[] = [];
-      for (let i = 0; i < 3; i++) ids.push((await newPost(ana, { category, title: `P${i}` })).id);
+      for (let i = 0; i < 3; i++)
+        ids.push((await newPost(ana, { category, title: `P${i}` })).id);
 
-      const first = await api().get('/posts').query({ category, limit: 2 }).set(ana.auth).expect(200);
+      const first = await api()
+        .get('/posts')
+        .query({ category, limit: 2 })
+        .set(ana.auth)
+        .expect(200);
       expect(first.body.items).toHaveLength(2);
       expect(first.body.nextCursor).toBe(first.body.items[1].id);
 
@@ -232,16 +370,30 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       expect(second.body.items).toHaveLength(1);
       expect(second.body.nextCursor).toBeNull();
 
-      const all = [...first.body.items, ...second.body.items].map((p: { id: string }) => p.id);
+      const all = [...first.body.items, ...second.body.items].map(
+        (p: { id: string }) => p.id,
+      );
       expect(new Set(all)).toEqual(new Set(ids));
     });
 
     it('valida la entrada con 400', async () => {
       const ana = await newUser('Ana');
-      await api().post('/posts').set(ana.auth).send({ category: 'x', title: '', body: 'b' }).expect(400);
-      await api().post('/posts').set(ana.auth).send({ title: 't', body: 'b' }).expect(400);
+      await api()
+        .post('/posts')
+        .set(ana.auth)
+        .send({ category: 'x', title: '', body: 'b' })
+        .expect(400);
+      await api()
+        .post('/posts')
+        .set(ana.auth)
+        .send({ title: 't', body: 'b' })
+        .expect(400);
       await api().get('/posts').query({ limit: 500 }).set(ana.auth).expect(400);
-      await api().get('/posts').query({ cursor: 'xx' }).set(ana.auth).expect(400);
+      await api()
+        .get('/posts')
+        .query({ cursor: 'xx' })
+        .set(ana.auth)
+        .expect(400);
       await api().post('/posts').send({}).expect(401);
     });
 
@@ -250,16 +402,40 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       const luis = await newUser('Luis');
       const post = await newPost(ana);
 
-      await api().post(`/posts/${post.id}/replies`).set(luis.auth).send({ body: 'Primera' }).expect(201);
-      await api().post(`/posts/${post.id}/replies`).set(ana.auth).send({ body: 'Segunda' }).expect(201);
-      await api().post(`/posts/${post.id}/replies`).set(ana.auth).send({ body: '' }).expect(400);
-      await api().post(`/posts/${MISSING_ID}/replies`).set(ana.auth).send({ body: 'x' }).expect(404);
+      await api()
+        .post(`/posts/${post.id}/replies`)
+        .set(luis.auth)
+        .send({ body: 'Primera' })
+        .expect(201);
+      await api()
+        .post(`/posts/${post.id}/replies`)
+        .set(ana.auth)
+        .send({ body: 'Segunda' })
+        .expect(201);
+      await api()
+        .post(`/posts/${post.id}/replies`)
+        .set(ana.auth)
+        .send({ body: '' })
+        .expect(400);
+      await api()
+        .post(`/posts/${MISSING_ID}/replies`)
+        .set(ana.auth)
+        .send({ body: 'x' })
+        .expect(404);
 
-      const found = await api().get(`/posts/${post.id}`).set(ana.auth).expect(200);
-      expect(found.body.replies.map((r: { body: string }) => r.body)).toEqual(['Primera', 'Segunda']);
+      const found = await api()
+        .get(`/posts/${post.id}`)
+        .set(ana.auth)
+        .expect(200);
+      expect(found.body.replies.map((r: { body: string }) => r.body)).toEqual([
+        'Primera',
+        'Segunda',
+      ]);
 
       const list = await api().get('/posts').set(ana.auth).expect(200);
-      const item = list.body.items.find((p: { id: string }) => p.id === post.id);
+      const item = list.body.items.find(
+        (p: { id: string }) => p.id === post.id,
+      );
       expect(item.repliesCount).toBe(2);
     });
 
@@ -267,7 +443,11 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
       const post = await newPost(ana);
-      const reply = await api().post(`/posts/${post.id}/replies`).set(luis.auth).send({ body: 'Hola' }).expect(201);
+      const reply = await api()
+        .post(`/posts/${post.id}/replies`)
+        .set(luis.auth)
+        .send({ body: 'Hola' })
+        .expect(201);
       const url = `/posts/${post.id}/replies/${reply.body.id}`;
 
       await api().delete(url).set(ana.auth).expect(403);
@@ -279,17 +459,28 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
       const post = await newPost(ana);
-      const like = (s: Session) => api().put(`/posts/${post.id}/like`).set(s.auth);
-      const unlike = (s: Session) => api().delete(`/posts/${post.id}/like`).set(s.auth);
+      const like = (s: Session) =>
+        api().put(`/posts/${post.id}/like`).set(s.auth);
+      const unlike = (s: Session) =>
+        api().delete(`/posts/${post.id}/like`).set(s.auth);
 
-      expect((await like(ana).expect(200)).body).toEqual({ liked: true, likesCount: 1 });
+      expect((await like(ana).expect(200)).body).toEqual({
+        liked: true,
+        likesCount: 1,
+      });
       expect((await like(ana).expect(200)).body.likesCount).toBe(1); // repetido: no suma
       expect((await like(luis).expect(200)).body.likesCount).toBe(2);
 
-      const seen = await api().get(`/posts/${post.id}`).set(luis.auth).expect(200);
+      const seen = await api()
+        .get(`/posts/${post.id}`)
+        .set(luis.auth)
+        .expect(200);
       expect(seen.body).toMatchObject({ likesCount: 2, likedByMe: true });
 
-      expect((await unlike(ana).expect(200)).body).toEqual({ liked: false, likesCount: 1 });
+      expect((await unlike(ana).expect(200)).body).toEqual({
+        liked: false,
+        likesCount: 1,
+      });
       expect((await unlike(ana).expect(200)).body.likesCount).toBe(1); // repetido: no resta
       expect((await unlike(luis).expect(200)).body.likesCount).toBe(0);
     });
@@ -298,11 +489,18 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       const ana = await newUser('Ana');
       const post = await newPost(ana);
       await Promise.all(
-        Array.from({ length: 5 }, () => api().put(`/posts/${post.id}/like`).set(ana.auth).expect(200)),
+        Array.from({ length: 5 }, () =>
+          api().put(`/posts/${post.id}/like`).set(ana.auth).expect(200),
+        ),
       );
-      const found = await api().get(`/posts/${post.id}`).set(ana.auth).expect(200);
+      const found = await api()
+        .get(`/posts/${post.id}`)
+        .set(ana.auth)
+        .expect(200);
       expect(found.body.likesCount).toBe(1);
-      expect(await prisma.postLike.count({ where: { postId: post.id } })).toBe(1);
+      expect(await prisma.postLike.count({ where: { postId: post.id } })).toBe(
+        1,
+      );
     });
 
     it('like a una publicación inexistente responde 404', async () => {
@@ -315,14 +513,22 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
       const post = await newPost(ana);
-      await api().post(`/posts/${post.id}/replies`).set(luis.auth).send({ body: 'Hola' }).expect(201);
+      await api()
+        .post(`/posts/${post.id}/replies`)
+        .set(luis.auth)
+        .send({ body: 'Hola' })
+        .expect(201);
       await api().put(`/posts/${post.id}/like`).set(luis.auth).expect(200);
 
       await api().delete(`/posts/${post.id}`).set(luis.auth).expect(403);
       await api().delete(`/posts/${post.id}`).set(ana.auth).expect(204);
       await api().get(`/posts/${post.id}`).set(ana.auth).expect(404);
-      expect(await prisma.postReply.count({ where: { postId: post.id } })).toBe(0);
-      expect(await prisma.postLike.count({ where: { postId: post.id } })).toBe(0);
+      expect(await prisma.postReply.count({ where: { postId: post.id } })).toBe(
+        0,
+      );
+      expect(await prisma.postLike.count({ where: { postId: post.id } })).toBe(
+        0,
+      );
     });
   });
 
@@ -330,73 +536,170 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
     it('envía una solicitud pendiente y ambos la ven con su dirección', async () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
-      const sent = await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(201);
-      expect(sent.body).toMatchObject({ status: 'pending', direction: 'sent', user: { id: luis.id } });
+      const sent = await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201);
+      expect(sent.body).toMatchObject({
+        status: 'pending',
+        direction: 'sent',
+        user: { id: luis.id },
+      });
 
       const anaList = await api().get('/friendships').set(ana.auth).expect(200);
       expect(anaList.body).toHaveLength(1);
-      expect(anaList.body[0]).toMatchObject({ direction: 'sent', user: { id: luis.id, name: 'Luis' } });
+      expect(anaList.body[0]).toMatchObject({
+        direction: 'sent',
+        user: { id: luis.id, name: 'Luis' },
+      });
 
-      const luisList = await api().get('/friendships').set(luis.auth).expect(200);
-      expect(luisList.body[0]).toMatchObject({ direction: 'received', user: { id: ana.id, name: 'Ana' } });
+      const luisList = await api()
+        .get('/friendships')
+        .set(luis.auth)
+        .expect(200);
+      expect(luisList.body[0]).toMatchObject({
+        direction: 'received',
+        user: { id: ana.id, name: 'Ana' },
+      });
     });
 
     it('rechaza solicitudes inválidas', async () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
-      await api().post('/friendships').set(ana.auth).send({ addresseeId: ana.id }).expect(400);
-      await api().post('/friendships').set(ana.auth).send({ addresseeId: 'xx' }).expect(400);
-      await api().post('/friendships').set(ana.auth).send({ addresseeId: MISSING_ID }).expect(404);
+      await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: ana.id })
+        .expect(400);
+      await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: 'xx' })
+        .expect(400);
+      await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: MISSING_ID })
+        .expect(404);
 
-      await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(201);
-      await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(409); // repetida
-      await api().post('/friendships').set(luis.auth).send({ addresseeId: ana.id }).expect(409); // inversa
+      await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201);
+      await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(409); // repetida
+      await api()
+        .post('/friendships')
+        .set(luis.auth)
+        .send({ addresseeId: ana.id })
+        .expect(409); // inversa
     });
 
     it('solo el destinatario responde, una sola vez', async () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
       const otra = await newUser('Otra');
-      const sent = await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(201);
+      const sent = await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201);
       const url = `/friendships/${sent.body.id}`;
 
-      await api().patch(url).set(ana.auth).send({ status: 'accepted' }).expect(404); // el que envía
-      await api().patch(url).set(otra.auth).send({ status: 'accepted' }).expect(404); // un tercero
-      await api().patch(url).set(luis.auth).send({ status: 'pending' }).expect(400);
-      await api().patch(url).set(luis.auth).send({ status: 'accepted' }).expect(200);
-      await api().patch(url).set(luis.auth).send({ status: 'rejected' }).expect(409);
+      await api()
+        .patch(url)
+        .set(ana.auth)
+        .send({ status: 'accepted' })
+        .expect(404); // el que envía
+      await api()
+        .patch(url)
+        .set(otra.auth)
+        .send({ status: 'accepted' })
+        .expect(404); // un tercero
+      await api()
+        .patch(url)
+        .set(luis.auth)
+        .send({ status: 'pending' })
+        .expect(400);
+      await api()
+        .patch(url)
+        .set(luis.auth)
+        .send({ status: 'accepted' })
+        .expect(200);
+      await api()
+        .patch(url)
+        .set(luis.auth)
+        .send({ status: 'rejected' })
+        .expect(409);
 
-      const accepted = await api().get('/friendships').query({ status: 'accepted' }).set(ana.auth).expect(200);
+      const accepted = await api()
+        .get('/friendships')
+        .query({ status: 'accepted' })
+        .set(ana.auth)
+        .expect(200);
       expect(accepted.body).toHaveLength(1);
-      await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(409); // ya son amigos
+      await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(409); // ya son amigos
     });
 
     it('una solicitud rechazada la ve el destinatario pero no quien la envió', async () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
-      const sent = await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(201);
-      await api().patch(`/friendships/${sent.body.id}`).set(luis.auth).send({ status: 'rejected' }).expect(200);
+      const sent = await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201);
+      await api()
+        .patch(`/friendships/${sent.body.id}`)
+        .set(luis.auth)
+        .send({ status: 'rejected' })
+        .expect(200);
 
-      expect((await api().get('/friendships').set(ana.auth).expect(200)).body).toHaveLength(0);
-      expect((await api().get('/friendships').set(luis.auth).expect(200)).body).toHaveLength(1);
+      expect(
+        (await api().get('/friendships').set(ana.auth).expect(200)).body,
+      ).toHaveLength(0);
+      expect(
+        (await api().get('/friendships').set(luis.auth).expect(200)).body,
+      ).toHaveLength(1);
     });
 
     it('cualquiera de las dos partes puede eliminar; un tercero no', async () => {
       const ana = await newUser('Ana');
       const luis = await newUser('Luis');
       const otra = await newUser('Otra');
-      const sent = await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(201);
+      const sent = await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201);
       const url = `/friendships/${sent.body.id}`;
 
       await api().delete(url).set(otra.auth).expect(404);
       await api().delete(url).set(ana.auth).expect(204); // cancelar
       await api().delete(url).set(ana.auth).expect(404);
-      await api().post('/friendships').set(ana.auth).send({ addresseeId: luis.id }).expect(201); // se puede reenviar
+      await api()
+        .post('/friendships')
+        .set(ana.auth)
+        .send({ addresseeId: luis.id })
+        .expect(201); // se puede reenviar
     });
 
     it('valida el filtro de estado y requiere token', async () => {
       const ana = await newUser('Ana');
-      await api().get('/friendships').query({ status: 'otro' }).set(ana.auth).expect(400);
+      await api()
+        .get('/friendships')
+        .query({ status: 'otro' })
+        .set(ana.auth)
+        .expect(400);
       await api().get('/friendships').expect(401);
     });
   });

@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from 'react';
 import { colorFor, firstName, initialOf } from '../../lib/format';
 import { filterStudents } from '../../lib/students';
+import { useChat } from '../chat/ChatProvider';
 import FriendCard from './FriendCard';
 
 const KINDS = [
@@ -24,6 +25,7 @@ export default function AmigosTab({ social, onToast }) {
   const [filters, setFilters] = useState({ query: '', kind: 'todos', career: '', language: '' });
   const [busyId, setBusyId] = useState(null);
   const searchId = useId();
+  const { openChat } = useChat();
 
   const set = (name) => (e) => setFilters((f) => ({ ...f, [name]: e.target.value }));
   const students = useMemo(() => filterStudents(social.users, filters), [social.users, filters]);
@@ -171,6 +173,7 @@ export default function AmigosTab({ social, onToast }) {
               }
               onReject={() => act(person.id, () => social.respond(relation.id, 'rejected'), 'Solicitud rechazada')}
               onRemove={() => confirmRemove(relation, person)}
+              onMessage={() => openChat(person)}
             />
           );
         })}

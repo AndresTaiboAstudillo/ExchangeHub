@@ -4,18 +4,24 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { isForeignKeyViolation, toPage } from '../common/pagination.dto.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreatePostDto } from './dto/create-post.dto.js';
 import { CreateReplyDto } from './dto/create-reply.dto.js';
 import { ListPostsDto } from './dto/list-posts.dto.js';
 
-const author = { select: { id: true, name: true, countryOfOrigin: true } } as const;
+const author = {
+  select: { id: true, name: true, countryOfOrigin: true },
+} as const;
 
 const POST_NOT_FOUND = 'La publicación no existe';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   create(userId: string, dto: CreatePostDto) {
     return this.prisma.post.create({
@@ -105,17 +111,33 @@ export class PostsService {
 
   async createReply(userId: string, postId: string, dto: CreateReplyDto) {
     try {
-      return await this.prisma.postReply.create({
+      const reply = await this.prisma.postReply.create({
         data: { postId, authorId: userId, body: dto.body },
         select: { id: true, body: true, createdAt: true, author },
       });
+      const post = await this.prisma.post.findUnique({
+        where: { id: postId },
+        select: { authorId: true },
+      });
+      if (post) {
+        await this.notifications.notify(post.authorId, userId, 'post_reply', {
+          postId,
+          preview: dto.body,
+        });
+      }
+      return reply;
     } catch (error) {
-      if (isForeignKeyViolation(error)) throw new NotFoundException(POST_NOT_FOUND);
+      if (isForeignKeyViolation(error))
+        throw new NotFoundException(POST_NOT_FOUND);
       throw error;
     }
   }
 
-  async removeReply(userId: string, postId: string, replyId: string): Promise<void> {
+  async removeReply(
+    userId: string,
+    postId: string,
+    replyId: string,
+  ): Promise<void> {
     const reply = await this.prisma.postReply.findFirst({
       where: { id: replyId, postId },
       select: { authorId: true },
@@ -128,9 +150,13 @@ export class PostsService {
   }
 
   /** Idempotente: darle like dos veces cuenta una sola vez. */
-  like(userId: string, postId: string) {
-    return this.prisma.$transaction(async (tx) => {
-      const post = await tx.post.findUnique({ where: { id: postId }, select: { id: true } });
+  async like(userId: string, postId: string) {
+    let newLike: { authorId: string; title: string } | null = null;
+    const result = await this.prisma.$transaction(async (tx) => {
+      const post = await tx.post.findUnique({
+        where: { id: postId },
+        select: { id: true, authorId: true, title: true },
+      });
       if (!post) throw new NotFoundException(POST_NOT_FOUND);
 
       // skipDuplicates (ON CONFLICT DO NOTHING) evita la condición de carrera.
@@ -149,17 +175,32 @@ export class PostsService {
               where: { id: postId },
               select: { likesCount: true },
             });
+      if (count > 0) newLike = post;
       return { liked: true, likesCount: updated.likesCount };
     });
+    // Solo el primer like avisa al autor; repetirlo no genera otra notificación.
+    if (newLike) {
+      const { authorId, title } = newLike;
+      await this.notifications.notify(authorId, userId, 'post_like', {
+        postId,
+        preview: title,
+      });
+    }
+    return result;
   }
 
   /** Idempotente: quitar un like que no existe no cambia nada. */
   unlike(userId: string, postId: string) {
     return this.prisma.$transaction(async (tx) => {
-      const post = await tx.post.findUnique({ where: { id: postId }, select: { id: true } });
+      const post = await tx.post.findUnique({
+        where: { id: postId },
+        select: { id: true },
+      });
       if (!post) throw new NotFoundException(POST_NOT_FOUND);
 
-      const { count } = await tx.postLike.deleteMany({ where: { postId, userId } });
+      const { count } = await tx.postLike.deleteMany({
+        where: { postId, userId },
+      });
       const updated =
         count > 0
           ? await tx.post.update({
