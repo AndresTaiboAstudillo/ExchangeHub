@@ -1,9 +1,13 @@
 'use client';
 
+import { Suspense } from 'react';
 import InicioPage from '../../../components/InicioPage';
-import { useApp } from '../../providers';
 
+// InicioPage lee ?universidad= de la URL, y eso exige un límite de Suspense.
 export default function Page() {
-  const { openDetail } = useApp();
-  return <InicioPage onOpenDetail={openDetail} />;
+  return (
+    <Suspense fallback={<p className="text-sm text-muted p-6">Cargando mapa…</p>}>
+      <InicioPage />
+    </Suspense>
+  );
 }

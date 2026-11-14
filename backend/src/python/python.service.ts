@@ -6,6 +6,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { currentRequestId } from '../observability/request-context.js';
+import type { PlacesPipelineResult } from '../map/places.types.js';
 import type {
   PipelineResult,
   PipelineSource,
@@ -32,6 +33,11 @@ export class PythonService {
     process.env.PYTHON_PIPELINE_TIMEOUT_MS ?? 120000,
   );
 
+  /** Overpass puede tardar bastante (dos servidores, hasta ~50 s cada uno). */
+  private readonly placesTimeoutMs = Number(
+    process.env.PYTHON_PLACES_TIMEOUT_MS ?? 150000,
+  );
+
   health(): Promise<{ status: string }> {
     return this.request('/health', { timeoutMs: this.timeoutMs });
   }
@@ -45,6 +51,14 @@ export class PythonService {
       method: 'POST',
       body: { sources },
       timeoutMs: this.pipelineTimeoutMs,
+    });
+  }
+
+  runPlacesPipeline(): Promise<PlacesPipelineResult> {
+    return this.request('/v1/pipeline/places/run', {
+      method: 'POST',
+      body: {},
+      timeoutMs: this.placesTimeoutMs,
     });
   }
 

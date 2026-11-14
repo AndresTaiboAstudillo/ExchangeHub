@@ -1,43 +1,207 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { api } from '../lib/api';
+import {
+  COMMERCE_CATEGORY_IDS,
+  LODGING_CATEGORY_IDS,
+  PLACE_CATEGORIES,
+  fromListing,
+  fromPlace,
+  fromUniversity,
+  fromZone,
+  matchesQuery,
+} from '../lib/map';
 import ListingCard from './inicio/ListingCard';
 import MapPanel from './inicio/MapPanel';
-import { alojamientos, comercios, zonas } from '../data/listings';
+import ReviewsModal from './inicio/ReviewsModal';
 
 const TABS = [
-  { id: 'alojamiento', label: '🏠 Alojamiento', data: alojamientos },
-  { id: 'comercio', label: '🏪 Comercios', data: comercios },
-  { id: 'zona', label: '🗺 Zonas', data: zonas },
+  { id: 'alojamiento', label: '🏠 Alojamiento' },
+  { id: 'comercio', label: '🏪 Comercios' },
+  { id: 'zona', label: '🗺 Zonas' },
+  { id: 'universidad', label: '🎓 Universidades' },
 ];
+// Con la vista muy alejada la zona es enorme: se pide acercar en vez de cargar miles de comercios.
+const MIN_PLACES_ZOOM = 13;
+const EMPTY_PLACES = { items: [], total: 0, status: 'idle', truncated: false };
+const chip = (id) => [id, PLACE_CATEGORIES[id]];
+// Filtros de cada pestaña: "arriendo" son las piezas y departamentos publicados (no vienen de OpenStreetMap).
+const TODOS = ['todas', { label: 'Todos', emoji: '' }];
+const CHIPS = {
+  comercio: [TODOS, ...COMMERCE_CATEGORY_IDS.map(chip)],
+  universidad: [
+    TODOS,
+    ['universidad', { label: 'Universidades', emoji: '🎓' }],
+    ['instituto_profesional', { label: 'Institutos', emoji: '📘' }],
+    ['centro_formacion_tecnica', { label: 'CFT', emoji: '🔧' }],
+  ],
+  alojamiento: [TODOS, ['arriendo', { label: 'Piezas y deptos', emoji: '🏠' }], ...LODGING_CATEGORY_IDS.map(chip)],
+};
 
-export default function InicioPage({ onOpenDetail }) {
-  const [tab, setTab] = useState('alojamiento');
-  const active = TABS.find((t) => t.id === tab);
+export default function InicioPage() {
+  // Desde Universidades se llega con ?universidad=<id>: se abre esa pestaña y se muestra la institución.
+  const focusId = useSearchParams().get('universidad');
+  const focusRef = useRef(focusId);
+  const [tab, setTab] = useState(focusId ? 'universidad' : 'alojamiento');
+  const [q, setQ] = useState('');
+  const [category, setCategory] = useState('todas');
+  const [selectedId, setSelectedId] = useState(null);
+  const [viewport, setViewport] = useState(null); // { bbox, zoom }
+  const [reviewsPlace, setReviewsPlace] = useState(null); // comercio con el detalle abierto
+
+  const [listings, setListings] = useState({ items: [], status: 'loading' });
+  const [zones, setZones] = useState({ items: [], status: 'loading' });
+  const [universities, setUniversities] = useState({ items: [], status: 'loading' });
+  const [places, setPlaces] = useState({ ...EMPTY_PLACES, tab: null });
+  const cardRefs = useRef(new Map());
+
+  useEffect(() => {
+    let cancelled = false;
+    api.mapListings().then(
+      (rows) => !cancelled && setListings({ items: rows.map(fromListing), status: 'ready' }),
+      () => !cancelled && setListings({ items: [], status: 'error' }),
+    );
+    api.mapZones().then(
+      (rows) => !cancelled && setZones({ items: rows.map(fromZone), status: 'ready' }),
+      () => !cancelled && setZones({ items: [], status: 'error' }),
+    );
+    api.mapUniversities().then(
+      (rows) => {
+        if (cancelled) return;
+        const items = rows.map(fromUniversity);
+        setUniversities({ items, status: 'ready' });
+        if (focusRef.current && items.some((i) => i.id === focusRef.current)) setSelectedId(focusRef.current);
+      },
+      () => !cancelled && setUniversities({ items: [], status: 'error' }),
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Los comercios y hospedajes de OpenStreetMap se piden por la zona visible y la categoría elegida.
+  const bbox = viewport?.bbox;
+  const zoomedIn = (viewport?.zoom ?? 0) >= MIN_PLACES_ZOOM;
+  const placeCategories = useMemo(() => {
+    if (tab === 'comercio') return category === 'todas' ? COMMERCE_CATEGORY_IDS : [category];
+    if (tab === 'alojamiento' && category !== 'arriendo') return category === 'todas' ? LODGING_CATEGORY_IDS : [category];
+    return null; // zonas, o solo piezas y departamentos publicados
+  }, [tab, category]);
+  useEffect(() => {
+    if (!placeCategories || !bbox || !zoomedIn) return undefined;
+    let cancelled = false;
+    api.mapPlaces({ bbox, category: placeCategories }).then(
+      (res) =>
+        !cancelled &&
+        setPlaces({ items: res.items.map(fromPlace), total: res.total, truncated: res.truncated, status: 'ready', tab }),
+      () => !cancelled && setPlaces((p) => ({ ...p, status: 'error', tab })),
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [tab, placeCategories, bbox, zoomedIn]);
+
+  // Lo que llegó de otra pestaña no se mezcla con la actual.
+  const placesNow = placeCategories && places.tab === tab ? places : EMPTY_PLACES;
+  const withListings = tab === 'alojamiento' && (category === 'todas' || category === 'arriendo');
+  let source;
+  if (tab === 'zona') source = zones;
+  else if (tab === 'universidad') {
+    source = {
+      items: category === 'todas' ? universities.items : universities.items.filter((i) => i.categoryId === category),
+      status: universities.status,
+    };
+  }
+  else if (tab === 'comercio') source = placesNow;
+  else {
+    source = {
+      items: [...(withListings ? listings.items : []), ...placesNow.items],
+      status: withListings ? listings.status : placesNow.status === 'error' ? 'error' : 'ready',
+    };
+  }
+  const visible = useMemo(() => source.items.filter((i) => matchesQuery(i, q)), [source.items, q]);
+
+  const onViewportChange = useCallback((nextBbox, zoom) => setViewport({ bbox: nextBbox, zoom }), []);
+
+  // Abre las reseñas con una copia del comercio, para que sigan abiertas aunque cambie la zona visible.
+  const reviewables = useRef([]);
+  useEffect(() => {
+    reviewables.current = [...places.items, ...listings.items];
+  });
+  const openReviews = useCallback((id) => {
+    const place = reviewables.current.find((p) => p.id === id);
+    if (place) setReviewsPlace(place);
+  }, []);
+  const closeReviews = useCallback(() => setReviewsPlace(null), []);
+  const updateRating = useCallback((id, rating) => {
+    const apply = (i) => (i.id === id ? { ...i, rating } : i);
+    setPlaces((p) => ({ ...p, items: p.items.map(apply) }));
+    setListings((l) => ({ ...l, items: l.items.map(apply) }));
+    setReviewsPlace((r) => (r?.id === id ? { ...r, rating } : r));
+  }, []);
+
+  const select = useCallback((id) => setSelectedId(id), []);
+  // La tarjeta elegida (desde el mapa o desde otra página) se desplaza hasta quedar a la vista.
+  useEffect(() => {
+    if (selectedId) cardRefs.current.get(selectedId)?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
+  }, [selectedId, tab]);
+
+  const changeTab = (next) => {
+    setTab(next);
+    setCategory('todas');
+    setSelectedId(null);
+    setQ('');
+  };
+
+  const what = tab === 'comercio' ? 'comercios y servicios' : 'hoteles y hospedajes';
+  const needsZoom = Boolean(placeCategories) && !zoomedIn;
+  let status = '';
+  if (placeCategories) {
+    if (needsZoom) status = `Acerca el mapa para ver ${what}.`;
+    else if (places.tab === tab && places.status === 'error') status = `No pudimos cargar los ${what}.`;
+    else if (placesNow.truncated) status = `Mostrando ${placesNow.items.length} de ${placesNow.total}. Acerca el mapa para ver más.`;
+  }
+
+  const empty = (() => {
+    if (source.status === 'loading') return 'Cargando…';
+    if (source.status === 'error') return 'No pudimos cargar los datos. Inténtalo de nuevo más tarde.';
+    if (needsZoom && !withListings) return `Acerca el mapa para ver ${what}.`;
+    if (visible.length === 0) {
+      return q ? 'Sin resultados para tu búsqueda.' : 'Aún no hay lugares en esta zona.';
+    }
+    return null;
+  })();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] h-[calc(100vh-60px)]">
+    <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] lg:h-[calc(100vh-60px)]">
       {/* Sidebar */}
-      <div className="bg-white border-r border-border flex flex-col overflow-hidden">
+      <div className="bg-white border-r border-border flex flex-col overflow-hidden max-h-[55vh] lg:max-h-none order-2 lg:order-1">
         <div className="px-[18px] pt-[18px] pb-3.5 border-b border-border">
-          <div className="flex gap-2 mb-3">
-            <div className="relative flex-1">
-              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[15px] text-muted">🔍</span>
-              <input
-                type="text"
-                placeholder="Buscar calle, barrio, local…"
-                className="w-full pl-9 pr-3.5 py-2 border-[1.5px] border-border rounded-lg text-sm bg-surface focus:outline-none focus:border-forest-lt focus:bg-white transition-colors"
-              />
-            </div>
-            <button className="px-3.5 py-1.5 rounded-lg text-[13px] font-semibold bg-forest-mid text-white hover:bg-forest-lt transition-colors">
-              Buscar
-            </button>
+          <div className="relative mb-3">
+            <span aria-hidden="true" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[15px] text-muted">
+              🔍
+            </span>
+            <label htmlFor="inicio-search" className="sr-only">
+              Buscar en la lista
+            </label>
+            <input
+              id="inicio-search"
+              type="search"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Buscar por nombre o dirección…"
+              className="w-full pl-9 pr-3.5 py-2 border-[1.5px] border-border rounded-lg text-sm bg-surface focus:outline-none focus:border-forest-lt focus:bg-white transition-colors"
+            />
           </div>
-          <div className="flex gap-1.5">
+          <div role="tablist" className="flex gap-1.5 flex-wrap">
             {TABS.map((t) => (
               <button
                 key={t.id}
-                onClick={() => setTab(t.id)}
+                role="tab"
+                aria-selected={tab === t.id}
+                onClick={() => changeTab(t.id)}
                 className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
                   tab === t.id ? 'bg-forest-mid text-white' : 'bg-surface-2 text-muted'
                 }`}
@@ -46,17 +210,74 @@ export default function InicioPage({ onOpenDetail }) {
               </button>
             ))}
           </div>
+
+          {CHIPS[tab] && (
+            <div className="flex gap-1.5 flex-wrap mt-2.5" aria-label={tab === 'comercio' ? 'Categoría de comercio' : 'Tipo de alojamiento'}>
+              {CHIPS[tab].map(([id, meta]) => (
+                <button
+                  key={id}
+                  type="button"
+                  aria-pressed={category === id}
+                  onClick={() => setCategory(id)}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    category === id
+                      ? 'bg-forest-mid text-white border-forest-mid'
+                      : 'bg-white text-ink-mid border-border hover:bg-surface-2'
+                  }`}
+                >
+                  {meta.emoji} {meta.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="thin-scroll flex-1 overflow-y-auto p-3.5 flex flex-col gap-3">
-          {active.data.map((item) => (
-            <ListingCard key={item.id} item={item} onOpen={onOpenDetail} />
-          ))}
+          {empty ? (
+            <p className="text-sm text-muted text-center py-8">{empty}</p>
+          ) : (
+            visible.map((item) => (
+              <div
+                key={item.id}
+                ref={(node) => {
+                  if (node) cardRefs.current.set(item.id, node);
+                  else cardRefs.current.delete(item.id);
+                }}
+              >
+                <ListingCard item={item} selected={item.id === selectedId} onOpen={select} onReviews={openReviews} />
+              </div>
+            ))
+          )}
+          <p className="text-[11px] text-muted text-center pt-1">
+            Mapa y comercios: © colaboradores de{' '}
+            <a
+              href="https://www.openstreetmap.org/copyright"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              OpenStreetMap
+            </a>{' '}
+            (ODbL)
+          </p>
         </div>
       </div>
 
-      {/* Map */}
-      <MapPanel onOpen={onOpenDetail} />
+      {/* Mapa */}
+      <div className="h-[45vh] lg:h-auto order-1 lg:order-2 flex flex-col">
+        <MapPanel
+          items={tab === 'comercio' && !zoomedIn ? [] : visible}
+          selectedId={selectedId}
+          onSelect={select}
+          onViewportChange={onViewportChange}
+          onReviews={openReviews}
+          status={status}
+        />
+      </div>
+
+      {reviewsPlace && (
+        <ReviewsModal key={reviewsPlace.id} place={reviewsPlace} onClose={closeReviews} onRatingChange={updateRating} />
+      )}
     </div>
   );
 }

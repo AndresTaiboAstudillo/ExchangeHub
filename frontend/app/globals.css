@@ -17,3 +17,43 @@ body {
 .thin-scroll::-webkit-scrollbar-thumb {
   @apply bg-border rounded-full;
 }
+
+/* Mapa de Inicio (Leaflet) */
+.eh-pin {
+  background: none;
+  border: none;
+}
+.eh-pin-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid #fff;
+}
+.eh-pin-emoji {
+  transform: rotate(45deg);
+  font-size: 14px;
+  line-height: 1;
+}
+.eh-pin-forest { background: #2d6a4f; }
+.eh-pin-amber { background: #d4a017; }
+.eh-pin-green { background: #059669; }
+.eh-pin-blue { background: #2563eb; }
+.eh-pin-selected .eh-pin-body {
+  outline: 3px solid rgba(45, 106, 79, 0.45);
+  transform: rotate(-45deg) scale(1.18);
+}
+.eh-popup { display: flex; flex-direction: column; gap: 4px; min-width: 170px; max-width: 230px; font-size: 13px; }
+.eh-popup-title { font-size: 14px; }
+.eh-popup-badge { align-self: flex-start; background: #ecfdf5; color: #065f46; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 600; }
+.eh-popup-price { font-weight: 700; color: #2d6a4f; }
+.eh-popup-line, .eh-popup-desc { color: #4b5563; }
+.eh-popup-actions { display: flex; gap: 12px; margin-top: 4px; }
+.eh-popup-link { color: #2d6a4f; font-weight: 600; text-decoration: none; }
+.eh-popup-link:hover { text-decoration: underline; }
+.eh-popup-rating { color: #b45309; font-weight: 600; }
+.eh-popup-button { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-weight: 600; }

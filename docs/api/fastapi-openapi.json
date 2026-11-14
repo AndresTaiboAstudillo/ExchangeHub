@@ -97,6 +97,200 @@
         "title": "PipelineResult",
         "type": "object"
       },
+      "PlaceOut": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "content_hash": {
+            "title": "Content Hash",
+            "type": "string"
+          },
+          "external_id": {
+            "description": "Identificador OSM, p. ej. `node/123`",
+            "title": "External Id",
+            "type": "string"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "opening_hours": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Hours"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          }
+        },
+        "required": [
+          "external_id",
+          "category",
+          "name",
+          "latitude",
+          "longitude",
+          "content_hash"
+        ],
+        "title": "PlaceOut",
+        "type": "object"
+      },
+      "PlacesRequest": {
+        "properties": {
+          "bbox": {
+            "anyOf": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Zona a consultar como (sur, oeste, norte, este). Por defecto, Valparaíso y Viña del Mar.",
+            "title": "Bbox"
+          }
+        },
+        "title": "PlacesRequest",
+        "type": "object"
+      },
+      "PlacesResult": {
+        "properties": {
+          "duplicates_discarded": {
+            "default": 0,
+            "title": "Duplicates Discarded",
+            "type": "integer"
+          },
+          "elapsed_ms": {
+            "default": 0,
+            "title": "Elapsed Ms",
+            "type": "integer"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "fetched_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetched At"
+          },
+          "places": {
+            "items": {
+              "$ref": "#/components/schemas/PlaceOut"
+            },
+            "title": "Places",
+            "type": "array"
+          },
+          "records_received": {
+            "default": 0,
+            "title": "Records Received",
+            "type": "integer"
+          },
+          "records_rejected": {
+            "default": 0,
+            "title": "Records Rejected",
+            "type": "integer"
+          },
+          "records_valid": {
+            "default": 0,
+            "title": "Records Valid",
+            "type": "integer"
+          },
+          "source": {
+            "default": "osm_places",
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "PlacesResult",
+        "type": "object"
+      },
       "Provenance": {
         "properties": {
           "content_hash": {
@@ -630,6 +824,48 @@
         "summary": "El proceso está vivo",
         "tags": [
           "salud"
+        ]
+      }
+    },
+    "/v1/pipeline/places/run": {
+      "post": {
+        "description": "Consulta una vez la API Overpass de OpenStreetMap (datos ODbL) para la zona pedida y devuelve ferias, supermercados, minimarkets, panaderías, verdulerías, farmacias y lavanderías con nombre y coordenadas. Descarta lo que no tenga nombre, categoría o punto.\n\nLa URL de Overpass viene de la configuración del servicio, nunca de la petición. Si la fuente no responde, `status` es `failed` y la lista va vacía.",
+        "operationId": "run_places_v1_pipeline_places_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlacesResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recupera comercios y servicios de OpenStreetMap",
+        "tags": [
+          "pipeline"
         ]
       }
     },

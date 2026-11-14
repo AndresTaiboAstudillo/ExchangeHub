@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { colorFor } from "../../lib/format";
 import {
   categoryLabel,
   crestOf,
-  mapUrl,
+  mapHref,
   ownershipLabel,
   safeWebsite,
   statusInfo,
@@ -12,7 +13,7 @@ import Badge from "../Badge";
 
 export default function UniversityCard({ university: u }) {
   const site = u.website ? safeWebsite(u.website) : null;
-  const map = mapUrl(u.latitude, u.longitude);
+  const map = mapHref(u);
   const status = statusInfo(u);
 
   return (
@@ -61,14 +62,12 @@ export default function UniversityCard({ university: u }) {
         )}
         {map && (
           <Row icon="📍" label="Ubicación">
-            <a
+            <Link
               href={map}
-              target="_blank"
-              rel="noopener noreferrer"
               className="text-forest-mid font-medium hover:underline"
             >
               Ver en el mapa
-            </a>
+            </Link>
           </Row>
         )}
         {u.registryNumber && (

@@ -84,9 +84,10 @@ export function websiteLabel(url) {
   }
 }
 
-export function mapUrl(latitude, longitude) {
-  if (typeof latitude !== 'number' || typeof longitude !== 'number') return null;
-  return `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}`;
+/** Enlace al mapa de Inicio centrado en la institución (null si no se conoce su ubicación). */
+export function mapHref({ id, latitude, longitude }) {
+  if (!id || typeof latitude !== 'number' || typeof longitude !== 'number') return null;
+  return `/inicio?universidad=${encodeURIComponent(id)}`;
 }
 
 const dateFormat = new Intl.DateTimeFormat('es-CL', {
