@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -17,6 +18,7 @@ import { CurrentUser } from '../auth/current-user.decorator.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { AdminGuard } from '../universities/admin.guard.js';
 import { PlacesQueryDto } from './dto/places-query.dto.js';
+import { CreateListingDto, UpdateListingDto } from './dto/listing.dto.js';
 import { ListReviewsDto, UpsertReviewDto } from './dto/review.dto.js';
 import { MapService } from './map.service.js';
 import { PlacesIngestionService } from './places-ingestion.service.js';
@@ -37,6 +39,36 @@ export class MapController {
   @Get('listings')
   listings() {
     return this.map.listListings();
+  }
+
+  @ApiOperation({ summary: 'Publicar un arriendo (solo administradores)' })
+  @Post('listings')
+  @UseGuards(AdminGuard)
+  createListing(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: CreateListingDto,
+  ) {
+    return this.map.createListing(user.sub, dto);
+  }
+
+  @ApiOperation({ summary: 'Editar un arriendo (solo administradores)' })
+  @Patch('listings/:id')
+  @UseGuards(AdminGuard)
+  updateListing(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateListingDto,
+  ) {
+    return this.map.updateListing(id, dto);
+  }
+
+  @ApiOperation({
+    summary: 'Eliminar un arriendo y sus reseñas (solo administradores)',
+  })
+  @Delete('listings/:id')
+  @HttpCode(204)
+  @UseGuards(AdminGuard)
+  deleteListing(@Param('id', ParseUUIDPipe) id: string) {
+    return this.map.deleteListing(id);
   }
 
   @ApiOperation({

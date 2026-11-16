@@ -20,6 +20,9 @@ const apiMock = vi.hoisted(() => ({
   listingReviews: vi.fn(),
   savePlaceReview: vi.fn(),
   deleteReview: vi.fn(),
+  createListing: vi.fn(),
+  updateListing: vi.fn(),
+  deleteListing: vi.fn(),
 }));
 vi.mock('../lib/api', () => ({ api: apiMock }));
 
@@ -256,5 +259,137 @@ describe('Inicio', () => {
     expect(await screen.findByText('Departamento Viña')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('tab', { name: /Universidades/ }));
     expect(await screen.findByText(/No pudimos cargar los datos/)).toBeInTheDocument();
+  });
+
+  describe('arriendos (administradores)', () => {
+    it('una persona común no ve los botones para publicar, editar ni eliminar', async () => {
+      render(<InicioPage />);
+      await screen.findByText('Departamento Viña');
+      expect(screen.queryByRole('button', { name: /Agregar arriendo/ })).toBeNull();
+      expect(screen.queryByRole('button', { name: /^Editar / })).toBeNull();
+      expect(screen.queryByRole('button', { name: /^Eliminar / })).toBeNull();
+    });
+
+    it('el botón de agregar solo está en la pestaña Alojamiento', async () => {
+      render(<InicioPage canManage />);
+      await screen.findByText('Departamento Viña');
+      expect(screen.getByRole('button', { name: /Agregar arriendo/ })).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('tab', { name: /Zonas/ }));
+      expect(screen.queryByRole('button', { name: /Agregar arriendo/ })).toBeNull();
+    });
+
+    it('publica un arriendo eligiendo el punto en el mapa', async () => {
+      const created = { id: 'l9', type: 'alojamiento', name: 'Pieza nueva', address: null, latitude: -33.04, longitude: -71.62, priceClp: 230000, availability: 'Disponible', description: null, ratingAverage: null, ratingCount: 0 };
+      apiMock.createListing.mockResolvedValue(created);
+      render(<InicioPage canManage />);
+      await screen.findByText('Departamento Viña');
+      fireEvent.click(screen.getByRole('button', { name: /Agregar arriendo/ }));
+      fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Pieza nueva' } });
+      fireEvent.change(screen.getByLabelText(/Arriendo mensual/), { target: { value: '230.000' } });
+
+      // Sin punto no se puede publicar.
+      fireEvent.click(screen.getByRole('button', { name: 'Publicar arriendo' }));
+      expect(await screen.findByText(/Marca el punto en el mapa/)).toBeInTheDocument();
+      expect(apiMock.createListing).not.toHaveBeenCalled();
+
+      // Elegir en el mapa: el formulario se oculta y el mapa queda en modo "elegir".
+      fireEvent.click(screen.getByRole('button', { name: /Elegir en el mapa/ }));
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(screen.getByRole('status')).toHaveTextContent('Toca el mapa');
+      expect(mapProps.picking).toBe(true);
+
+      act(() => mapProps.onPick(-33.04, -71.62));
+      expect(mapProps.picking).toBe(false);
+      expect(mapProps.pickedPoint).toEqual({ lat: -33.04, lng: -71.62 });
+      // Vuelve el formulario con lo que ya estaba escrito y el punto elegido.
+      expect(screen.getByLabelText('Nombre')).toHaveValue('Pieza nueva');
+      expect(screen.getByLabelText('Latitud')).toHaveValue('-33.040000');
+
+      fireEvent.click(screen.getByRole('button', { name: 'Publicar arriendo' }));
+      await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+      expect(apiMock.createListing).toHaveBeenCalledWith({
+        name: 'Pieza nueva',
+        address: null,
+        latitude: -33.04,
+        longitude: -71.62,
+        description: null,
+        priceClp: 230000,
+        availability: 'Disponible',
+      });
+      expect(screen.getByText('Pieza nueva')).toBeInTheDocument();
+      expect(mapProps.selectedId).toBe('l9');
+      expect(mapProps.pickedPoint).toBeNull();
+    });
+
+    it('cancelar la elección del punto devuelve el formulario sin cambios', async () => {
+      render(<InicioPage canManage />);
+      await screen.findByText('Departamento Viña');
+      fireEvent.click(screen.getByRole('button', { name: /Agregar arriendo/ }));
+      fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Borrador' } });
+      fireEvent.click(screen.getByRole('button', { name: /Elegir en el mapa/ }));
+      fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+      expect(mapProps.picking).toBe(false);
+      expect(screen.getByLabelText('Nombre')).toHaveValue('Borrador');
+    });
+
+    it('si el servidor rechaza el arriendo, muestra el motivo y conserva el formulario', async () => {
+      apiMock.createListing.mockRejectedValue(new Error('Requiere rol de administrador'));
+      render(<InicioPage canManage />);
+      await screen.findByText('Departamento Viña');
+      fireEvent.click(screen.getByRole('button', { name: /Agregar arriendo/ }));
+      fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Pieza nueva' } });
+      fireEvent.change(screen.getByLabelText('Latitud'), { target: { value: '-33,04' } });
+      fireEvent.change(screen.getByLabelText('Longitud'), { target: { value: '-71,62' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Publicar arriendo' }));
+      expect(await screen.findByText('Requiere rol de administrador')).toBeInTheDocument();
+      expect(screen.getByLabelText('Nombre')).toHaveValue('Pieza nueva');
+      expect(screen.getByRole('button', { name: 'Publicar arriendo' })).toBeEnabled();
+    });
+
+    it('edita un arriendo existente', async () => {
+      apiMock.updateListing.mockResolvedValue({ ...listings[1], priceClp: 200000, description: null, ratingAverage: null, ratingCount: 0 });
+      render(<InicioPage canManage />);
+      await screen.findByText('Departamento Viña');
+      fireEvent.click(screen.getByRole('button', { name: 'Editar Departamento Viña' }));
+      expect(screen.getByRole('dialog', { name: 'Editar arriendo' })).toBeInTheDocument();
+      expect(screen.getByLabelText('Nombre')).toHaveValue('Departamento Viña');
+      expect(screen.getByLabelText('Latitud')).toHaveValue('-33.02');
+      expect(mapProps.pickedPoint).toEqual({ lat: -33.02, lng: -71.55 });
+      fireEvent.change(screen.getByLabelText(/Arriendo mensual/), { target: { value: '200000' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
+      expect(await screen.findByText('$200.000/mes')).toBeInTheDocument();
+      expect(apiMock.updateListing).toHaveBeenCalledWith('l2', expect.objectContaining({ name: 'Departamento Viña', priceClp: 200000, latitude: -33.02 }));
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
+
+    it('elimina un arriendo solo tras confirmar', async () => {
+      apiMock.deleteListing.mockResolvedValue(null);
+      render(<InicioPage canManage />);
+      await screen.findByText('Departamento Viña');
+      fireEvent.click(screen.getByRole('button', { name: 'Eliminar Departamento Viña' }));
+      fireEvent.click(screen.getByRole('button', { name: 'No' }));
+      expect(apiMock.deleteListing).not.toHaveBeenCalled();
+      expect(screen.getByText('Departamento Viña')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Eliminar Departamento Viña' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Sí, eliminar' }));
+      await waitFor(() => expect(screen.queryByText('Departamento Viña')).toBeNull());
+      expect(apiMock.deleteListing).toHaveBeenCalledWith('l2');
+      expect(screen.getByTestId('map')).toHaveTextContent('1 en el mapa');
+    });
+
+    it('los hospedajes de OpenStreetMap no se pueden editar ni eliminar desde aquí', async () => {
+      apiMock.mapPlaces.mockResolvedValue({
+        items: [{ id: 'h1', category: 'hotel', name: 'Hotel Cerro', address: null, latitude: -33.04, longitude: -71.62, openingHours: null, website: null, ratingAverage: null, ratingCount: 0 }],
+        total: 1,
+        truncated: false,
+      });
+      render(<InicioPage canManage />);
+      await screen.findByText('Departamento Viña');
+      await viewport();
+      await screen.findByText('Hotel Cerro');
+      expect(screen.queryByRole('button', { name: 'Editar Hotel Cerro' })).toBeNull();
+      expect(screen.getByRole('button', { name: 'Editar Departamento Viña' })).toBeInTheDocument();
+    });
   });
 });

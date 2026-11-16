@@ -58,7 +58,7 @@ Resumen de los límites conocidos del proyecto. El detalle de cada uno está en 
 - Los **hoteles, hostales y hospedajes** vienen de OpenStreetMap: son alojamiento turístico, sin precio ni
   disponibilidad, y dependen de que alguien los haya mapeado.
 - Las **piezas y departamentos** y las **zonas de seguridad** son datos de ejemplo con coordenadas aproximadas: OpenStreetMap
-  no tiene arriendos con precio ni niveles de seguridad. Aún no hay formulario para publicar arriendos.
+  no tiene arriendos con precio ni niveles de seguridad. Los arriendos nuevos solo los publican administradores (no hay formulario abierto a estudiantes ni flujo de aprobación).
 - En el mapa solo aparecen las **universidades con coordenadas** (las que Wikidata pudo ubicar); el resto está
   únicamente en la lista de Universidades.
 - Las **reseñas** existen para comercios y alojamientos (las zonas no). No hay denuncias ni reseñas con foto:

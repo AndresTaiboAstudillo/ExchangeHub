@@ -151,6 +151,9 @@ export const api = {
   // Mapa de Inicio
   mapListings: () => request('/map/listings'),
   mapZones: () => request('/map/zones'),
+  createListing: (data) => request('/map/listings', { method: 'POST', body: data }),
+  updateListing: (id, data) => request(`/map/listings/${id}`, { method: 'PATCH', body: data }),
+  deleteListing: (id) => request(`/map/listings/${id}`, { method: 'DELETE' }),
   mapUniversities: () => request('/map/universities'),
   mapPlaces: ({ category, bbox, limit } = {}) =>
     request(`/map/places${query({ category: category?.length ? category.join(',') : undefined, bbox, limit })}`),

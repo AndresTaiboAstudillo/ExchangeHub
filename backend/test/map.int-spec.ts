@@ -692,4 +692,189 @@ describe('Mapa (PostgreSQL real)', () => {
       expect(mine[0]).not.toHaveProperty('registryNumber');
     });
   });
+
+  describe('arriendos (solo administradores)', () => {
+    const valid = {
+      name: 'Pieza en Playa Ancha',
+      address: 'Av. Playa Ancha 100, Valparaíso',
+      latitude: -33.0371,
+      longitude: -71.6402,
+      description: 'Pieza luminosa',
+      priceClp: 210000,
+      availability: 'Disponible',
+    };
+    const created: string[] = [];
+    const make = async (extra = {}) => {
+      const res = await api()
+        .post('/map/listings')
+        .set(admin)
+        .send({ ...valid, ...extra })
+        .expect(201);
+      created.push(res.body.id);
+      return res.body as { id: string };
+    };
+    afterEach(async () => {
+      await prisma.review.deleteMany({
+        where: { targetType: 'listing', targetId: { in: created } },
+      });
+      await prisma.listing.deleteMany({ where: { id: { in: created } } });
+      created.length = 0;
+    });
+
+    it('un usuario común no puede crear, editar ni eliminar', async () => {
+      const item = await make();
+      await api().post('/map/listings').send(valid).expect(401);
+      await api().post('/map/listings').set(member).send(valid).expect(403);
+      await api()
+        .patch(`/map/listings/${item.id}`)
+        .set(member)
+        .send({ priceClp: 1 })
+        .expect(403);
+      await api().delete(`/map/listings/${item.id}`).set(member).expect(403);
+      expect(await prisma.listing.count({ where: { id: item.id } })).toBe(1);
+    });
+
+    it('un administrador crea un arriendo que aparece en el listado, con su autor', async () => {
+      const item = await make({ name: '  Con espacios  ' });
+      const row = await prisma.listing.findUniqueOrThrow({
+        where: { id: item.id },
+      });
+      expect(row).toMatchObject({
+        name: 'Con espacios',
+        type: 'alojamiento',
+        priceClp: 210000,
+      });
+      expect(row.authorId).toBeTruthy();
+      const list = await api().get('/map/listings').set(member).expect(200);
+      expect(
+        list.body.find((l: { id: string }) => l.id === item.id),
+      ).toMatchObject({
+        name: 'Con espacios',
+        ratingCount: 0,
+        ratingAverage: null,
+      });
+    });
+
+    it('los campos opcionales pueden omitirse o venir vacíos', async () => {
+      const item = await make({
+        address: '  ',
+        description: '',
+        priceClp: undefined,
+        availability: '',
+      });
+      const row = await prisma.listing.findUniqueOrThrow({
+        where: { id: item.id },
+      });
+      expect(row).toMatchObject({
+        address: null,
+        description: null,
+        priceClp: null,
+        availability: null,
+      });
+    });
+
+    it('valida nombre, coordenadas y precio', async () => {
+      const bad = [
+        { name: 'ab' },
+        { name: 'x'.repeat(121) },
+        { latitude: 91 },
+        { latitude: 'a' },
+        { longitude: -181 },
+        { priceClp: -1 },
+        { priceClp: 1.5 },
+        { priceClp: 30_000_000 },
+        { description: 'x'.repeat(1001) },
+        { availability: 'x'.repeat(61) },
+      ];
+      for (const extra of bad) {
+        await api()
+          .post('/map/listings')
+          .set(admin)
+          .send({ ...valid, ...extra })
+          .expect(400);
+      }
+      await api()
+        .post('/map/listings')
+        .set(admin)
+        .send({ name: 'Sin coordenadas' })
+        .expect(400);
+      expect(
+        await prisma.listing.count({ where: { name: 'Sin coordenadas' } }),
+      ).toBe(0);
+    });
+
+    it('edita solo los campos enviados y permite vaciar un campo', async () => {
+      const item = await make();
+      const res = await api()
+        .patch(`/map/listings/${item.id}`)
+        .set(admin)
+        .send({ priceClp: 250000, description: '', availability: '2 cupos' })
+        .expect(200);
+      expect(res.body).toMatchObject({
+        name: valid.name,
+        priceClp: 250000,
+        description: null,
+        availability: '2 cupos',
+        latitude: valid.latitude,
+      });
+      await api()
+        .patch(`/map/listings/${item.id}`)
+        .set(admin)
+        .send({ latitude: 200 })
+        .expect(400);
+      await api()
+        .patch(`/map/listings/${randomUUID()}`)
+        .set(admin)
+        .send({ priceClp: 1 })
+        .expect(404);
+    });
+
+    it('un administrador puede editar también los arriendos de ejemplo', async () => {
+      const SAMPLE = '00000000-0000-4000-8000-0000000a0004';
+      const before = await prisma.listing.findUniqueOrThrow({
+        where: { id: SAMPLE },
+      });
+      try {
+        await api()
+          .patch(`/map/listings/${SAMPLE}`)
+          .set(admin)
+          .send({ priceClp: 999 })
+          .expect(200);
+      } finally {
+        await prisma.listing.update({
+          where: { id: SAMPLE },
+          data: { priceClp: before.priceClp },
+        });
+      }
+    });
+
+    it('al eliminar un arriendo se eliminan sus reseñas', async () => {
+      const item = await make();
+      await api()
+        .put(`/map/listings/${item.id}/reviews`)
+        .set(member)
+        .send({ rating: 5 })
+        .expect(200);
+      await api().delete(`/map/listings/${item.id}`).set(admin).expect(204);
+      expect(await prisma.listing.count({ where: { id: item.id } })).toBe(0);
+      expect(await prisma.review.count({ where: { targetId: item.id } })).toBe(
+        0,
+      );
+      await api().delete(`/map/listings/${item.id}`).set(admin).expect(404);
+      await api()
+        .get(`/map/listings/${item.id}/reviews`)
+        .set(member)
+        .expect(404);
+    });
+
+    it('el rol se lee de la base: quien pierde el rol deja de poder', async () => {
+      const id = (await api().get('/users/me').set(admin).expect(200)).body.id;
+      await prisma.user.update({ where: { id }, data: { role: 'user' } });
+      try {
+        await api().post('/map/listings').set(admin).send(valid).expect(403);
+      } finally {
+        await prisma.user.update({ where: { id }, data: { role: 'admin' } });
+      }
+    });
+  });
 });

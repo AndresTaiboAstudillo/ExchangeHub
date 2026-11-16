@@ -1,8 +1,50 @@
+import { useState } from 'react';
 import { ratingLabel } from '../../lib/map';
 import Badge from '../Badge';
 
+/** Editar y eliminar un arriendo (solo administradores). Eliminar pide confirmación en la misma tarjeta. */
+function AdminActions({ item, onEdit, onDelete }) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const remove = async () => {
+    setBusy(true);
+    try {
+      await onDelete(item.id);
+    } finally {
+      setBusy(false);
+      setConfirming(false);
+    }
+  };
+  const btn = 'px-2 py-0.5 rounded hover:bg-surface-2 disabled:opacity-60';
+  return (
+    <div className="flex justify-end items-center gap-1 mt-1 text-xs text-muted">
+      {confirming ? (
+        <>
+          <span>¿Eliminar este arriendo y sus reseñas?</span>
+          <button type="button" onClick={remove} disabled={busy} className={`${btn} font-semibold text-red-600`}>
+            Sí, eliminar
+          </button>
+          <button type="button" onClick={() => setConfirming(false)} disabled={busy} className={btn}>
+            No
+          </button>
+        </>
+      ) : (
+        <>
+          <button type="button" onClick={() => onEdit(item)} aria-label={`Editar ${item.name}`} className={btn}>
+            ✏️ Editar
+          </button>
+          <button type="button" onClick={() => setConfirming(true)} aria-label={`Eliminar ${item.name}`} className={btn}>
+            🗑 Eliminar
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 /** Tarjeta de un lugar. Tocarla lo muestra en el mapa. */
-export default function ListingCard({ item, selected = false, onOpen, onReviews }) {
+export default function ListingCard({ item, selected = false, onOpen, onReviews, onEdit, onDelete }) {
+  const manageable = Boolean(onEdit && onDelete && item.reviewTarget === 'listing');
   const reviewable = (item.kind === 'comercio' || item.kind === 'alojamiento') && onReviews;
   const card = (
     <button
@@ -35,9 +77,18 @@ export default function ListingCard({ item, selected = false, onOpen, onReviews 
       </div>
     </button>
   );
-  if (!reviewable) return card;
+  if (!reviewable && !manageable) return card;
 
   const label = ratingLabel(item.rating);
+  const admin = manageable && <AdminActions item={item} onEdit={onEdit} onDelete={onDelete} />;
+  if (!reviewable) {
+    return (
+      <div>
+        {card}
+        {admin}
+      </div>
+    );
+  }
   return (
     <div>
       {card}
@@ -50,6 +101,7 @@ export default function ListingCard({ item, selected = false, onOpen, onReviews 
         <span className={label ? 'font-semibold text-amber-700' : 'text-muted'}>{label ?? '☆ Sin reseñas todavía'}</span>
         <span className="font-semibold text-forest-mid">{label ? 'Ver reseñas' : 'Sé la primera persona en opinar'}</span>
       </button>
+      {admin}
     </div>
   );
 }

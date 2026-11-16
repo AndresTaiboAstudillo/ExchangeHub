@@ -10,7 +10,7 @@ Mapa interactivo (Leaflet + OpenStreetMap) con tres capas: **alojamientos**, **c
 | Comercios y servicios | OpenStreetMap vía Overpass, importados por el servicio Python | `places` |
 | Hoteles, hostales y hospedajes | OpenStreetMap vía Overpass (misma importación que los comercios) | `places` |
 | Universidades e institutos | Catálogo de la sección Universidades (Mineduc + coordenadas de Wikidata) | `universities` |
-| Piezas y departamentos | Datos de ejemplo de la migración (`author_id` vacío) | `listings` |
+| Piezas y departamentos | Publicados por administradores (más 4 de ejemplo de la migración, sin autor) | `listings` |
 | Zonas | Datos de ejemplo de la migración | `zones` |
 
 Los datos de ejemplo tienen coordenadas aproximadas y ids fijos; se pueden editar o borrar desde la base
@@ -53,6 +53,33 @@ Cada comercio de `GET /map/places` y cada alojamiento de `GET /map/listings` inc
 
 El frontend pide los comercios solo de la zona visible (con un pequeño retardo al mover el mapa) y no los pide
 si el zoom es menor a 13.
+
+## Cómo llegar
+El botón del globo del mapa abre la **app de mapas del dispositivo** con el destino ya puesto y la ruta desde la
+ubicación actual de la persona (`directionsUrl` en `lib/map.js`): Apple Maps en iPhone y iPad, y un enlace de Google
+Maps en el resto. En Android, y dentro de la app Capacitor, ese enlace abre Google Maps si está instalada; en un
+computador abre la web. No hay navegación propia: la ruta, el tráfico y el transporte público los resuelve la app
+de mapas. Para dibujar rutas dentro de ExchangeHub haría falta un servicio de rutas con clave y cuotas.
+
+## Arriendos publicados por administradores
+Los arriendos (piezas, departamentos, pensiones) solo los puede publicar, editar y eliminar un **administrador**
+(`users.role = 'admin'`); el resto de las personas los ve y los reseña.
+- **Desde la app:** en Inicio → Alojamiento, un administrador ve **＋ Agregar arriendo** y, en cada arriendo,
+  **Editar** y **Eliminar**. El formulario pide nombre, dirección, precio mensual, disponibilidad y descripción;
+  la ubicación se elige tocando el mapa ("📍 Elegir en el mapa") o escribiendo latitud y longitud.
+- **API:** `POST /map/listings`, `PATCH /map/listings/:id` y `DELETE /map/listings/:id`, todas con `AdminGuard`
+  (403 para quien no sea administrador). El rol se lee de la base en cada llamada, no del token: quitarlo surte
+  efecto de inmediato. Cada arriendo guarda quién lo publicó (`listings.author_id`).
+- Eliminar un arriendo elimina también sus reseñas. Los hoteles y hospedajes de OpenStreetMap no se editan aquí.
+- Los botones solo se muestran a administradores, pero la protección real está en el servidor.
+
+### Cómo hacer administrador a un usuario
+No hay pantalla para esto a propósito (evita que alguien se otorgue el rol). Con acceso a la base:
+```bash
+docker compose exec postgres sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+  -c "UPDATE users SET role = '"'"'admin'"'"' WHERE email = '"'"'correo@ejemplo.cl'"'"';"'
+```
+Para quitarlo, la misma instrucción con `role = 'user'`. La persona debe volver a abrir la app para ver los botones.
 
 ## Universidades en el mapa
 La pestaña **🎓 Universidades** de Inicio muestra las instituciones vigentes que tienen coordenadas (filtros:

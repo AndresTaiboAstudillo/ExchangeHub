@@ -13,12 +13,22 @@ const VIEWPORT_DEBOUNCE_MS = 400;
  * Mapa de Leaflet con mosaicos de OpenStreetMap. Dibuja `items` (alojamientos, comercios o zonas),
  * abre el globo del seleccionado y avisa cuando cambia la zona visible.
  */
-export default function MapPanel({ items, selectedId, onSelect, onViewportChange, onReviews, status }) {
+export default function MapPanel({
+  items,
+  selectedId,
+  onSelect,
+  onViewportChange,
+  onReviews,
+  picking = false,
+  onPick,
+  pickedPoint = null,
+  status,
+}) {
   const containerRef = useRef(null);
   const leaflet = useRef(null); // { L, map, layer, markers: Map<id, marker> }
   const callbacks = useRef({});
   useEffect(() => {
-    callbacks.current = { onSelect, onViewportChange, onReviews };
+    callbacks.current = { onSelect, onViewportChange, onReviews, picking, onPick };
   });
   const [ready, setReady] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -45,6 +55,8 @@ export default function MapPanel({ items, selectedId, onSelect, onViewportChange
         );
       };
       map.on('moveend', emit);
+      // Al elegir la ubicación de un arriendo, tocar el mapa marca el punto.
+      map.on('click', (e) => callbacks.current.picking && callbacks.current.onPick?.(e.latlng.lat, e.latlng.lng));
       map.whenReady(() => callbacks.current.onViewportChange?.(bboxParam(map.getBounds()), map.getZoom()));
       setReady(true);
     });
@@ -110,6 +122,30 @@ export default function MapPanel({ items, selectedId, onSelect, onViewportChange
     }
     marker.openPopup();
   }, [selectedId, items, ready]);
+
+  // Cursor de mira mientras se elige un punto, y marcador del punto elegido.
+  useEffect(() => {
+    const ctx = leaflet.current;
+    if (!ready || !ctx) return;
+    ctx.map.getContainer().classList.toggle('eh-picking', picking);
+  }, [picking, ready]);
+  useEffect(() => {
+    const ctx = leaflet.current;
+    if (!ready || !ctx) return undefined;
+    const { L, map } = ctx;
+    if (!pickedPoint) return undefined;
+    const marker = L.marker([pickedPoint.lat, pickedPoint.lng], {
+      icon: L.divIcon({
+        className: 'eh-pin',
+        html: '<span class="eh-pin-body eh-pin-rose"><span class="eh-pin-emoji">📍</span></span>',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+      }),
+      interactive: false,
+      keyboard: false,
+    }).addTo(map);
+    return () => marker.remove();
+  }, [pickedPoint, ready]);
 
   const locate = () => {
     const ctx = leaflet.current;

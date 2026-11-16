@@ -81,6 +81,32 @@ describe('buildPopup', () => {
   });
 });
 
+describe('cómo llegar', () => {
+  const ua = {
+    android: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36',
+    iphone: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148',
+    ipadAsMac: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Version/17 Safari/605.1.15',
+    windows: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36',
+  };
+  const google = 'https://www.google.com/maps/dir/?api=1&destination=-33.04,-71.62';
+  const apple = 'https://maps.apple.com/?daddr=-33.04,-71.62';
+
+  it('usa Google Maps en Android, Windows y Mac de escritorio', () => {
+    expect(directionsUrl(-33.04, -71.62, { userAgent: ua.android, touchPoints: 5 })).toBe(google);
+    expect(directionsUrl(-33.04, -71.62, { userAgent: ua.windows, touchPoints: 0 })).toBe(google);
+    expect(directionsUrl(-33.04, -71.62, { userAgent: ua.ipadAsMac, touchPoints: 0 })).toBe(google);
+  });
+
+  it('usa Apple Maps en iPhone y en iPad (aunque se presente como Mac)', () => {
+    expect(directionsUrl(-33.04, -71.62, { userAgent: ua.iphone, touchPoints: 5 })).toBe(apple);
+    expect(directionsUrl(-33.04, -71.62, { userAgent: ua.ipadAsMac, touchPoints: 5 })).toBe(apple);
+  });
+
+  it('sin navegador (render en servidor) usa Google Maps', () => {
+    expect(directionsUrl(-33.04, -71.62, { userAgent: '', touchPoints: 0 })).toBe(google);
+  });
+});
+
 describe('alojamientos de OpenStreetMap', () => {
   it('hoteles, hostales y hospedajes se muestran como alojamientos y se reseñan como lugares', () => {
     const h = fromPlace({ id: 'h', category: 'hostal', name: 'Hostal', latitude: 0, longitude: 0 });

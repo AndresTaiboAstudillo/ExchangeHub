@@ -13,6 +13,53 @@
         ],
         "type": "object"
       },
+      "CreateListingDto": {
+        "properties": {
+          "address": {
+            "maxLength": 200,
+            "nullable": true,
+            "type": "string"
+          },
+          "availability": {
+            "example": "Disponible",
+            "maxLength": 60,
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "nullable": true,
+            "type": "string"
+          },
+          "latitude": {
+            "example": -33.0437,
+            "type": "number"
+          },
+          "longitude": {
+            "example": -71.6288,
+            "type": "number"
+          },
+          "name": {
+            "example": "Habitación en Cerro Alegre",
+            "maxLength": 120,
+            "minLength": 3,
+            "type": "string"
+          },
+          "priceClp": {
+            "description": "Arriendo mensual en pesos chilenos.",
+            "maximum": 20000000,
+            "minimum": 0,
+            "nullable": true,
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "latitude",
+          "longitude"
+        ],
+        "type": "object"
+      },
       "CreatePostDto": {
         "properties": {
           "body": {
@@ -106,6 +153,48 @@
         "required": [
           "status"
         ],
+        "type": "object"
+      },
+      "UpdateListingDto": {
+        "properties": {
+          "address": {
+            "maxLength": 200,
+            "nullable": true,
+            "type": "string"
+          },
+          "availability": {
+            "example": "Disponible",
+            "maxLength": 60,
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "nullable": true,
+            "type": "string"
+          },
+          "latitude": {
+            "example": -33.0437,
+            "type": "number"
+          },
+          "longitude": {
+            "example": -71.6288,
+            "type": "number"
+          },
+          "name": {
+            "example": "Habitación en Cerro Alegre",
+            "maxLength": 120,
+            "minLength": 3,
+            "type": "string"
+          },
+          "priceClp": {
+            "description": "Arriendo mensual en pesos chilenos.",
+            "maximum": 20000000,
+            "minimum": 0,
+            "nullable": true,
+            "type": "number"
+          }
+        },
         "type": "object"
       },
       "UpdateProfileDto": {
@@ -536,6 +625,100 @@
           }
         ],
         "summary": "Alojamientos publicados",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "post": {
+        "operationId": "MapController_createListing",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Publicar un arriendo (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/listings/{id}": {
+      "delete": {
+        "operationId": "MapController_deleteListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un arriendo y sus reseñas (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "patch": {
+        "operationId": "MapController_updateListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateListingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar un arriendo (solo administradores)",
         "tags": [
           "Mapa"
         ]

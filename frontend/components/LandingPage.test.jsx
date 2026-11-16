@@ -27,9 +27,10 @@ describe('LandingPage', () => {
     expect((await screen.findByRole('alert')).textContent).toBe('Credenciales inválidas');
   });
 
-  it('el acceso con cuenta universitaria aún no está disponible', () => {
+  it('solo ofrece ingresar con correo y contraseña (sin acceso con cuenta universitaria)', () => {
     setup();
-    expect(screen.getByRole('button', { name: /Cuenta universitaria PUCV/ })).toBeDisabled();
+    expect(screen.queryByText(/Cuenta universitaria/)).toBeNull();
+    expect(screen.queryByText(/o continúa con/)).toBeNull();
   });
 
   describe('registro', () => {

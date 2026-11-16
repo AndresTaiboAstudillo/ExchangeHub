@@ -43,6 +43,8 @@ body {
 .eh-pin-amber { background: #d4a017; }
 .eh-pin-green { background: #059669; }
 .eh-pin-blue { background: #2563eb; }
+.eh-pin-rose { background: #e11d48; }
+.leaflet-container.eh-picking { cursor: crosshair; }
 .eh-pin-selected .eh-pin-body {
   outline: 3px solid rgba(45, 106, 79, 0.45);
   transform: rotate(-45deg) scale(1.18);

@@ -13,7 +13,9 @@ import {
   fromZone,
   matchesQuery,
 } from '../lib/map';
+import { EMPTY_LISTING, toFormValues } from '../lib/listingForm';
 import ListingCard from './inicio/ListingCard';
+import ListingFormModal from './inicio/ListingFormModal';
 import MapPanel from './inicio/MapPanel';
 import ReviewsModal from './inicio/ReviewsModal';
 
@@ -40,7 +42,8 @@ const CHIPS = {
   alojamiento: [TODOS, ['arriendo', { label: 'Piezas y deptos', emoji: '🏠' }], ...LODGING_CATEGORY_IDS.map(chip)],
 };
 
-export default function InicioPage() {
+/** `canManage`: la persona es administradora y puede publicar, editar y eliminar arriendos. */
+export default function InicioPage({ canManage = false }) {
   // Desde Universidades se llega con ?universidad=<id>: se abre esa pestaña y se muestra la institución.
   const focusId = useSearchParams().get('universidad');
   const focusRef = useRef(focusId);
@@ -50,6 +53,10 @@ export default function InicioPage() {
   const [selectedId, setSelectedId] = useState(null);
   const [viewport, setViewport] = useState(null); // { bbox, zoom }
   const [reviewsPlace, setReviewsPlace] = useState(null); // comercio con el detalle abierto
+  // Formulario de arriendos: { mode, id?, initial, key, hidden } y modo "elegir punto en el mapa".
+  const [form, setForm] = useState(null);
+  const [picking, setPicking] = useState(false);
+  const [pickedPoint, setPickedPoint] = useState(null);
 
   const [listings, setListings] = useState({ items: [], status: 'loading' });
   const [zones, setZones] = useState({ items: [], status: 'loading' });
@@ -135,6 +142,53 @@ export default function InicioPage() {
     if (place) setReviewsPlace(place);
   }, []);
   const closeReviews = useCallback(() => setReviewsPlace(null), []);
+
+  const openCreate = () => {
+    setForm({ mode: 'create', initial: EMPTY_LISTING, key: 0, hidden: false });
+    setPickedPoint(null);
+  };
+  const openEdit = (item) => {
+    setForm({ mode: 'edit', id: item.id, initial: toFormValues(item.listing), key: 0, hidden: false });
+    setPickedPoint({ lat: item.lat, lng: item.lng });
+  };
+  const closeForm = useCallback(() => {
+    setForm(null);
+    setPicking(false);
+    setPickedPoint(null);
+  }, []);
+  const startPicking = (values) => {
+    setForm((f) => ({ ...f, initial: values, hidden: true }));
+    setPicking(true);
+  };
+  const cancelPicking = () => {
+    setPicking(false);
+    setForm((f) => (f ? { ...f, hidden: false, key: f.key + 1 } : f));
+  };
+  const onPick = useCallback((lat, lng) => {
+    setPicking(false);
+    setPickedPoint({ lat, lng });
+    setForm((f) =>
+      f ? { ...f, hidden: false, key: f.key + 1, initial: { ...f.initial, latitude: lat.toFixed(6), longitude: lng.toFixed(6) } } : f,
+    );
+  }, []);
+  const saveListing = async (body) => {
+    if (form.mode === 'edit') {
+      const row = await api.updateListing(form.id, body);
+      setListings((l) => ({ ...l, items: l.items.map((i) => (i.id === row.id ? fromListing(row) : i)) }));
+      setSelectedId(row.id);
+    } else {
+      const row = await api.createListing(body);
+      setListings((l) => ({ ...l, items: [...l.items, fromListing(row)] }));
+      setSelectedId(row.id);
+    }
+    closeForm();
+  };
+  const deleteListing = async (id) => {
+    await api.deleteListing(id);
+    setListings((l) => ({ ...l, items: l.items.filter((i) => i.id !== id) }));
+    setSelectedId((s) => (s === id ? null : s));
+    setReviewsPlace((r) => (r?.id === id ? null : r));
+  };
   const updateRating = useCallback((id, rating) => {
     const apply = (i) => (i.id === id ? { ...i, rating } : i);
     setPlaces((p) => ({ ...p, items: p.items.map(apply) }));
@@ -233,6 +287,15 @@ export default function InicioPage() {
         </div>
 
         <div className="thin-scroll flex-1 overflow-y-auto p-3.5 flex flex-col gap-3">
+          {canManage && tab === 'alojamiento' && (
+            <button
+              type="button"
+              onClick={openCreate}
+              className="w-full px-3.5 py-2 rounded-lg text-[13px] font-semibold border-[1.5px] border-dashed border-forest-mid text-forest-mid hover:bg-surface-2"
+            >
+              ＋ Agregar arriendo
+            </button>
+          )}
           {empty ? (
             <p className="text-sm text-muted text-center py-8">{empty}</p>
           ) : (
@@ -244,7 +307,14 @@ export default function InicioPage() {
                   else cardRefs.current.delete(item.id);
                 }}
               >
-                <ListingCard item={item} selected={item.id === selectedId} onOpen={select} onReviews={openReviews} />
+                <ListingCard
+                  item={item}
+                  selected={item.id === selectedId}
+                  onOpen={select}
+                  onReviews={openReviews}
+                  onEdit={canManage ? openEdit : undefined}
+                  onDelete={canManage ? deleteListing : undefined}
+                />
               </div>
             ))
           )}
@@ -264,17 +334,41 @@ export default function InicioPage() {
       </div>
 
       {/* Mapa */}
-      <div className="h-[45vh] lg:h-auto order-1 lg:order-2 flex flex-col">
+      <div className="h-[45vh] lg:h-auto order-1 lg:order-2 flex flex-col relative">
+        {picking && (
+          <div
+            role="status"
+            className="absolute z-[1000] top-3 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px] bg-white shadow-card-lg rounded-lg px-4 py-2.5 flex items-center justify-between gap-3 text-[13px]"
+          >
+            <span>📍 Toca el mapa para marcar la ubicación del arriendo</span>
+            <button type="button" onClick={cancelPicking} className="font-semibold text-forest-mid underline">
+              Cancelar
+            </button>
+          </div>
+        )}
         <MapPanel
           items={tab === 'comercio' && !zoomedIn ? [] : visible}
           selectedId={selectedId}
           onSelect={select}
           onViewportChange={onViewportChange}
           onReviews={openReviews}
+          picking={picking}
+          onPick={onPick}
+          pickedPoint={pickedPoint}
           status={status}
         />
       </div>
 
+      {form && !form.hidden && (
+        <ListingFormModal
+          key={form.key}
+          mode={form.mode}
+          initial={form.initial}
+          onSubmit={saveListing}
+          onCancel={closeForm}
+          onPickLocation={startPicking}
+        />
+      )}
       {reviewsPlace && (
         <ReviewsModal key={reviewsPlace.id} place={reviewsPlace} onClose={closeReviews} onRatingChange={updateRating} />
       )}

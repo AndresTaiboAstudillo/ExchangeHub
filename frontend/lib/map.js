@@ -56,8 +56,25 @@ export function ratingLabel(rating) {
   return rating?.count > 0 ? `★ ${formatRating(rating.average)} (${rating.count})` : null;
 }
 
-export function directionsUrl(lat, lng) {
-  return `https://www.openstreetmap.org/directions?to=${lat}%2C${lng}`;
+function browserInfo() {
+  if (typeof navigator === 'undefined') return { userAgent: '', touchPoints: 0 };
+  return { userAgent: navigator.userAgent ?? '', touchPoints: navigator.maxTouchPoints ?? 0 };
+}
+
+/** iPhone, iPad (también el que se presenta como Mac de escritorio) e iPod. */
+const isApple = ({ userAgent, touchPoints }) =>
+  /iPhone|iPad|iPod/.test(userAgent) || (/Macintosh/.test(userAgent) && touchPoints > 1);
+
+/**
+ * Enlace "Cómo llegar": abre la app de mapas del dispositivo con el destino ya puesto y la ruta desde
+ * donde está la persona. En iPhone/iPad abre Apple Maps; en el resto (Android, la app de Capacitor y
+ * computadores) un enlace de Google Maps, que en Android abre la app instalada y en un PC, la web.
+ */
+export function directionsUrl(lat, lng, info = browserInfo()) {
+  const destination = `${lat},${lng}`;
+  return isApple(info)
+    ? `https://maps.apple.com/?daddr=${destination}`
+    : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
 }
 
 /** Texto sin tildes ni mayúsculas, para buscar "panaderia" y encontrar "Panadería". */
@@ -91,6 +108,7 @@ export function fromListing(l) {
     badge: l.availability ? { text: l.availability, color: /cupo/i.test(l.availability) ? 'amber' : 'green' } : null,
     description: l.description,
     reviewTarget: 'listing',
+    listing: l, // datos originales, para que un administrador pueda editarlos
     rating: { average: l.ratingAverage ?? null, count: l.ratingCount ?? 0 },
   };
 }

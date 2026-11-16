@@ -1,7 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { PlacesQueryDto } from './dto/places-query.dto.js';
+import type { CreateListingDto, UpdateListingDto } from './dto/listing.dto.js';
 import { ReviewsService } from './reviews.service.js';
 
 const placeSelect = {
@@ -27,6 +32,18 @@ export function parseBbox(bbox: string) {
   return { west, south, east, north };
 }
 
+const LISTING_SELECT = {
+  id: true,
+  type: true,
+  name: true,
+  address: true,
+  latitude: true,
+  longitude: true,
+  description: true,
+  priceClp: true,
+  availability: true,
+} as const;
+
 @Injectable()
 export class MapService {
   constructor(
@@ -37,17 +54,7 @@ export class MapService {
   async listListings() {
     const rows = await this.prisma.listing.findMany({
       orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
-      select: {
-        id: true,
-        type: true,
-        name: true,
-        address: true,
-        latitude: true,
-        longitude: true,
-        description: true,
-        priceClp: true,
-        availability: true,
-      },
+      select: LISTING_SELECT,
     });
     const ratings = await this.reviews.ratingsFor(
       'listing',
@@ -58,6 +65,49 @@ export class MapService {
       ratingAverage: ratings.get(l.id)?.average ?? null,
       ratingCount: ratings.get(l.id)?.count ?? 0,
     }));
+  }
+
+  /** Un administrador publica un arriendo; queda registrado quién lo creó. */
+  async createListing(adminId: string, dto: CreateListingDto) {
+    const row = await this.prisma.listing.create({
+      data: { ...dto, type: 'alojamiento', authorId: adminId },
+      select: LISTING_SELECT,
+    });
+    return { ...row, ratingAverage: null, ratingCount: 0 };
+  }
+
+  async updateListing(id: string, dto: UpdateListingDto) {
+    await this.assertListing(id);
+    const row = await this.prisma.listing.update({
+      where: { id },
+      data: dto,
+      select: LISTING_SELECT,
+    });
+    const ratings = await this.reviews.ratingsFor('listing', [id]);
+    return {
+      ...row,
+      ratingAverage: ratings.get(id)?.average ?? null,
+      ratingCount: ratings.get(id)?.count ?? 0,
+    };
+  }
+
+  /** Borra el arriendo y sus reseñas (la referencia es polimórfica: no hay cascada en la base). */
+  async deleteListing(id: string) {
+    await this.assertListing(id);
+    await this.prisma.$transaction([
+      this.prisma.review.deleteMany({
+        where: { targetType: 'listing', targetId: id },
+      }),
+      this.prisma.listing.delete({ where: { id } }),
+    ]);
+  }
+
+  private async assertListing(id: string) {
+    const found = await this.prisma.listing.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!found) throw new NotFoundException('Alojamiento no encontrado');
   }
 
   /** Instituciones vigentes con ubicación conocida (las del catálogo que Wikidata pudo ubicar). */
