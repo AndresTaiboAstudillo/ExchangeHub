@@ -92,7 +92,7 @@ describe("UniversidadesPage", () => {
     expect(within(card).getByText("Fundada en 1988")).toBeInTheDocument();
     expect(
       within(card).getByRole("link", { name: "Ver en el mapa" }),
-    ).toHaveAttribute("href", expect.stringContaining("openstreetmap.org"));
+    ).toHaveAttribute("href", expect.stringMatching(/^\/inicio\?universidad=/));
     expect(within(card).queryByText(/Fuente:/)).not.toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("2 instituciones");
   });

@@ -149,15 +149,6 @@ export default function LandingPage({ onLogin, onRegister }) {
               >
                 {busy ? 'Iniciando sesión…' : 'Iniciar sesión'}
               </button>
-              <Divider />
-              <button
-                type="button"
-                disabled
-                title="Próximamente"
-                className="w-full flex justify-center items-center gap-1.5 py-2.5 px-5 rounded-lg text-sm font-semibold border-[1.5px] border-border text-ink-mid opacity-60 cursor-not-allowed"
-              >
-                🌐 &nbsp;Cuenta universitaria PUCV
-              </button>
             </form>
           ) : (
             <form onSubmit={submitRegister} className="flex flex-col gap-4">
@@ -212,10 +203,6 @@ export default function LandingPage({ onLogin, onRegister }) {
               </button>
             </form>
           )}
-
-          <p className="text-xs text-muted mt-4 text-center">
-            Al acceder aceptas nuestros <u>Términos de uso</u> y <u>Política de privacidad</u>
-          </p>
         </div>
       </div>
     </div>
@@ -247,10 +234,3 @@ function ErrorMessage({ text }) {
   );
 }
 
-function Divider() {
-  return (
-    <div className="flex items-center gap-3 text-muted text-xs my-1 before:content-[''] before:flex-1 before:h-px before:bg-border after:content-[''] after:flex-1 after:h-px after:bg-border">
-      o continúa con
-    </div>
-  );
-}

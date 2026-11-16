@@ -85,16 +85,18 @@ model Friendship {
 
 model Listing {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  authorId    String   @map("author_id") @db.Uuid
+  authorId    String?  @map("author_id") @db.Uuid
   type        String
   name        String
   address     String?
   latitude    Float
   longitude   Float
   description String?
+  priceClp    Int?     @map("price_clp")
+  availability String?
   createdAt   DateTime @default(now()) @map("created_at")
 
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author User? @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([authorId])
   @@map("listings")
@@ -108,6 +110,7 @@ model Zone {
   safeHours   String?  @map("safe_hours")
   latCenter   Float    @map("lat_center")
   lngCenter   Float    @map("lng_center")
+  radiusM     Int      @default(400) @map("radius_m")
   createdAt   DateTime @default(now()) @map("created_at")
 
   @@map("zones")
@@ -124,10 +127,12 @@ model Review {
   rating     Int
   body       String?
   createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  @@index([targetType, targetId])
+  @@unique([authorId, targetType, targetId])
+  @@index([targetType, targetId, createdAt(sort: Desc)])
   @@index([authorId])
   @@map("reviews")
 }
@@ -340,4 +345,25 @@ model Notification {
 
   @@index([userId, createdAt(sort: Desc)])
   @@map("notifications")
+}
+
+/// Comercios y servicios importados de OpenStreetMap (ODbL). Se refrescan por el pipeline de Python.
+model Place {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  source       String   @default("osm")
+  externalId   String   @map("external_id")
+  category     String
+  name         String
+  address      String?
+  latitude     Float
+  longitude    Float
+  openingHours String?  @map("opening_hours")
+  website      String?
+  contentHash  String   @map("content_hash")
+  fetchedAt    DateTime @map("fetched_at")
+
+  @@unique([source, externalId])
+  @@index([category])
+  @@index([latitude, longitude])
+  @@map("places")
 }

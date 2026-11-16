@@ -13,6 +13,53 @@
         ],
         "type": "object"
       },
+      "CreateListingDto": {
+        "properties": {
+          "address": {
+            "maxLength": 200,
+            "nullable": true,
+            "type": "string"
+          },
+          "availability": {
+            "example": "Disponible",
+            "maxLength": 60,
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "nullable": true,
+            "type": "string"
+          },
+          "latitude": {
+            "example": -33.0437,
+            "type": "number"
+          },
+          "longitude": {
+            "example": -71.6288,
+            "type": "number"
+          },
+          "name": {
+            "example": "Habitación en Cerro Alegre",
+            "maxLength": 120,
+            "minLength": 3,
+            "type": "string"
+          },
+          "priceClp": {
+            "description": "Arriendo mensual en pesos chilenos.",
+            "maximum": 20000000,
+            "minimum": 0,
+            "nullable": true,
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "latitude",
+          "longitude"
+        ],
+        "type": "object"
+      },
       "CreatePostDto": {
         "properties": {
           "body": {
@@ -108,6 +155,48 @@
         ],
         "type": "object"
       },
+      "UpdateListingDto": {
+        "properties": {
+          "address": {
+            "maxLength": 200,
+            "nullable": true,
+            "type": "string"
+          },
+          "availability": {
+            "example": "Disponible",
+            "maxLength": 60,
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "nullable": true,
+            "type": "string"
+          },
+          "latitude": {
+            "example": -33.0437,
+            "type": "number"
+          },
+          "longitude": {
+            "example": -71.6288,
+            "type": "number"
+          },
+          "name": {
+            "example": "Habitación en Cerro Alegre",
+            "maxLength": 120,
+            "minLength": 3,
+            "type": "string"
+          },
+          "priceClp": {
+            "description": "Arriendo mensual en pesos chilenos.",
+            "maximum": 20000000,
+            "minimum": 0,
+            "nullable": true,
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "UpdateProfileDto": {
         "properties": {
           "bio": {
@@ -157,6 +246,25 @@
           }
         },
         "type": "object"
+      },
+      "UpsertReviewDto": {
+        "properties": {
+          "body": {
+            "maxLength": 1000,
+            "nullable": true,
+            "type": "string"
+          },
+          "rating": {
+            "description": "Estrellas.",
+            "maximum": 5,
+            "minimum": 1,
+            "type": "number"
+          }
+        },
+        "required": [
+          "rating"
+        ],
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -175,6 +283,68 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/admin/users": {
+      "delete": {
+        "operationId": "AdminController_remove",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "example": "estudiante@correo.cl",
+              "format": "email",
+              "maxLength": 254,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar a un usuario por su correo, con todo lo que publicó (administradores)",
+        "tags": [
+          "admin"
+        ]
+      },
+      "get": {
+        "operationId": "AdminController_lookup",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "example": "estudiante@correo.cl",
+              "format": "email",
+              "maxLength": 254,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver a quién se eliminaría y cuánto contenido tiene (administradores)",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "AuthController_login",
@@ -499,6 +669,471 @@
         "summary": "Comprueba PostgreSQL y el servicio Python",
         "tags": [
           "Salud"
+        ]
+      }
+    },
+    "/map/listings": {
+      "get": {
+        "operationId": "MapController_listings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Alojamientos publicados",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "post": {
+        "operationId": "MapController_createListing",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Publicar un arriendo (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/listings/{id}": {
+      "delete": {
+        "operationId": "MapController_deleteListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un arriendo y sus reseñas (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "patch": {
+        "operationId": "MapController_updateListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateListingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar un arriendo (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/listings/{id}/reviews": {
+      "get": {
+        "operationId": "MapController_listListingReviews",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Id de la última reseña recibida.",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reseñas de un alojamiento",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "put": {
+        "operationId": "MapController_upsertListingReview",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertReviewDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dejar o actualizar mi reseña de un alojamiento",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/places": {
+      "get": {
+        "operationId": "MapController_places",
+        "parameters": [
+          {
+            "description": "Una o varias categorías separadas por coma.",
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "items": {
+                "enum": [
+                  "feria",
+                  "supermercado",
+                  "minimarket",
+                  "panaderia",
+                  "verduleria",
+                  "farmacia",
+                  "lavanderia",
+                  "hotel",
+                  "hostal",
+                  "hospedaje"
+                ],
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            }
+          },
+          {
+            "description": "Zona visible como `oeste,sur,este,norte` (lng,lat,lng,lat).",
+            "in": "query",
+            "name": "bbox",
+            "required": false,
+            "schema": {
+              "example": "-71.66,-33.06,-71.58,-33.02",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 300,
+              "maximum": 500,
+              "minimum": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Comercios y servicios (OpenStreetMap), filtrables por categoría y zona visible",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/places/refresh": {
+      "post": {
+        "operationId": "MapController_refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar los comercios desde OpenStreetMap (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/places/{id}/reviews": {
+      "get": {
+        "operationId": "MapController_listReviews",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Id de la última reseña recibida.",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reseñas de un comercio, con promedio y la reseña propia",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "put": {
+        "operationId": "MapController_upsertReview",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertReviewDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dejar o actualizar mi reseña de un comercio (una por persona)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/reviews/{reviewId}": {
+      "delete": {
+        "operationId": "MapController_removeReview",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reviewId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una reseña propia (o cualquiera, si eres administrador)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/universities": {
+      "get": {
+        "operationId": "MapController_universities",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Universidades e institutos vigentes con ubicación conocida",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/zones": {
+      "get": {
+        "operationId": "MapController_zones",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Zonas con su nivel de seguridad",
+        "tags": [
+          "Mapa"
         ]
       }
     },
@@ -1237,13 +1872,6 @@
         ],
         "responses": {
           "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            },
             "description": ""
           }
         },

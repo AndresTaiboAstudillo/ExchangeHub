@@ -53,6 +53,17 @@ describe('PythonService', () => {
     );
   });
 
+  it('runPlacesPipeline envía POST a la ruta de lugares con el tiempo largo del pipeline', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ status: 'ok' }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(new PythonService().runPlacesPipeline()).resolves.toEqual({
+      status: 'ok',
+    });
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe('http://localhost:8001/v1/pipeline/places/run');
+    expect(init.method).toBe('POST');
+  });
+
   describe('runUniversitiesPipeline', () => {
     it('envía POST con las fuentes y devuelve el resultado', async () => {
       const fetchMock = vi

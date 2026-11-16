@@ -52,6 +52,23 @@ Resumen de los límites conocidos del proyecto. El detalle de cada uno está en 
 - Los mensajes no se cifran de extremo a extremo y no se borran: si dos personas dejan de ser amigas
   se conserva el historial, pero ninguna puede leerlo ni escribir. Falta definir una política de retención.
 
+## Mapa de Inicio (`docs/mapa.md`)
+- Los **comercios** vienen de OpenStreetMap: dependen de que alguien los haya mapeado y de que el nombre y
+  la categoría estén bien etiquetados. No incluyen precios. Cubren solo Valparaíso y Viña del Mar.
+- Los **hoteles, hostales y hospedajes** vienen de OpenStreetMap: son alojamiento turístico, sin precio ni
+  disponibilidad, y dependen de que alguien los haya mapeado.
+- Las **piezas y departamentos** y las **zonas de seguridad** son datos de ejemplo con coordenadas aproximadas: OpenStreetMap
+  no tiene arriendos con precio ni niveles de seguridad. Los arriendos nuevos solo los publican administradores (no hay formulario abierto a estudiantes ni flujo de aprobación).
+- En el mapa solo aparecen las **universidades con coordenadas** (las que Wikidata pudo ubicar); el resto está
+  únicamente en la lista de Universidades.
+- Las **reseñas** existen para comercios y alojamientos (las zonas no). No hay denuncias ni reseñas con foto:
+  la moderación es manual (un administrador borra desde la API) y no se verifica que la persona haya visitado
+  el lugar.
+- Los mosaicos públicos de OpenStreetMap tienen una política de uso (tráfico moderado, atribución). Para
+  producción con mucho tráfico conviene un proveedor de mosaicos propio (`NEXT_PUBLIC_TILE_URL`).
+- La actualización de comercios es manual (administrador) y el mapa necesita internet para los mosaicos.
+- "Mi ubicación" requiere el permiso del navegador o del teléfono.
+
 ## Despliegue (`docs/despliegue-staging.md`)
 - Staging usa el Docker del ejecutor (local); con el ejecutor de GitHub no permanece disponible tras el job.
 - No hay entorno de producción ni despliegue remoto.
@@ -60,3 +77,10 @@ Resumen de los límites conocidos del proyecto. El detalle de cada uno está en 
 - La **universidad de destino** del estudiante aún no se guarda en el perfil (solo existe la de
   procedencia); es requisito de la capacidad adaptativa.
 - La capacidad adaptativa está **especificada** (`docs/capacidad-adaptativa.md`), no implementada.
+
+## Administración (`docs/administracion.md`)
+- Eliminar a alguien es **definitivo**: no hay papelera ni "desactivar". La persona puede volver a registrarse con el
+  mismo correo; para bloquear a alguien de verdad hará falta un estado de cuenta desactivada.
+- Solo se puede eliminar por correo, de una persona a la vez, y no a otro administrador (hay que quitarle el rol antes).
+- Las conversaciones de chat de la persona eliminada se borran completas, incluidos los mensajes de la otra persona.
+- No hay registro de auditoría en pantalla: queda un evento `user_deleted` en los registros del servidor.

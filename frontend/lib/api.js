@@ -148,6 +148,27 @@ export const api = {
   markNotificationRead: (id) => request(`/notifications/${id}/read`, { method: 'POST' }),
   markAllNotificationsRead: () => request('/notifications/read-all', { method: 'POST' }),
 
+  // Mapa de Inicio
+  mapListings: () => request('/map/listings'),
+  mapZones: () => request('/map/zones'),
+  adminUser: (email) => request(`/admin/users${query({ email })}`),
+  adminDeleteUser: (email) => request(`/admin/users${query({ email })}`, { method: 'DELETE' }),
+  createListing: (data) => request('/map/listings', { method: 'POST', body: data }),
+  updateListing: (id, data) => request(`/map/listings/${id}`, { method: 'PATCH', body: data }),
+  deleteListing: (id) => request(`/map/listings/${id}`, { method: 'DELETE' }),
+  mapUniversities: () => request('/map/universities'),
+  mapPlaces: ({ category, bbox, limit } = {}) =>
+    request(`/map/places${query({ category: category?.length ? category.join(',') : undefined, bbox, limit })}`),
+  placeReviews: (placeId, { cursor, limit } = {}) =>
+    request(`/map/places/${placeId}/reviews${query({ cursor, limit })}`),
+  savePlaceReview: (placeId, { rating, body }) =>
+    request(`/map/places/${placeId}/reviews`, { method: 'PUT', body: { rating, body } }),
+  listingReviews: (listingId, { cursor, limit } = {}) =>
+    request(`/map/listings/${listingId}/reviews${query({ cursor, limit })}`),
+  saveListingReview: (listingId, { rating, body }) =>
+    request(`/map/listings/${listingId}/reviews`, { method: 'PUT', body: { rating, body } }),
+  deleteReview: (reviewId) => request(`/map/reviews/${reviewId}`, { method: 'DELETE' }),
+
   // Amistades
   friendships: (status) => request(`/friendships${query({ status })}`),
   requestFriendship: (addresseeId) =>

@@ -3,7 +3,7 @@ import {
   crestOf,
   formatDate,
   latestFetch,
-  mapUrl,
+  mapHref,
   ownershipLabel,
   safeWebsite,
   statusInfo,
@@ -53,10 +53,11 @@ describe('enlaces', () => {
     expect(websiteLabel('https://www.uai.cl/es')).toBe('uai.cl');
   });
 
-  it('arma el enlace al mapa solo con coordenadas numéricas', () => {
-    expect(mapUrl(-33.486, -70.518)).toContain('mlat=-33.486&mlon=-70.518');
-    expect(mapUrl(null, -70)).toBeNull();
-    expect(mapUrl('1', '2')).toBeNull();
+  it('enlaza al mapa de Inicio solo si hay id y coordenadas numéricas', () => {
+    expect(mapHref({ id: 'u 1', latitude: -33.486, longitude: -70.518 })).toBe('/inicio?universidad=u%201');
+    expect(mapHref({ id: 'u1', latitude: null, longitude: -70 })).toBeNull();
+    expect(mapHref({ id: 'u1', latitude: '1', longitude: '2' })).toBeNull();
+    expect(mapHref({ latitude: 1, longitude: 2 })).toBeNull();
   });
 });
 

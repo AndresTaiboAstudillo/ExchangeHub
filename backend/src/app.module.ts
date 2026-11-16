@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { AdminModule } from './admin/admin.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { FriendshipsModule } from './friendships/friendships.module.js';
 import { HealthModule } from './health/health.module.js';
+import { MapModule } from './map/map.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
 import { ObservabilityModule } from './observability/observability.module.js';
 import { PostsModule } from './posts/posts.module.js';
@@ -24,6 +26,8 @@ import { UsersModule } from './users/users.module.js';
     RealtimeModule,
     NotificationsModule,
     ChatModule,
+    MapModule,
+    AdminModule,
     HealthModule,
     ObservabilityModule,
   ],

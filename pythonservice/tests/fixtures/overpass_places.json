@@ -1,0 +1,105 @@
+{
+ "version": 0.6,
+ "generator": "Overpass API (muestra sintética para pruebas)",
+ "elements": [
+  {
+   "type": "node",
+   "id": 101,
+   "lat": -33.0455,
+   "lon": -71.609,
+   "tags": {
+    "amenity": "marketplace",
+    "name": "Feria Argentina",
+    "opening_hours": "We,Sa 08:00-15:00",
+    "addr:street": "Avenida Argentina"
+   }
+  },
+  {
+   "type": "way",
+   "id": 202,
+   "center": {
+    "lat": -33.0431,
+    "lon": -71.6162
+   },
+   "tags": {
+    "shop": "supermarket",
+    "name": "Líder Express",
+    "addr:street": "Pedro Montt",
+    "addr:housenumber": "2001",
+    "addr:city": "Valparaíso",
+    "website": "https://www.lider.cl"
+   }
+  },
+  {
+   "type": "node",
+   "id": 303,
+   "lat": -33.046,
+   "lon": -71.62,
+   "tags": {
+    "shop": "bakery",
+    "name": "Panadería Don Juan",
+    "website": "javascript:alert(1)"
+   }
+  },
+  {
+   "type": "node",
+   "id": 304,
+   "lat": -33.0461,
+   "lon": -71.6201,
+   "tags": {
+    "amenity": "pharmacy",
+    "name": "Farmacia Cruz Verde"
+   }
+  },
+  {
+   "type": "node",
+   "id": 305,
+   "lat": -33.047,
+   "lon": -71.621,
+   "tags": {
+    "shop": "convenience"
+   }
+  },
+  {
+   "type": "node",
+   "id": 306,
+   "lat": -33.0471,
+   "lon": -71.6211,
+   "tags": {
+    "shop": "clothes",
+    "name": "Ropa"
+   }
+  },
+  {
+   "type": "node",
+   "id": 307,
+   "tags": {
+    "shop": "laundry",
+    "name": "Lavandería Sin Punto"
+   }
+  },
+  {
+   "type": "node",
+   "id": 101,
+   "lat": -33.0455,
+   "lon": -71.609,
+   "tags": {
+    "amenity": "marketplace",
+    "name": "Feria Argentina"
+   }
+  },
+  {
+   "type": "relation",
+   "id": 408,
+   "center": {
+    "lat": -33.02,
+    "lon": -71.55
+   },
+   "tags": {
+    "shop": "greengrocer",
+    "name": "Verdulería del Mar"
+   }
+  },
+  "basura"
+ ]
+}

@@ -16,6 +16,9 @@ const NAV_ITEMS = [
   { href: '/perfil', icon: '👤', label: 'Perfil', iconOnlyOnMobile: true },
 ];
 
+// Solo para administradores.
+const ADMIN_ITEM = { href: '/administracion', icon: '⚙️', label: 'Administración', mobileLabel: 'Admin' };
+
 function IconButton({ label, icon, count, active, onClick }) {
   return (
     <button
@@ -49,6 +52,7 @@ export default function Navbar() {
   const panel = openPanel.path === pathname ? openPanel.name : null;
   const setPanel = useCallback((name) => setOpenPanel({ name, path: pathname }), [pathname]);
   const barRef = useRef(null);
+  const items = user?.role === 'admin' ? [...NAV_ITEMS, ADMIN_ITEM] : NAV_ITEMS;
 
   const toggle = (name) => setPanel(panel === name ? null : name);
 
@@ -75,7 +79,7 @@ export default function Navbar() {
         </Link>
 
         <ul className="hidden md:flex gap-1 list-none">
-          {NAV_ITEMS.map((item) => {
+          {items.map((item) => {
             const active = pathname === item.href;
             return (
               <li key={item.href}>
@@ -117,8 +121,8 @@ export default function Navbar() {
       </nav>
 
       {/* En pantallas pequeñas la navegación pasa a una barra inferior, al alcance del pulgar. */}
-      <ul className="md:hidden fixed bottom-0 inset-x-0 z-[100] bg-forest grid grid-cols-4 list-none pb-[env(safe-area-inset-bottom)] border-t border-white/10">
-        {NAV_ITEMS.map((item) => {
+      <ul className={`md:hidden fixed bottom-0 inset-x-0 z-[100] bg-forest grid ${items.length > 4 ? 'grid-cols-5' : 'grid-cols-4'} list-none pb-[env(safe-area-inset-bottom)] border-t border-white/10`}>
+        {items.map((item) => {
           const active = pathname === item.href;
           return (
             <li key={item.href}>
@@ -132,7 +136,7 @@ export default function Navbar() {
                 <span aria-hidden="true" className="text-lg leading-none">
                   {item.icon}
                 </span>
-                {item.label}
+                {item.mobileLabel ?? item.label}
               </Link>
             </li>
           );

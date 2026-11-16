@@ -12,7 +12,8 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from observability import RequestContextMiddleware, configure_logging
-from pipeline.models import PipelineResult, RunRequest
+from pipeline.models import PipelineResult, PlacesRequest, PlacesResult, RunRequest
+from pipeline.places import run_places_pipeline
 from pipeline.runner import run_universities_pipeline
 from pipeline.settings import Settings
 
@@ -116,3 +117,25 @@ def run_universities(
     client: Annotated[httpx.Client, Depends(get_http_client)],
 ) -> PipelineResult:
     return run_universities_pipeline(request.sources, settings, client)
+
+
+@app.post(
+    "/v1/pipeline/places/run",
+    response_model=PlacesResult,
+    tags=["pipeline"],
+    summary="Recupera comercios y servicios de OpenStreetMap",
+    description=(
+        "Consulta una vez la API Overpass de OpenStreetMap (datos ODbL) para la zona pedida y "
+        "devuelve ferias, supermercados, minimarkets, panaderías, verdulerías, farmacias y "
+        "lavanderías con nombre y coordenadas. Descarta lo que no tenga nombre, categoría "
+        "o punto.\n\n"
+        "La URL de Overpass viene de la configuración del servicio, nunca de la petición. "
+        "Si la fuente no responde, `status` es `failed` y la lista va vacía."
+    ),
+)
+def run_places(
+    request: PlacesRequest,
+    settings: Annotated[Settings, Depends(get_settings)],
+    client: Annotated[httpx.Client, Depends(get_http_client)],
+) -> PlacesResult:
+    return run_places_pipeline(request.bbox, settings, client)

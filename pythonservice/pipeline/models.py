@@ -5,6 +5,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from .osm import MAX_SPAN_DEGREES
+
 SourceCode = Literal["mineduc_ies", "wikidata"]
 Category = Literal["universidad", "instituto_profesional", "centro_formacion_tecnica"]
 Ownership = Literal["estatal", "particular_con_aportes", "privada", "otra"]
@@ -106,3 +108,53 @@ class PipelineResult(BaseModel):
     universities: list[UniversityRecord]
     rejected: list[Rejected]
     quality: QualityReport
+
+
+class PlacesRequest(BaseModel):
+    bbox: tuple[float, float, float, float] | None = Field(
+        None,
+        description=(
+            "Zona a consultar como (sur, oeste, norte, este). "
+            "Por defecto, Valparaíso y Viña del Mar."
+        ),
+    )
+
+    @field_validator("bbox")
+    @classmethod
+    def _validate_bbox(cls, v):
+        if v is None:
+            return v
+        south, west, north, east = v
+        if not (-90 <= south < north <= 90 and -180 <= west < east <= 180):
+            raise ValueError(
+                "bbox debe ser (sur, oeste, norte, este) con sur < norte y oeste < este"
+            )
+        if north - south > MAX_SPAN_DEGREES or east - west > MAX_SPAN_DEGREES:
+            raise ValueError(f"la zona no puede superar {MAX_SPAN_DEGREES} grados por lado")
+        return v
+
+
+class PlaceOut(BaseModel):
+    external_id: str = Field(description="Identificador OSM, p. ej. `node/123`")
+    category: str
+    name: str
+    latitude: float
+    longitude: float
+    address: str | None = None
+    opening_hours: str | None = None
+    website: str | None = None
+    content_hash: str
+
+
+class PlacesResult(BaseModel):
+    status: Literal["ok", "failed"]
+    source: str = "osm_places"
+    url: str | None = None
+    fetched_at: datetime | None = None
+    elapsed_ms: int = 0
+    records_received: int = 0
+    records_valid: int = 0
+    records_rejected: int = 0
+    duplicates_discarded: int = 0
+    error: str | None = None
+    places: list[PlaceOut] = Field(default_factory=list)

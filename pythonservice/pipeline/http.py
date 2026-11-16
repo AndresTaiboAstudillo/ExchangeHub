@@ -39,6 +39,7 @@ def fetch(
     retries: int = 3,
     backoff: float = 1.0,
     max_bytes: int = 5_000_000,
+    timeout: float | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> Fetched:
     """GET con reintentos. Falla rápido en 4xx; lanza SourceUnavailable al agotar intentos."""
@@ -48,7 +49,8 @@ def fetch(
     for attempt in range(attempts):
         wait = backoff * (2**attempt)
         try:
-            response = client.get(url, params=params, headers=headers)
+            extra = {} if timeout is None else {"timeout": timeout}
+            response = client.get(url, params=params, headers=headers, **extra)
         except httpx.HTTPError as exc:
             last_error = f"error de red ({type(exc).__name__})"
         else:
