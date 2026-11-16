@@ -61,7 +61,15 @@ export class ChatGateway
     this.realtime.attach(server);
   }
 
-  async handleConnection(client: Socket): Promise<void> {
+  handleConnection(client: Socket): Promise<void> {
+    // El cliente recibe `connect` antes de que termine esta verificación asíncrona;
+    // los eventos que llegan en ese lapso esperan a `client.data.auth` en `handle`.
+    const auth = this.authenticate(client);
+    client.data.auth = auth;
+    return auth;
+  }
+
+  private async authenticate(client: Socket): Promise<void> {
     const token: unknown = client.handshake.auth?.token;
     try {
       if (typeof token !== 'string' || !token) throw new Error('sin token');
@@ -137,6 +145,7 @@ export class ChatGateway
     client: Socket,
     action: (userId: string) => Promise<Reply>,
   ): Promise<Reply> {
+    await (client.data.auth as Promise<void> | undefined);
     const userId = client.data.userId as string | undefined;
     let response: Reply;
     if (!userId) {
