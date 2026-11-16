@@ -77,3 +77,10 @@ Resumen de los límites conocidos del proyecto. El detalle de cada uno está en 
 - La **universidad de destino** del estudiante aún no se guarda en el perfil (solo existe la de
   procedencia); es requisito de la capacidad adaptativa.
 - La capacidad adaptativa está **especificada** (`docs/capacidad-adaptativa.md`), no implementada.
+
+## Administración (`docs/administracion.md`)
+- Eliminar a alguien es **definitivo**: no hay papelera ni "desactivar". La persona puede volver a registrarse con el
+  mismo correo; para bloquear a alguien de verdad hará falta un estado de cuenta desactivada.
+- Solo se puede eliminar por correo, de una persona a la vez, y no a otro administrador (hay que quitarle el rol antes).
+- Las conversaciones de chat de la persona eliminada se borran completas, incluidos los mensajes de la otra persona.
+- No hay registro de auditoría en pantalla: queda un evento `user_deleted` en los registros del servidor.

@@ -283,6 +283,68 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/admin/users": {
+      "delete": {
+        "operationId": "AdminController_remove",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "example": "estudiante@correo.cl",
+              "format": "email",
+              "maxLength": 254,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar a un usuario por su correo, con todo lo que publicó (administradores)",
+        "tags": [
+          "admin"
+        ]
+      },
+      "get": {
+        "operationId": "AdminController_lookup",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "example": "estudiante@correo.cl",
+              "format": "email",
+              "maxLength": 254,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver a quién se eliminaría y cuánto contenido tiene (administradores)",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "AuthController_login",

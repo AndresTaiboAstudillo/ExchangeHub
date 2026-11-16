@@ -151,6 +151,8 @@ export const api = {
   // Mapa de Inicio
   mapListings: () => request('/map/listings'),
   mapZones: () => request('/map/zones'),
+  adminUser: (email) => request(`/admin/users${query({ email })}`),
+  adminDeleteUser: (email) => request(`/admin/users${query({ email })}`, { method: 'DELETE' }),
   createListing: (data) => request('/map/listings', { method: 'POST', body: data }),
   updateListing: (id, data) => request(`/map/listings/${id}`, { method: 'PATCH', body: data }),
   deleteListing: (id) => request(`/map/listings/${id}`, { method: 'DELETE' }),

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AdminModule } from './admin/admin.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { FriendshipsModule } from './friendships/friendships.module.js';
@@ -26,6 +27,7 @@ import { UsersModule } from './users/users.module.js';
     NotificationsModule,
     ChatModule,
     MapModule,
+    AdminModule,
     HealthModule,
     ObservabilityModule,
   ],

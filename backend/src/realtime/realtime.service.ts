@@ -22,6 +22,12 @@ export class RealtimeService {
     this.server?.to(userRoom(userId)).emit(event, payload);
   }
 
+  /** Cierra todas las conexiones de una persona (p. ej. al eliminar su cuenta). */
+  disconnectUser(userId: string): void {
+    this.server?.in(userRoom(userId)).disconnectSockets(true);
+    this.connections.delete(userId);
+  }
+
   isOnline(userId: string): boolean {
     return (this.connections.get(userId) ?? 0) > 0;
   }

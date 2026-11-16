@@ -31,6 +31,7 @@ describe('LandingPage', () => {
     setup();
     expect(screen.queryByText(/Cuenta universitaria/)).toBeNull();
     expect(screen.queryByText(/o continúa con/)).toBeNull();
+    expect(screen.queryByText(/Términos de uso/)).toBeNull();
   });
 
   describe('registro', () => {

@@ -13,6 +13,7 @@ import {
 import type { Server, Socket } from 'socket.io';
 import { allowedOrigins } from '../app.setup.js';
 import type { JwtPayload } from '../auth/auth.types.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 import { RealtimeService, userRoom } from '../realtime/realtime.service.js';
 import { ChatService, MAX_MESSAGE_LENGTH } from './chat.service.js';
 import { RateLimiter } from './rate-limiter.js';
@@ -53,6 +54,7 @@ export class ChatGateway
     private readonly jwt: JwtService,
     private readonly chat: ChatService,
     private readonly realtime: RealtimeService,
+    private readonly prisma: PrismaService,
   ) {}
 
   afterInit(server: Server): void {
@@ -64,6 +66,11 @@ export class ChatGateway
     try {
       if (typeof token !== 'string' || !token) throw new Error('sin token');
       const payload = await this.jwt.verifyAsync<JwtPayload>(token);
+      const exists = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+        select: { id: true },
+      });
+      if (!exists) throw new Error('la cuenta ya no existe');
       client.data.userId = payload.sub;
     } catch {
       client.emit('chat:error', { message: 'Token inválido o expirado' });

@@ -203,10 +203,6 @@ export default function LandingPage({ onLogin, onRegister }) {
               </button>
             </form>
           )}
-
-          <p className="text-xs text-muted mt-4 text-center">
-            Al acceder aceptas nuestros <u>Términos de uso</u> y <u>Política de privacidad</u>
-          </p>
         </div>
       </div>
     </div>
