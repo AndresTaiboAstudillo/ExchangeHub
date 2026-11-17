@@ -20,7 +20,7 @@ function AdminActions({ item, onEdit, onDelete }) {
     <div className="flex justify-end items-center gap-1 mt-1 text-xs text-muted">
       {confirming ? (
         <>
-          <span>¿Eliminar este arriendo y sus reseñas?</span>
+          <span>{item.kind === 'zona' ? '¿Eliminar esta zona y sus reseñas?' : '¿Eliminar este arriendo y sus reseñas?'}</span>
           <button type="button" onClick={remove} disabled={busy} className={`${btn} font-semibold text-red-600`}>
             Sí, eliminar
           </button>
@@ -44,8 +44,8 @@ function AdminActions({ item, onEdit, onDelete }) {
 
 /** Tarjeta de un lugar. Tocarla lo muestra en el mapa. */
 export default function ListingCard({ item, selected = false, onOpen, onReviews, onEdit, onDelete }) {
-  const manageable = Boolean(onEdit && onDelete && item.reviewTarget === 'listing');
-  const reviewable = (item.kind === 'comercio' || item.kind === 'alojamiento') && onReviews;
+  const manageable = Boolean(onEdit && onDelete && (item.reviewTarget === 'listing' || item.reviewTarget === 'zone'));
+  const reviewable = (item.kind === 'comercio' || item.kind === 'alojamiento' || item.kind === 'zona') && onReviews;
   const card = (
     <button
       type="button"

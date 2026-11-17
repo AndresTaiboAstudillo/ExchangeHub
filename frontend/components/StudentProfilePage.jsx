@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '../app/providers';
 import { api } from '../lib/api';
-import { colorFor, firstName, initialOf } from '../lib/format';
+import { firstName } from '../lib/format';
+import Avatar from './Avatar';
 import { languageLabel } from '../lib/languages';
 import { isLocal } from '../lib/students';
 import Badge from './Badge';
@@ -90,12 +91,7 @@ export default function StudentProfilePage({ userId }) {
 
       <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start mt-4">
         <div className="bg-white rounded-lg p-7 text-center shadow-card">
-          <div
-            className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white mx-auto mb-3"
-            style={{ background: colorFor(profile.id) }}
-          >
-            {initialOf(profile.name)}
-          </div>
+          <Avatar person={profile} className="w-20 h-20 text-3xl mx-auto mb-3" />
           <h1 className="text-[18px] font-bold mb-1">{profile.name}</h1>
           {place && <div className="text-[13px] text-muted mb-1">🌎 {place}</div>}
           {profile.career && <div className="text-[13px] text-muted">{profile.career}</div>}

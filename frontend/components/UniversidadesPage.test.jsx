@@ -261,7 +261,19 @@ describe("UniversidadesPage", () => {
     expect(screen.queryByText("Universidad Adolfo Ibáñez")).toBeNull();
   });
 
-  it("informa la frescura de los datos y avisa si están desactualizados", async () => {
+  it("muestra la fuente y no avisa de la fecha cuando los datos están al día", async () => {
+    api.universities.mockResolvedValue(page([uai]));
+    setup();
+    expect(
+      await screen.findByText("Fuente: Ministerio de Educación de Chile"),
+    ).toBeInTheDocument();
+    await screen.findByText("Universidad Adolfo Ibáñez");
+    expect(api.universitiesSources).toHaveBeenCalled();
+    expect(screen.queryByText(/Datos del Ministerio/)).toBeNull();
+    expect(screen.queryByText(/enriquecido con datos abiertos/)).toBeNull();
+  });
+
+  it("avisa solo si los datos están desactualizados", async () => {
     api.universities.mockResolvedValue(page([uai]));
     api.universitiesSources.mockResolvedValue({
       sources: [

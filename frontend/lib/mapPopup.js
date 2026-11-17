@@ -28,7 +28,7 @@ export function buildPopup(item, { onReviews } = {}) {
   if (item.description) root.appendChild(el('div', 'eh-popup-desc', item.description));
 
   const actions = el('div', 'eh-popup-actions');
-  if ((item.kind === 'comercio' || item.kind === 'alojamiento') && onReviews) {
+  if ((item.kind === 'comercio' || item.kind === 'alojamiento' || item.kind === 'zona') && onReviews) {
     const button = el('button', 'eh-popup-link eh-popup-button', rating ? 'Ver reseñas' : 'Reseñar');
     button.type = 'button';
     button.addEventListener('click', () => onReviews(item.id));

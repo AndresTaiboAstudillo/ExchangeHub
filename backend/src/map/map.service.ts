@@ -6,6 +6,7 @@ import {
 import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { PlacesQueryDto } from './dto/places-query.dto.js';
+import type { CreateZoneDto, UpdateZoneDto } from './dto/zone.dto.js';
 import type { CreateListingDto, UpdateListingDto } from './dto/listing.dto.js';
 import { ReviewsService } from './reviews.service.js';
 
@@ -42,6 +43,19 @@ const LISTING_SELECT = {
   description: true,
   priceClp: true,
   availability: true,
+} as const;
+
+/** Todas las zonas miden lo mismo: así el color depende solo de las reseñas. */
+export const ZONE_RADIUS_M = 400;
+
+const ZONE_SELECT = {
+  id: true,
+  name: true,
+  description: true,
+  safeHours: true,
+  latCenter: true,
+  lngCenter: true,
+  radiusM: true,
 } as const;
 
 @Injectable()
@@ -132,20 +146,76 @@ export class MapService {
     });
   }
 
-  listZones() {
-    return this.prisma.zone.findMany({
+  async listZones() {
+    const rows = await this.prisma.zone.findMany({
       orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
-      select: {
-        id: true,
-        name: true,
-        safetyLevel: true,
-        description: true,
-        safeHours: true,
-        latCenter: true,
-        lngCenter: true,
-        radiusM: true,
-      },
+      select: ZONE_SELECT,
     });
+    const ratings = await this.reviews.ratingsFor(
+      'zone',
+      rows.map((z) => z.id),
+    );
+    return rows.map((z) => ({
+      ...z,
+      ratingAverage: ratings.get(z.id)?.average ?? null,
+      ratingCount: ratings.get(z.id)?.count ?? 0,
+    }));
+  }
+
+  /** Un administrador agrega una zona; todas tienen la misma área (radio fijo). */
+  async createZone(dto: CreateZoneDto) {
+    const row = await this.prisma.zone.create({
+      data: {
+        name: dto.name,
+        description: dto.description,
+        safeHours: dto.safeHours,
+        latCenter: dto.latitude,
+        lngCenter: dto.longitude,
+        radiusM: ZONE_RADIUS_M,
+      },
+      select: ZONE_SELECT,
+    });
+    return { ...row, ratingAverage: null, ratingCount: 0 };
+  }
+
+  async updateZone(id: string, dto: UpdateZoneDto) {
+    await this.assertZone(id);
+    const row = await this.prisma.zone.update({
+      where: { id },
+      data: {
+        name: dto.name,
+        description: dto.description,
+        safeHours: dto.safeHours,
+        latCenter: dto.latitude,
+        lngCenter: dto.longitude,
+      },
+      select: ZONE_SELECT,
+    });
+    const ratings = await this.reviews.ratingsFor('zone', [id]);
+    return {
+      ...row,
+      ratingAverage: ratings.get(id)?.average ?? null,
+      ratingCount: ratings.get(id)?.count ?? 0,
+    };
+  }
+
+  /** Borra la zona y sus reseñas (la referencia es polimórfica: no hay cascada en la base). */
+  async deleteZone(id: string) {
+    await this.assertZone(id);
+    await this.prisma.$transaction([
+      this.prisma.review.deleteMany({
+        where: { targetType: 'zone', targetId: id },
+      }),
+      this.prisma.zone.delete({ where: { id } }),
+    ]);
+  }
+
+  private async assertZone(id: string) {
+    const found = await this.prisma.zone.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!found) throw new NotFoundException('Zona no encontrada');
   }
 
   async listPlaces(query: PlacesQueryDto) {

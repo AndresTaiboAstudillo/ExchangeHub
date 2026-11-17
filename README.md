@@ -58,6 +58,8 @@
 
 # Instrucciones de instalación
 
+
+
 ```bash
 git clone https://github.com/AndresTaiboAstudillo/ExchangeHub
 cd ExchangeHub
@@ -317,13 +319,4 @@ Requisitos, configuración de producción y límites: [`docs/android.md`](docs/a
   <img width="402" height="652" alt="publicarforo drawio" src="https://github.com/user-attachments/assets/34684d22-afb2-475e-9d79-3e873c34f556" />
   <img width="402" height="652" alt="reseñamapa drawio" src="https://github.com/user-attachments/assets/90a6abd8-49c1-427b-856f-1fe05b47ea61" />
   
-# Limitaciones conocidas
-
-* Falta confirmar el `robots.txt` y la licencia del archivo del Ministerio; mientras tanto el pipeline funciona con
-  un Excel local.
-* La cobertura real de Wikidata (sitio web, coordenadas) aún no está medida.
-* Los alojamientos, comercios y zonas del mapa usan datos de ejemplo del frontend, aún no del backend.
-* La capacidad adaptativa está especificada, no implementada, y la universidad de destino todavía no se guarda en
-  el perfil.
-* El despliegue a staging es local; no hay entorno de producción.
- # Falta implementar el chat en tiempo real, las notificaciones y el mapa, ya que por ahora este aparece fuera de la aplicación.
+Cuenta de administrador: admin@correo.cl | Admin123

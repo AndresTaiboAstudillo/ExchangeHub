@@ -18,7 +18,7 @@ const select = {
   preview: true,
   readAt: true,
   createdAt: true,
-  actor: { select: { id: true, name: true } },
+  actor: { select: { id: true, name: true, avatarUpdatedAt: true } },
 } as const;
 
 @Injectable()

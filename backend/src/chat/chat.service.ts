@@ -86,8 +86,8 @@ export class ChatService {
       },
       select: {
         requesterId: true,
-        requester: { select: { id: true, name: true } },
-        addressee: { select: { id: true, name: true } },
+        requester: { select: { id: true, name: true, avatarUpdatedAt: true } },
+        addressee: { select: { id: true, name: true, avatarUpdatedAt: true } },
       },
     });
     const friends = friendships.map((f) =>

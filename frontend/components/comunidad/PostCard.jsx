@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { api } from '../../lib/api';
 import { categoryById } from '../../lib/categories';
-import { colorFor, initialOf, profileHref, shortName, timeAgo } from '../../lib/format';
+import { profileHref, shortName, timeAgo } from '../../lib/format';
+import Avatar from '../Avatar';
 import Badge from '../Badge';
 
 /** Enlace al perfil de quien escribió (el propio va a "Mi perfil"). */
@@ -101,12 +102,7 @@ export default function PostCard({ post, meId, onToast, onUpdate, onRemove }) {
     <article className="bg-white rounded-lg p-5 shadow-card mb-3.5 border-[1.5px] border-transparent hover:border-forest-lt transition-colors">
       <div className="flex justify-between items-start mb-2.5 gap-3">
         <AuthorLink author={post.author} meId={meId} className="flex items-center gap-2.5 min-w-0 hover:opacity-90">
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-            style={{ background: colorFor(post.author.id) }}
-          >
-            {initialOf(post.author.name)}
-          </div>
+          <Avatar person={post.author} className="w-9 h-9 text-sm" />
           <div className="min-w-0">
             <div className="text-sm font-semibold">
               {shortName(post.author.name)}
@@ -154,12 +150,7 @@ export default function PostCard({ post, meId, onToast, onUpdate, onRemove }) {
             <div key={r.id} className="py-2.5 border-b border-border last:border-b-0">
               <div className="flex items-center gap-2 mb-1">
                 <AuthorLink author={r.author} meId={meId} className="flex items-center gap-2 hover:opacity-90">
-                  <div
-                    className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[11px] font-bold text-white"
-                    style={{ background: colorFor(r.author.id) }}
-                  >
-                    {initialOf(r.author.name)}
-                  </div>
+                  <Avatar person={r.author} className="w-[26px] h-[26px] text-[11px]" />
                   <strong className="text-[13px]">{shortName(r.author.name)}</strong>
                 </AuthorLink>
                 <span className="text-xs text-muted">

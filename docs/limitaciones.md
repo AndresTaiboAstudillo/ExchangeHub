@@ -57,11 +57,11 @@ Resumen de los límites conocidos del proyecto. El detalle de cada uno está en 
   la categoría estén bien etiquetados. No incluyen precios. Cubren solo Valparaíso y Viña del Mar.
 - Los **hoteles, hostales y hospedajes** vienen de OpenStreetMap: son alojamiento turístico, sin precio ni
   disponibilidad, y dependen de que alguien los haya mapeado.
-- Las **piezas y departamentos** y las **zonas de seguridad** son datos de ejemplo con coordenadas aproximadas: OpenStreetMap
-  no tiene arriendos con precio ni niveles de seguridad. Los arriendos nuevos solo los publican administradores (no hay formulario abierto a estudiantes ni flujo de aprobación).
+- Las **piezas y departamentos** y las **zonas** de ejemplo son datos con coordenadas aproximadas: OpenStreetMap
+  no tiene arriendos con precio ni opiniones sobre barrios. Las zonas nuevas las agregan solo los administradores y todas cubren la misma área (400 m). Los arriendos nuevos solo los publican administradores (no hay formulario abierto a estudiantes ni flujo de aprobación).
 - En el mapa solo aparecen las **universidades con coordenadas** (las que Wikidata pudo ubicar); el resto está
   únicamente en la lista de Universidades.
-- Las **reseñas** existen para comercios y alojamientos (las zonas no). No hay denuncias ni reseñas con foto:
+- Las **reseñas** existen para comercios, alojamientos y zonas. No hay denuncias ni reseñas con foto:
   la moderación es manual (un administrador borra desde la API) y no se verifica que la persona haya visitado
   el lugar.
 - Los mosaicos públicos de OpenStreetMap tienen una política de uso (tráfico moderado, atribución). Para
@@ -84,3 +84,5 @@ Resumen de los límites conocidos del proyecto. El detalle de cada uno está en 
 - Solo se puede eliminar por correo, de una persona a la vez, y no a otro administrador (hay que quitarle el rol antes).
 - Las conversaciones de chat de la persona eliminada se borran completas, incluidos los mensajes de la otra persona.
 - No hay registro de auditoría en pantalla: queda un evento `user_deleted` en los registros del servidor.
+
+- **Fotos de perfil:** no tienen moderación de contenido y se sirven sin sesión por un enlace con el id de la persona (ver `docs/perfil.md`).

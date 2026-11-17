@@ -15,7 +15,9 @@ import {
 } from '../lib/map';
 import { EMPTY_LISTING, toFormValues } from '../lib/listingForm';
 import ListingCard from './inicio/ListingCard';
+import { EMPTY_ZONE, ZONE_RADIUS_M, zoneToFormValues } from '../lib/zoneForm';
 import ListingFormModal from './inicio/ListingFormModal';
+import ZoneFormModal from './inicio/ZoneFormModal';
 import MapPanel from './inicio/MapPanel';
 import ReviewsModal from './inicio/ReviewsModal';
 
@@ -42,7 +44,7 @@ const CHIPS = {
   alojamiento: [TODOS, ['arriendo', { label: 'Piezas y deptos', emoji: '🏠' }], ...LODGING_CATEGORY_IDS.map(chip)],
 };
 
-/** `canManage`: la persona es administradora y puede publicar, editar y eliminar arriendos. */
+/** `canManage`: la persona es administradora y puede publicar, editar y eliminar arriendos y zonas. */
 export default function InicioPage({ canManage = false }) {
   // Desde Universidades se llega con ?universidad=<id>: se abre esa pestaña y se muestra la institución.
   const focusId = useSearchParams().get('universidad');
@@ -53,7 +55,7 @@ export default function InicioPage({ canManage = false }) {
   const [selectedId, setSelectedId] = useState(null);
   const [viewport, setViewport] = useState(null); // { bbox, zoom }
   const [reviewsPlace, setReviewsPlace] = useState(null); // comercio con el detalle abierto
-  // Formulario de arriendos: { mode, id?, initial, key, hidden } y modo "elegir punto en el mapa".
+  // Formulario de arriendos o zonas: { kind, mode, id?, initial, key, hidden } y modo "elegir punto en el mapa".
   const [form, setForm] = useState(null);
   const [picking, setPicking] = useState(false);
   const [pickedPoint, setPickedPoint] = useState(null);
@@ -135,7 +137,7 @@ export default function InicioPage({ canManage = false }) {
   // Abre las reseñas con una copia del comercio, para que sigan abiertas aunque cambie la zona visible.
   const reviewables = useRef([]);
   useEffect(() => {
-    reviewables.current = [...places.items, ...listings.items];
+    reviewables.current = [...places.items, ...listings.items, ...zones.items];
   });
   const openReviews = useCallback((id) => {
     const place = reviewables.current.find((p) => p.id === id);
@@ -143,12 +145,14 @@ export default function InicioPage({ canManage = false }) {
   }, []);
   const closeReviews = useCallback(() => setReviewsPlace(null), []);
 
-  const openCreate = () => {
-    setForm({ mode: 'create', initial: EMPTY_LISTING, key: 0, hidden: false });
+  const openCreate = (kind = 'listing') => {
+    setForm({ kind, mode: 'create', initial: kind === 'zone' ? EMPTY_ZONE : EMPTY_LISTING, key: 0, hidden: false });
     setPickedPoint(null);
   };
   const openEdit = (item) => {
-    setForm({ mode: 'edit', id: item.id, initial: toFormValues(item.listing), key: 0, hidden: false });
+    const kind = item.reviewTarget === 'zone' ? 'zone' : 'listing';
+    const initial = kind === 'zone' ? zoneToFormValues(item.zone) : toFormValues(item.listing);
+    setForm({ kind, mode: 'edit', id: item.id, initial, key: 0, hidden: false });
     setPickedPoint({ lat: item.lat, lng: item.lng });
   };
   const closeForm = useCallback(() => {
@@ -189,10 +193,33 @@ export default function InicioPage({ canManage = false }) {
     setSelectedId((s) => (s === id ? null : s));
     setReviewsPlace((r) => (r?.id === id ? null : r));
   };
+  const saveZone = async (body) => {
+    const row = form.mode === 'edit' ? await api.updateZone(form.id, body) : await api.createZone(body);
+    const item = fromZone(row);
+    setZones((z) => ({
+      ...z,
+      items: form.mode === 'edit' ? z.items.map((i) => (i.id === row.id ? item : i)) : [...z.items, item],
+    }));
+    setSelectedId(row.id);
+    closeForm();
+  };
+  const deleteZone = async (id) => {
+    await api.deleteZone(id);
+    setZones((z) => ({ ...z, items: z.items.filter((i) => i.id !== id) }));
+    setSelectedId((s) => (s === id ? null : s));
+    setReviewsPlace((r) => (r?.id === id ? null : r));
+  };
   const updateRating = useCallback((id, rating) => {
-    const apply = (i) => (i.id === id ? { ...i, rating } : i);
+    // La zona cambia de color con el promedio, así que se rehace desde sus datos.
+    const apply = (i) =>
+      i.id !== id
+        ? i
+        : i.kind === 'zona'
+          ? fromZone({ ...i.zone, ratingAverage: rating.average, ratingCount: rating.count })
+          : { ...i, rating };
     setPlaces((p) => ({ ...p, items: p.items.map(apply) }));
     setListings((l) => ({ ...l, items: l.items.map(apply) }));
+    setZones((z) => ({ ...z, items: z.items.map(apply) }));
     setReviewsPlace((r) => (r?.id === id ? { ...r, rating } : r));
   }, []);
 
@@ -287,13 +314,13 @@ export default function InicioPage({ canManage = false }) {
         </div>
 
         <div className="thin-scroll flex-1 overflow-y-auto p-3.5 flex flex-col gap-3">
-          {canManage && tab === 'alojamiento' && (
+          {canManage && (tab === 'alojamiento' || tab === 'zona') && (
             <button
               type="button"
-              onClick={openCreate}
+              onClick={() => openCreate(tab === 'zona' ? 'zone' : 'listing')}
               className="w-full px-3.5 py-2 rounded-lg text-[13px] font-semibold border-[1.5px] border-dashed border-forest-mid text-forest-mid hover:bg-surface-2"
             >
-              ＋ Agregar arriendo
+              {tab === 'zona' ? '＋ Agregar zona' : '＋ Agregar arriendo'}
             </button>
           )}
           {empty ? (
@@ -313,7 +340,7 @@ export default function InicioPage({ canManage = false }) {
                   onOpen={select}
                   onReviews={openReviews}
                   onEdit={canManage ? openEdit : undefined}
-                  onDelete={canManage ? deleteListing : undefined}
+                  onDelete={canManage ? (item.kind === 'zona' ? deleteZone : deleteListing) : undefined}
                 />
               </div>
             ))
@@ -355,11 +382,22 @@ export default function InicioPage({ canManage = false }) {
           picking={picking}
           onPick={onPick}
           pickedPoint={pickedPoint}
+          pickedRadius={form?.kind === 'zone' ? ZONE_RADIUS_M : null}
           status={status}
         />
       </div>
 
-      {form && !form.hidden && (
+      {form && !form.hidden && form.kind === 'zone' && (
+        <ZoneFormModal
+          key={form.key}
+          mode={form.mode}
+          initial={form.initial}
+          onSubmit={saveZone}
+          onCancel={closeForm}
+          onPickLocation={startPicking}
+        />
+      )}
+      {form && !form.hidden && form.kind !== 'zone' && (
         <ListingFormModal
           key={form.key}
           mode={form.mode}

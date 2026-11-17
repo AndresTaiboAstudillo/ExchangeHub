@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useApp } from '../../app/providers';
-import { colorFor, initialOf, profileHref } from '../../lib/format';
+import { profileHref } from '../../lib/format';
+import Avatar from '../Avatar';
 import { MAX_MESSAGE_LENGTH, clockTime, draftToSend } from '../../lib/chat';
 import { useChat } from './ChatProvider';
 
@@ -69,12 +70,7 @@ function ChatPanel() {
           aria-label={minimized ? `Abrir chat con ${friend.name}` : `Minimizar chat con ${friend.name}`}
           className="flex-1 min-w-0 flex items-center gap-2.5 px-3 py-2.5 text-left"
         >
-          <span
-            className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-            style={{ background: colorFor(friend.id) }}
-          >
-            {initialOf(friend.name)}
-          </span>
+          <Avatar person={friend} className="w-8 h-8 text-sm" />
           <span className="min-w-0">
             <span className="block text-sm font-semibold truncate">{friend.name}</span>
             <span className="flex items-center gap-1.5 text-[11px] text-white/75">

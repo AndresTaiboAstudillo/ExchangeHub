@@ -23,6 +23,11 @@ const apiMock = vi.hoisted(() => ({
   createListing: vi.fn(),
   updateListing: vi.fn(),
   deleteListing: vi.fn(),
+  zoneReviews: vi.fn(),
+  saveZoneReview: vi.fn(),
+  createZone: vi.fn(),
+  updateZone: vi.fn(),
+  deleteZone: vi.fn(),
 }));
 vi.mock('../lib/api', () => ({ api: apiMock }));
 
@@ -30,7 +35,7 @@ const listings = [
   { id: 'l1', type: 'alojamiento', name: 'Habitación en Cerro Alegre', address: 'Almirante Montt 256', latitude: -33.04, longitude: -71.62, priceClp: 280000, availability: 'Disponible' },
   { id: 'l2', type: 'alojamiento', name: 'Departamento Viña', address: 'Av. Libertad 1050', latitude: -33.02, longitude: -71.55, priceClp: 195000, availability: '2 cupos' },
 ];
-const zones = [{ id: 'z1', name: 'Cerro Alegre', safetyLevel: 'safe', description: 'Barrio turístico', safeHours: 'Hasta las 23:00', latCenter: -33.04, lngCenter: -71.62, radiusM: 350 }];
+const zones = [{ id: 'z1', name: 'Cerro Alegre', description: 'Barrio turístico', safeHours: 'Hasta las 23:00', latCenter: -33.04, lngCenter: -71.62, radiusM: 400, ratingAverage: 4.6, ratingCount: 3 }];
 
 const universities = [
   { id: 'u1', name: 'Pontificia Universidad Católica de Valparaíso', category: 'universidad', ownership: 'particular_con_aportes', address: null, website: 'https://www.pucv.cl', latitude: -33.0338, longitude: -71.5963 },
@@ -158,13 +163,14 @@ describe('Inicio', () => {
     await waitFor(() => expect(screen.getByTestId('map')).toHaveTextContent('Mostrando 0 de 900'));
   });
 
-  it('muestra las zonas con su nivel de seguridad', async () => {
+  it('muestra las zonas con su promedio y nivel', async () => {
     render(<InicioPage />);
     await screen.findByText('Departamento Viña');
     fireEvent.click(screen.getByRole('tab', { name: /Zonas/ }));
     const card = (await screen.findByText('Cerro Alegre')).closest('button');
-    expect(within(card).getByText('Segura')).toBeInTheDocument();
-    expect(within(card).getByText('🌙 Hasta las 23:00')).toBeInTheDocument();
+    expect(within(card).getByText('Bien valorada')).toBeInTheDocument();
+    expect(within(card).getByText('🕐 Hasta las 23:00')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reseñas de Cerro Alegre' })).toHaveTextContent('★ 4,6 (3)');
   });
 
   it('muestra un aviso si el backend falla', async () => {
@@ -215,12 +221,30 @@ describe('Inicio', () => {
     expect(apiMock.listingReviews).toHaveBeenCalledWith('l1');
   });
 
-  it('las zonas no tienen botón de reseñas', async () => {
+  it('las zonas se reseñan y cambian de color cuando cambia su promedio', async () => {
+    apiMock.zoneReviews.mockResolvedValue({
+      summary: { count: 3, average: 4.6, distribution: [0, 0, 0, 1, 2] },
+      mine: null,
+      items: [],
+      nextCursor: null,
+    });
+    apiMock.saveZoneReview.mockResolvedValue({
+      review: { id: 'r1', rating: 1, body: null, own: true, author: { id: 'me', name: 'Yo' } },
+      summary: { count: 4, average: 3.5, distribution: [1, 0, 0, 1, 2] },
+    });
     render(<InicioPage />);
     await screen.findByText('Departamento Viña');
     fireEvent.click(screen.getByRole('tab', { name: /Zonas/ }));
-    await screen.findByText('Cerro Alegre');
-    expect(screen.queryByRole('button', { name: /^Reseñas de/ })).toBeNull();
+    fireEvent.click(await screen.findByRole('button', { name: 'Reseñas de Cerro Alegre' }));
+    expect(await screen.findByRole('dialog', { name: 'Cerro Alegre' })).toBeInTheDocument();
+    expect(apiMock.zoneReviews).toHaveBeenCalledWith('z1');
+    const before = mapProps.items[0].zoneColor;
+    fireEvent.click(await screen.findByRole('radio', { name: /1 estrella/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Publicar' }));
+    await waitFor(() => expect(apiMock.saveZoneReview).toHaveBeenCalledWith('z1', { rating: 1, body: null }));
+    await waitFor(() => expect(mapProps.items[0].zoneColor).not.toBe(before));
+    expect(mapProps.items[0].rating).toEqual({ average: 3.5, count: 4 });
+    expect(mapProps.items[0].radius).toBe(400);
   });
 
   it('la pestaña Universidades muestra las instituciones con ubicación y se filtra por tipo', async () => {
@@ -270,12 +294,14 @@ describe('Inicio', () => {
       expect(screen.queryByRole('button', { name: /^Eliminar / })).toBeNull();
     });
 
-    it('el botón de agregar solo está en la pestaña Alojamiento', async () => {
+    it('cada pestaña tiene su botón de agregar', async () => {
       render(<InicioPage canManage />);
       await screen.findByText('Departamento Viña');
       expect(screen.getByRole('button', { name: /Agregar arriendo/ })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Agregar zona/ })).toBeNull();
       fireEvent.click(screen.getByRole('tab', { name: /Zonas/ }));
       expect(screen.queryByRole('button', { name: /Agregar arriendo/ })).toBeNull();
+      expect(screen.getByRole('button', { name: /Agregar zona/ })).toBeInTheDocument();
     });
 
     it('publica un arriendo eligiendo el punto en el mapa', async () => {
@@ -390,6 +416,76 @@ describe('Inicio', () => {
       await screen.findByText('Hotel Cerro');
       expect(screen.queryByRole('button', { name: 'Editar Hotel Cerro' })).toBeNull();
       expect(screen.getByRole('button', { name: 'Editar Departamento Viña' })).toBeInTheDocument();
+    });
+  });
+
+  describe('zonas (administradores)', () => {
+    const newZone = { id: 'z9', name: 'Playa Ancha', description: null, safeHours: null, latCenter: -33.03, lngCenter: -71.64, radiusM: 400, ratingAverage: null, ratingCount: 0 };
+    const goZones = async (props = { canManage: true }) => {
+      render(<InicioPage {...props} />);
+      await screen.findByText('Departamento Viña');
+      fireEvent.click(screen.getByRole('tab', { name: /Zonas/ }));
+      await screen.findByText('Cerro Alegre');
+    };
+
+    it('una persona común no ve cómo agregar, editar ni eliminar zonas', async () => {
+      await goZones({});
+      expect(screen.queryByRole('button', { name: /Agregar zona/ })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Editar Cerro Alegre' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Eliminar Cerro Alegre' })).toBeNull();
+    });
+
+    it('agrega una zona eligiendo el centro, con el área fija a la vista', async () => {
+      apiMock.createZone.mockResolvedValue(newZone);
+      await goZones();
+      fireEvent.click(screen.getByRole('button', { name: /Agregar zona/ }));
+      fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Playa Ancha' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Agregar zona' }));
+      expect(await screen.findByText(/Marca el centro en el mapa/)).toBeInTheDocument();
+      expect(apiMock.createZone).not.toHaveBeenCalled();
+
+      fireEvent.click(screen.getByRole('button', { name: /Elegir en el mapa/ }));
+      expect(mapProps.picking).toBe(true);
+      expect(mapProps.pickedRadius).toBe(400);
+      act(() => mapProps.onPick(-33.03, -71.64));
+      fireEvent.click(screen.getByRole('button', { name: 'Agregar zona' }));
+      await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+      expect(apiMock.createZone).toHaveBeenCalledWith({
+        name: 'Playa Ancha',
+        description: null,
+        safeHours: null,
+        latitude: -33.03,
+        longitude: -71.64,
+      });
+      expect(screen.getByText('Playa Ancha')).toBeInTheDocument();
+      expect(mapProps.selectedId).toBe('z9');
+      expect(mapProps.items.find((i) => i.id === 'z9')).toMatchObject({ radius: 400, badge: { text: 'Sin reseñas' } });
+    });
+
+    it('edita una zona con sus datos actuales', async () => {
+      apiMock.updateZone.mockResolvedValue({ ...zones[0], name: 'Cerro Alegre Alto' });
+      await goZones();
+      fireEvent.click(screen.getByRole('button', { name: 'Editar Cerro Alegre' }));
+      expect(screen.getByLabelText('Nombre')).toHaveValue('Cerro Alegre');
+      expect(screen.getByLabelText('Latitud')).toHaveValue('-33.04');
+      fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Cerro Alegre Alto' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
+      expect(await screen.findByText('Cerro Alegre Alto')).toBeInTheDocument();
+      expect(apiMock.updateZone).toHaveBeenCalledWith('z1', expect.objectContaining({ name: 'Cerro Alegre Alto', latitude: -33.04 }));
+    });
+
+    it('elimina una zona solo tras confirmar', async () => {
+      apiMock.deleteZone.mockResolvedValue(null);
+      await goZones();
+      fireEvent.click(screen.getByRole('button', { name: 'Eliminar Cerro Alegre' }));
+      expect(screen.getByText('¿Eliminar esta zona y sus reseñas?')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'No' }));
+      expect(apiMock.deleteZone).not.toHaveBeenCalled();
+      fireEvent.click(screen.getByRole('button', { name: 'Eliminar Cerro Alegre' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Sí, eliminar' }));
+      await waitFor(() => expect(screen.queryByText('Cerro Alegre')).toBeNull());
+      expect(apiMock.deleteZone).toHaveBeenCalledWith('z1');
+      expect(apiMock.deleteListing).not.toHaveBeenCalled();
     });
   });
 });

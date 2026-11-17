@@ -24,7 +24,10 @@ model User {
   bio              String?
   isVisible        Boolean  @default(true) @map("is_visible")
   createdAt        DateTime @default(now()) @map("created_at")
+  // Versión de la foto de perfil (null = sin foto); los bytes están en UserAvatar.
+  avatarUpdatedAt  DateTime? @map("avatar_updated_at")
 
+  avatar              UserAvatar?
   languages           UserLanguage[]
   hobbies             UserHobby[]
   friendshipsSent     Friendship[]   @relation("FriendshipRequester")
@@ -42,6 +45,16 @@ model User {
   notificationsCaused Notification[] @relation("NotificationActor")
 
   @@map("users")
+}
+
+model UserAvatar {
+  userId      String @id @map("user_id") @db.Uuid
+  contentType String @map("content_type")
+  data        Bytes
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_avatars")
 }
 
 model UserLanguage {
@@ -105,7 +118,6 @@ model Listing {
 model Zone {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
-  safetyLevel String   @map("safety_level")
   description String?
   safeHours   String?  @map("safe_hours")
   latCenter   Float    @map("lat_center")

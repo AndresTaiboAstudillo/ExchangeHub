@@ -13,6 +13,7 @@ const ownProfileSelect = {
   bio: true,
   isVisible: true,
   createdAt: true,
+  avatarUpdatedAt: true,
   languages: { select: { languageCode: true } },
   hobbies: { select: { hobby: true } },
 } as const;
@@ -27,6 +28,7 @@ const publicProfileSelect = {
   bio: true,
   isVisible: true,
   createdAt: true,
+  avatarUpdatedAt: true,
   languages: ownProfileSelect.languages,
   hobbies: ownProfileSelect.hobbies,
 } as const;
@@ -75,6 +77,7 @@ export class UsersService {
         universityOrigin: true,
         career: true,
         bio: true,
+        avatarUpdatedAt: true,
         languages: publicProfileSelect.languages,
         hobbies: publicProfileSelect.hobbies,
       },

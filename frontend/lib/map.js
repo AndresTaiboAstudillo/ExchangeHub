@@ -22,11 +22,30 @@ export const LODGING_CATEGORY_IDS = ['hotel', 'hostal', 'hospedaje'];
 export const COMMERCE_CATEGORY_IDS = Object.keys(PLACE_CATEGORIES).filter((id) => !LODGING_CATEGORY_IDS.includes(id));
 export const isLodging = (category) => LODGING_CATEGORY_IDS.includes(category);
 
-export const SAFETY = {
-  safe: { label: 'Segura', emoji: '🟢', badge: 'green', color: '#059669', background: '#D1FAE5' },
-  caution: { label: 'Precaución nocturna', emoji: '🟡', badge: 'amber', color: '#D97706', background: '#FEF3C7' },
-  busy: { label: 'Muy transitada', emoji: '🔵', badge: 'blue', color: '#2563EB', background: '#DBEAFE' },
-};
+/** Zona sin reseñas todavía: gris, para no sugerir que es buena ni mala. */
+export const ZONE_UNRATED_COLOR = '#9CA3AF';
+
+function hslToHex(h, sat, light) {
+  const k = (n) => (n + h / 30) % 12;
+  const a = sat * Math.min(light, 1 - light);
+  const f = (n) => light - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return `#${[f(0), f(8), f(4)].map((v) => Math.round(v * 255).toString(16).padStart(2, '0')).join('')}`;
+}
+
+/** Promedio de estrellas → color de la zona: 1★ rojo, 3★ amarillo, 5★ verde (con grados intermedios). */
+export function zoneColorFor(average) {
+  if (typeof average !== 'number' || Number.isNaN(average)) return ZONE_UNRATED_COLOR;
+  const clamped = Math.min(5, Math.max(1, average));
+  return hslToHex(((clamped - 1) / 4) * 120, 0.75, 0.38);
+}
+
+/** Nivel de la zona según su promedio, para la etiqueta de la tarjeta. */
+export function zoneLevel(average) {
+  if (typeof average !== 'number' || Number.isNaN(average)) return { label: 'Sin reseñas', badge: 'purple' };
+  if (average >= 3.5) return { label: 'Bien valorada', badge: 'green' };
+  if (average >= 2.5) return { label: 'Valoración regular', badge: 'amber' };
+  return { label: 'Mal valorada', badge: 'rose' };
+}
 
 const clp = new Intl.NumberFormat('es-CL');
 
@@ -152,20 +171,23 @@ export function fromUniversity(u) {
 }
 
 export function fromZone(z) {
-  const meta = SAFETY[z.safetyLevel] ?? SAFETY.busy;
+  const average = z.ratingAverage ?? null;
+  const level = zoneLevel(average);
   return {
     id: z.id,
     kind: 'zona',
+    reviewTarget: 'zone',
+    zone: z,
     name: z.name,
     address: z.description ?? '',
     lat: z.latCenter,
     lng: z.lngCenter,
     radius: z.radiusM,
-    emoji: meta.emoji,
+    emoji: '🗺️',
     color: 'green',
-    zoneColor: meta.color,
-    background: meta.background,
-    badge: { text: meta.label, color: meta.badge },
-    footer: z.safeHours ? `🌙 ${z.safeHours}` : null,
+    zoneColor: zoneColorFor(average),
+    badge: { text: level.label, color: level.badge },
+    footer: z.safeHours ? `🕐 ${z.safeHours}` : null,
+    rating: { average, count: z.ratingCount ?? 0 },
   };
 }

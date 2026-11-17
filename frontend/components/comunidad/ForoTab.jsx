@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../lib/api';
 import { FORUM_FILTERS } from '../../lib/categories';
-import { colorFor, firstName, initialOf, shortName } from '../../lib/format';
+import { firstName, shortName } from '../../lib/format';
+import Avatar from '../Avatar';
 import PostCard from './PostCard';
 
 const EMPTY_FEED = { items: [], nextCursor: null, status: 'loading', error: '' };
@@ -157,12 +158,7 @@ export default function ForoTab({ social, meId, postsVersion, onNewPost, onToast
             )}
             {suggestions.map((person) => (
               <div key={person.id} className="flex items-center gap-2.5">
-                <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                  style={{ background: colorFor(person.id) }}
-                >
-                  {initialOf(person.name)}
-                </div>
+                <Avatar person={person} className="w-9 h-9 text-sm" />
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-semibold truncate">
                     {shortName(person.name)}
@@ -206,14 +202,9 @@ export default function ForoTab({ social, meId, postsVersion, onNewPost, onToast
               </p>
               <div className="flex mt-2.5">
                 {social.friends.slice(0, 5).map((friend, i) => (
-                  <div
-                    key={friend.id}
-                    title={friend.name}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold text-white border-2 border-white ${i > 0 ? '-ml-2' : ''}`}
-                    style={{ background: colorFor(friend.id) }}
-                  >
-                    {initialOf(friend.name)}
-                  </div>
+                  <span key={friend.id} title={friend.name} className={`flex ${i > 0 ? '-ml-2' : ''}`}>
+                    <Avatar person={friend} className="w-8 h-8 text-[13px] border-2 border-white" />
+                  </span>
                 ))}
               </div>
             </>
