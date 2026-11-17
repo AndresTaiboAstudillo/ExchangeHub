@@ -13,12 +13,8 @@ export default function UniversidadesPage({ debounceMs }) {
   return (
     <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-7">
       <h1 className="font-serif text-[26px] mb-1">Instituciones de educación superior en Chile</h1>
-      <p className="text-sm text-muted mb-1">
-        Catálogo oficial del Ministerio de Educación, enriquecido con datos abiertos de Wikidata
-      </p>
-      {freshness && (
-        <p className={`text-xs mb-5 ${freshness.stale ? 'text-amber-800' : 'text-muted'}`}>{freshness.text}</p>
-      )}
+      <p className={`text-sm text-muted ${freshness ? 'mb-1' : 'mb-5'}`}>Fuente: Ministerio de Educación de Chile</p>
+      {freshness && <p className="text-xs mb-5 text-amber-800">{freshness.text}</p>}
 
       <div className="flex gap-2.5 mb-4 flex-wrap">
         <div className="relative max-w-[340px] flex-1 min-w-[220px]">
@@ -132,7 +128,7 @@ export default function UniversidadesPage({ debounceMs }) {
   );
 }
 
-/** Cuándo se actualizó el catálogo por última vez. Es informativo: si falla, no se muestra nada. */
+/** Aviso de datos desactualizados. Es informativo: si falla o están al día, no se muestra nada. */
 function useFreshness() {
   const [info, setInfo] = useState(null);
   useEffect(() => {
@@ -143,12 +139,9 @@ function useFreshness() {
         const catalog = res.sources.find((s) => s.code === 'mineduc_ies');
         const date = formatDate(catalog?.lastFetchedAt);
         if (!date) return;
-        setInfo({
-          stale: catalog.stale,
-          text: catalog.stale
-            ? `Datos del Ministerio recuperados el ${date}: podrían estar desactualizados.`
-            : `Datos del Ministerio actualizados el ${date}.`,
-        });
+        // Solo se avisa cuando están desactualizados; al día no hace falta decir nada.
+        if (!catalog.stale) return;
+        setInfo({ text: `Datos del Ministerio recuperados el ${date}: podrían estar desactualizados.` });
       },
       () => {},
     );

@@ -4,8 +4,10 @@ import { useId, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '../app/providers';
 import { api } from '../lib/api';
-import { emptyToNull, initialOf, joinName, splitName } from '../lib/format';
+import { emptyToNull, joinName, splitName } from '../lib/format';
 import { LANGUAGES, languageLabel } from '../lib/languages';
+import AvatarEditor from './perfil/AvatarEditor';
+import MyFriends from './perfil/MyFriends';
 import ToggleSwitch from './perfil/ToggleSwitch';
 
 const MAX_HOBBIES = 20;
@@ -123,24 +125,14 @@ export default function PerfilPage({ onToast }) {
         {/* Aside */}
         <div className="flex flex-col gap-4">
           <div className="bg-white rounded-lg p-7 text-center shadow-card">
-            <div className="w-20 h-20 rounded-full bg-forest-mid flex items-center justify-center text-3xl font-bold text-white mx-auto mb-3">
-              {initialOf(user.name)}
-            </div>
+            <AvatarEditor user={user} onChange={setUser} onToast={onToast} />
             <div className="text-[17px] font-bold mb-1">{user.name}</div>
             {place && <div className="text-[13px] text-muted mb-3.5">🌎 {place}</div>}
             {user.career && <div className="text-[13px] text-muted">{user.career}</div>}
             <div className="grid grid-cols-2 gap-2.5 mt-3.5">
-              <Stat value={user.friendsCount} label="Amigos" />
+              <Stat value={user.friendsCount} label="Amigos" href="#mis-amigos" />
               <Stat value={user.postsCount} label="Publicaciones" />
             </div>
-            <button
-              type="button"
-              disabled
-              title="Próximamente"
-              className="w-full mt-3.5 justify-center px-3.5 py-1.5 rounded-lg text-[13px] font-semibold border-[1.5px] border-border text-ink-mid opacity-60 cursor-not-allowed"
-            >
-              📷 Cambiar foto
-            </button>
           </div>
 
           <div className="bg-white rounded-lg p-6 shadow-card">
@@ -277,6 +269,8 @@ export default function PerfilPage({ onToast }) {
             </div>
           </div>
 
+          <MyFriends refreshKey={user.friendsCount} />
+
           <div className="bg-white rounded-lg p-6 shadow-card mb-5">
             <h3 className="text-base font-bold mb-4 pb-2.5 border-b-[1.5px] border-border">Privacidad</h3>
             <div className="flex flex-col gap-3.5">
@@ -285,12 +279,6 @@ export default function PerfilPage({ onToast }) {
                 desc='Otros usuarios pueden encontrarte en "Encontrar amigos"'
                 checked={form.isVisible}
                 onChange={(isVisible) => setForm((f) => ({ ...f, isVisible }))}
-              />
-              <PrivacyRow
-                title="Recibir solicitudes de amistad"
-                desc="Próximamente: por ahora cualquier estudiante puede enviarte una solicitud"
-                checked
-                disabled
               />
             </div>
           </div>
@@ -319,12 +307,20 @@ export default function PerfilPage({ onToast }) {
   );
 }
 
-function Stat({ value, label }) {
-  return (
-    <div className="bg-surface rounded-lg p-2.5 text-center">
+function Stat({ value, label, href }) {
+  const body = (
+    <>
       <strong className="block text-xl text-forest-mid">{value}</strong>
       <span className="text-[11px] text-muted">{label}</span>
-    </div>
+    </>
+  );
+  const box = 'bg-surface rounded-lg p-2.5 text-center';
+  return href ? (
+    <a href={href} className={`${box} block hover:bg-surface-2 transition-colors`}>
+      {body}
+    </a>
+  ) : (
+    <div className={box}>{body}</div>
   );
 }
 
@@ -362,14 +358,14 @@ function BioField(props) {
   );
 }
 
-function PrivacyRow({ title, desc, checked, onChange, disabled }) {
+function PrivacyRow({ title, desc, checked, onChange }) {
   return (
     <div className="flex justify-between items-center gap-4">
       <div>
         <div className="text-sm font-semibold">{title}</div>
         <div className="text-xs text-muted">{desc}</div>
       </div>
-      <ToggleSwitch checked={checked} onChange={onChange} disabled={disabled} label={title} />
+      <ToggleSwitch checked={checked} onChange={onChange} label={title} />
     </div>
   );
 }

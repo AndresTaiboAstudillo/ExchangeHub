@@ -126,10 +126,132 @@ describe('Mapa (PostgreSQL real)', () => {
       expect(typeof listings.body[0].latitude).toBe('number');
 
       const zones = await api().get('/map/zones').set(member).expect(200);
-      expect(
-        zones.body.map((z: { safetyLevel: string }) => z.safetyLevel),
-      ).toEqual(expect.arrayContaining(['safe', 'caution', 'busy']));
+      expect(zones.body.length).toBeGreaterThanOrEqual(3);
       expect(zones.body[0]).toHaveProperty('radiusM');
+      expect(zones.body[0]).not.toHaveProperty('safetyLevel');
+    });
+  });
+
+  describe('zonas: reseñas y administración', () => {
+    const validZone = {
+      name: 'Zona de prueba',
+      description: 'Barrio de ejemplo',
+      latitude: -33.04,
+      longitude: -71.62,
+    };
+    const createZone = async (body: object = validZone) =>
+      (await api().post('/map/zones').set(admin).send(body).expect(201)).body;
+
+    it('solo un administrador agrega, edita y elimina zonas', async () => {
+      await api().post('/map/zones').set(member).send(validZone).expect(403);
+      await api().post('/map/zones').send(validZone).expect(401);
+      const zone = await createZone();
+      await api()
+        .patch(`/map/zones/${zone.id}`)
+        .set(member)
+        .send({ name: 'Otra' })
+        .expect(403);
+      await api().delete(`/map/zones/${zone.id}`).set(member).expect(403);
+      await api().delete(`/map/zones/${zone.id}`).set(admin).expect(204);
+    });
+
+    it('todas las zonas tienen la misma área, aunque se pida otra', async () => {
+      const zone = await createZone({ ...validZone, radiusM: 5000 }).catch(
+        () => null,
+      );
+      // el radio no es un campo permitido: se rechaza con 400
+      expect(zone).toBeNull();
+      const ok = await createZone();
+      const zones = await api().get('/map/zones').set(member).expect(200);
+      const radii = new Set(
+        zones.body.map((z: { radiusM: number }) => z.radiusM),
+      );
+      expect(radii.size).toBe(1);
+      expect(ok.radiusM).toBe([...radii][0]);
+      await api().delete(`/map/zones/${ok.id}`).set(admin).expect(204);
+    });
+
+    it('valida los datos de la zona', async () => {
+      for (const bad of [
+        { ...validZone, name: 'ab' },
+        { ...validZone, latitude: 95 },
+        { ...validZone, longitude: 'x' },
+        { name: 'Sin coordenadas' },
+      ]) {
+        await api().post('/map/zones').set(admin).send(bad).expect(400);
+      }
+    });
+
+    it('edita una zona y responde 404 si no existe', async () => {
+      const zone = await createZone();
+      const res = await api()
+        .patch(`/map/zones/${zone.id}`)
+        .set(admin)
+        .send({ name: 'Nombre nuevo', safeHours: '  ' })
+        .expect(200);
+      expect(res.body).toMatchObject({ name: 'Nombre nuevo', safeHours: null });
+      await api()
+        .patch(`/map/zones/${randomUUID()}`)
+        .set(admin)
+        .send({ name: 'Nada' })
+        .expect(404);
+      await api().delete(`/map/zones/${zone.id}`).set(admin).expect(204);
+      await api().delete(`/map/zones/${zone.id}`).set(admin).expect(404);
+    });
+
+    it('promedia las reseñas, permite una por persona y la lista de zonas trae el promedio', async () => {
+      const zone = await createZone();
+      const url = `/map/zones/${zone.id}/reviews`;
+      const other = await newUser('Otra', 'user');
+      await api().put(url).set(member).send({ rating: 5 }).expect(200);
+      await api()
+        .put(url)
+        .set(other)
+        .send({ rating: 2, body: 'Ruidosa' })
+        .expect(200);
+      await api().put(url).set(other).send({ rating: 3 }).expect(200); // actualiza, no duplica
+      const list = await api().get(url).set(member).expect(200);
+      expect(list.body.summary).toMatchObject({ count: 2, average: 4 });
+      const zones = await api().get('/map/zones').set(member).expect(200);
+      const found = zones.body.find((z: { id: string }) => z.id === zone.id);
+      expect(found).toMatchObject({ ratingAverage: 4, ratingCount: 2 });
+      await api().put(url).set(member).send({ rating: 6 }).expect(400);
+      await api().delete(`/map/zones/${zone.id}`).set(admin).expect(204);
+    });
+
+    it('una zona sin reseñas no tiene promedio y una inexistente responde 404', async () => {
+      const zone = await createZone();
+      const zones = await api().get('/map/zones').set(member).expect(200);
+      expect(
+        zones.body.find((z: { id: string }) => z.id === zone.id),
+      ).toMatchObject({
+        ratingAverage: null,
+        ratingCount: 0,
+      });
+      await api()
+        .get(`/map/zones/${randomUUID()}/reviews`)
+        .set(member)
+        .expect(404);
+      await api()
+        .put(`/map/zones/${randomUUID()}/reviews`)
+        .set(member)
+        .send({ rating: 4 })
+        .expect(404);
+      await api().delete(`/map/zones/${zone.id}`).set(admin).expect(204);
+    });
+
+    it('al eliminar la zona se eliminan sus reseñas', async () => {
+      const zone = await createZone();
+      await api()
+        .put(`/map/zones/${zone.id}/reviews`)
+        .set(member)
+        .send({ rating: 4 })
+        .expect(200);
+      await api().delete(`/map/zones/${zone.id}`).set(admin).expect(204);
+      const left = await prisma.review.count({
+        where: { targetType: 'zone', targetId: zone.id },
+      });
+      expect(left).toBe(0);
     });
   });
 

@@ -1,7 +1,8 @@
 'use client';
 
 import { useId, useMemo, useState } from 'react';
-import { colorFor, firstName, initialOf } from '../../lib/format';
+import { firstName } from '../../lib/format';
+import Avatar from '../Avatar';
 import { filterStudents } from '../../lib/students';
 import { useChat } from '../chat/ChatProvider';
 import FriendCard from './FriendCard';
@@ -76,12 +77,7 @@ export default function AmigosTab({ social, onToast }) {
           <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
             {received.map((f) => (
               <div key={f.id} className="flex items-center gap-3 bg-white rounded-lg p-3.5 shadow-card">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0"
-                  style={{ background: colorFor(f.user.id) }}
-                >
-                  {initialOf(f.user.name)}
-                </div>
+                <Avatar person={f.user} className="w-10 h-10 text-base" />
                 <div className="flex-1 min-w-0 text-sm font-semibold truncate">{f.user.name}</div>
                 <button
                   type="button"

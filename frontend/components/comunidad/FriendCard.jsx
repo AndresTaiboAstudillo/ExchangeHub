@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { colorFor, initialOf, profileHref } from '../../lib/format';
+import { profileHref } from '../../lib/format';
+import Avatar from '../Avatar';
 import { isLocal } from '../../lib/students';
 import Badge from '../Badge';
 
@@ -22,12 +23,7 @@ export default function FriendCard({ person, relation, busy = false, onAdd, onAc
         aria-label={`Ver perfil de ${person.name}`}
         className="flex gap-3 items-center w-full rounded-lg hover:opacity-90"
       >
-        <div
-          className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-base text-white flex-shrink-0"
-          style={{ background: colorFor(person.id) }}
-        >
-          {initialOf(person.name)}
-        </div>
+        <Avatar person={person} className="w-11 h-11 text-base" />
         <div className="min-w-0">
           <div className="text-sm font-semibold truncate">{person.name}</div>
           <div className="text-xs text-muted mb-1 flex items-center gap-1.5 flex-wrap">

@@ -11,7 +11,12 @@ import { CreateReplyDto } from './dto/create-reply.dto.js';
 import { ListPostsDto } from './dto/list-posts.dto.js';
 
 const author = {
-  select: { id: true, name: true, countryOfOrigin: true },
+  select: {
+    id: true,
+    name: true,
+    countryOfOrigin: true,
+    avatarUpdatedAt: true,
+  },
 } as const;
 
 const POST_NOT_FOUND = 'La publicación no existe';

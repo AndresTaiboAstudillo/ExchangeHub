@@ -115,6 +115,8 @@ export const api = {
 
   // Perfil y estudiantes
   me: () => request('/users/me'),
+  setAvatar: (image) => request('/users/me/avatar', { method: 'PUT', body: { image } }),
+  removeAvatar: () => request('/users/me/avatar', { method: 'DELETE' }),
   updateMe: (data) => request('/users/me', { method: 'PATCH', body: data }),
   users: () => request('/users'),
   user: (id) => request(`/users/${id}`),
@@ -151,6 +153,9 @@ export const api = {
   // Mapa de Inicio
   mapListings: () => request('/map/listings'),
   mapZones: () => request('/map/zones'),
+  createZone: (data) => request('/map/zones', { method: 'POST', body: data }),
+  updateZone: (id, data) => request(`/map/zones/${id}`, { method: 'PATCH', body: data }),
+  deleteZone: (id) => request(`/map/zones/${id}`, { method: 'DELETE' }),
   adminUser: (email) => request(`/admin/users${query({ email })}`),
   adminDeleteUser: (email) => request(`/admin/users${query({ email })}`, { method: 'DELETE' }),
   createListing: (data) => request('/map/listings', { method: 'POST', body: data }),
@@ -167,6 +172,10 @@ export const api = {
     request(`/map/listings/${listingId}/reviews${query({ cursor, limit })}`),
   saveListingReview: (listingId, { rating, body }) =>
     request(`/map/listings/${listingId}/reviews`, { method: 'PUT', body: { rating, body } }),
+  zoneReviews: (zoneId, { cursor, limit } = {}) =>
+    request(`/map/zones/${zoneId}/reviews${query({ cursor, limit })}`),
+  saveZoneReview: (zoneId, { rating, body }) =>
+    request(`/map/zones/${zoneId}/reviews`, { method: 'PUT', body: { rating, body } }),
   deleteReview: (reviewId) => request(`/map/reviews/${reviewId}`, { method: 'DELETE' }),
 
   // Amistades

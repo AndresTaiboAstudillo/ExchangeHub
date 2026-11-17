@@ -1,7 +1,7 @@
 # Mapa de Inicio
 
 Mapa interactivo (Leaflet + OpenStreetMap) con tres capas: **alojamientos**, **comercios y servicios** y
-**zonas** con su nivel de seguridad. La lista lateral y el mapa están sincronizados.
+**zonas** valoradas por los estudiantes. La lista lateral y el mapa están sincronizados.
 
 ## De dónde sale cada dato
 | Capa | Fuente | Tabla |
@@ -95,10 +95,23 @@ promedio, la distribución por estrellas y las opiniones de otros estudiantes (c
   admitía `listing` y `zone`, y agrega `updated_at`).
 - **Una reseña por persona y comercio**: volver a enviarla la edita (aparece "editada"). El texto es opcional.
 - Quien tiene el perfil oculto (`isVisible = false`) aparece como "Estudiante", sin enlace ni país.
-- Las zonas no se reseñan.
 - La referencia es polimórfica (sin clave foránea), así que la actualización desde OpenStreetMap **no elimina
   comercios que tienen reseñas**, aunque ya no existan en OSM.
 - Moderación: un administrador puede borrar cualquier reseña con `DELETE /map/reviews/:id`.
+
+## Zonas valoradas por estudiantes
+
+- Cada zona es un círculo de **400 m** de radio (`ZONE_RADIUS_M`, restricción `zones_radius_fixed` en la base): todas miden
+  lo mismo y el color depende solo de las reseñas.
+- **Color por estrellas:** sin reseñas, gris; con reseñas va de **rojo (1★) a amarillo (3★) a verde (5★)** con grados
+  intermedios (`zoneColorFor` en `frontend/lib/map.js`). La etiqueta de la tarjeta es «Bien valorada» (≥ 3,5),
+  «Valoración regular» (≥ 2,5) o «Mal valorada».
+- Reseñas: `GET`/`PUT /map/zones/:id/reviews`, con las mismas reglas que comercios y alojamientos (una por persona,
+  1–5 estrellas, texto opcional). Al publicar o borrar una reseña el círculo cambia de color al instante.
+- Administración (solo administradores): `POST /map/zones`, `PATCH /map/zones/:id`, `DELETE /map/zones/:id` (borra también
+  sus reseñas). El formulario pide nombre, descripción, horario recomendado y el centro (en el mapa o con coordenadas);
+  el área no se elige. En el mapa se previsualiza el círculo al elegir el centro.
+- La migración `20261117000000_zone_reviews` elimina `zones.safety_level` (ya no se usa) y fija el radio de las zonas de ejemplo en 400 m.
 
 ## Seguridad
 Los nombres de OpenStreetMap no son de confianza: los globos del mapa se arman con el DOM (`textContent`), nunca

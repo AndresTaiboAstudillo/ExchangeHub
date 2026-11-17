@@ -94,6 +94,41 @@
         ],
         "type": "object"
       },
+      "CreateZoneDto": {
+        "properties": {
+          "description": {
+            "maxLength": 500,
+            "nullable": true,
+            "type": "string"
+          },
+          "latitude": {
+            "example": -33.0425,
+            "type": "number"
+          },
+          "longitude": {
+            "example": -71.629,
+            "type": "number"
+          },
+          "name": {
+            "example": "Cerro Alegre",
+            "maxLength": 80,
+            "minLength": 3,
+            "type": "string"
+          },
+          "safeHours": {
+            "example": "Segura hasta las 23:00",
+            "maxLength": 80,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "latitude",
+          "longitude"
+        ],
+        "type": "object"
+      },
       "LoginDto": {
         "properties": {
           "email": {
@@ -245,6 +280,51 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "UpdateZoneDto": {
+        "properties": {
+          "description": {
+            "maxLength": 500,
+            "nullable": true,
+            "type": "string"
+          },
+          "latitude": {
+            "example": -33.0425,
+            "type": "number"
+          },
+          "longitude": {
+            "example": -71.629,
+            "type": "number"
+          },
+          "name": {
+            "example": "Cerro Alegre",
+            "maxLength": 80,
+            "minLength": 3,
+            "type": "string"
+          },
+          "safeHours": {
+            "example": "Segura hasta las 23:00",
+            "maxLength": 80,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UploadAvatarDto": {
+        "properties": {
+          "image": {
+            "description": "Imagen JPEG, PNG o WebP como data URL en base64 (máx. 64 KB ya decodificada; el cliente la reduce a 256 px).",
+            "example": "data:image/jpeg;base64,/9j/4AAQ…",
+            "maxLength": 90000,
+            "pattern": "^data:image\\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "image"
+        ],
         "type": "object"
       },
       "UpsertReviewDto": {
@@ -412,6 +492,30 @@
         "summary": "Registrar un usuario",
         "tags": [
           "Autenticación"
+        ]
+      }
+    },
+    "/avatars/{id}": {
+      "get": {
+        "operationId": "AvatarsController_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Foto de perfil de un usuario (imagen)",
+        "tags": [
+          "Usuarios"
         ]
       }
     },
@@ -1116,13 +1220,6 @@
         "parameters": [],
         "responses": {
           "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            },
             "description": ""
           }
         },
@@ -1131,7 +1228,188 @@
             "bearer": []
           }
         ],
-        "summary": "Zonas con su nivel de seguridad",
+        "summary": "Zonas con su promedio de reseñas",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "post": {
+        "operationId": "MapController_createZone",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateZoneDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Agregar una zona (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/zones/{id}": {
+      "delete": {
+        "operationId": "MapController_deleteZone",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una zona y sus reseñas (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "patch": {
+        "operationId": "MapController_updateZone",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateZoneDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar una zona (solo administradores)",
+        "tags": [
+          "Mapa"
+        ]
+      }
+    },
+    "/map/zones/{id}/reviews": {
+      "get": {
+        "operationId": "MapController_listZoneReviews",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Id de la última reseña recibida.",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reseñas de una zona",
+        "tags": [
+          "Mapa"
+        ]
+      },
+      "put": {
+        "operationId": "MapController_upsertZoneReview",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertReviewDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dejar o actualizar mi reseña de una zona",
         "tags": [
           "Mapa"
         ]
@@ -1852,6 +2130,54 @@
           }
         ],
         "summary": "Actualizar mi perfil",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/users/me/avatar": {
+      "delete": {
+        "operationId": "UsersController_removeAvatar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quitar mi foto de perfil",
+        "tags": [
+          "Usuarios"
+        ]
+      },
+      "put": {
+        "operationId": "UsersController_setAvatar",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadAvatarDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cambiar mi foto de perfil",
         "tags": [
           "Usuarios"
         ]

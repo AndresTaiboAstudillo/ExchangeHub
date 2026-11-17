@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { AdminGuard } from '../universities/admin.guard.js';
 import { PlacesQueryDto } from './dto/places-query.dto.js';
 import { CreateListingDto, UpdateListingDto } from './dto/listing.dto.js';
+import { CreateZoneDto, UpdateZoneDto } from './dto/zone.dto.js';
 import { ListReviewsDto, UpsertReviewDto } from './dto/review.dto.js';
 import { MapService } from './map.service.js';
 import { PlacesIngestionService } from './places-ingestion.service.js';
@@ -79,10 +80,37 @@ export class MapController {
     return this.map.listUniversities();
   }
 
-  @ApiOperation({ summary: 'Zonas con su nivel de seguridad' })
+  @ApiOperation({ summary: 'Zonas con su promedio de reseñas' })
   @Get('zones')
   zones() {
     return this.map.listZones();
+  }
+
+  @ApiOperation({ summary: 'Agregar una zona (solo administradores)' })
+  @Post('zones')
+  @UseGuards(AdminGuard)
+  createZone(@Body() dto: CreateZoneDto) {
+    return this.map.createZone(dto);
+  }
+
+  @ApiOperation({ summary: 'Editar una zona (solo administradores)' })
+  @Patch('zones/:id')
+  @UseGuards(AdminGuard)
+  updateZone(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateZoneDto,
+  ) {
+    return this.map.updateZone(id, dto);
+  }
+
+  @ApiOperation({
+    summary: 'Eliminar una zona y sus reseñas (solo administradores)',
+  })
+  @Delete('zones/:id')
+  @HttpCode(204)
+  @UseGuards(AdminGuard)
+  deleteZone(@Param('id', ParseUUIDPipe) id: string) {
+    return this.map.deleteZone(id);
   }
 
   @ApiOperation({
@@ -159,5 +187,25 @@ export class MapController {
     @Body() dto: UpsertReviewDto,
   ) {
     return this.reviews.upsert('listing', id, user.sub, dto);
+  }
+
+  @ApiOperation({ summary: 'Reseñas de una zona' })
+  @Get('zones/:id/reviews')
+  listZoneReviews(
+    @CurrentUser() user: JwtPayload,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: ListReviewsDto,
+  ) {
+    return this.reviews.list('zone', id, user.sub, query);
+  }
+
+  @ApiOperation({ summary: 'Dejar o actualizar mi reseña de una zona' })
+  @Put('zones/:id/reviews')
+  upsertZoneReview(
+    @CurrentUser() user: JwtPayload,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpsertReviewDto,
+  ) {
+    return this.reviews.upsert('zone', id, user.sub, dto);
   }
 }

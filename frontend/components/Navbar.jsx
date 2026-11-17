@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useApp } from '../app/providers';
-import { initialOf } from '../lib/format';
+import { avatarSrc, initialOf } from '../lib/format';
+import Avatar from './Avatar';
 import { useChat } from './chat/ChatProvider';
 import FriendsPanel from './chat/FriendsPanel';
 import NotificationsPanel from './chat/NotificationsPanel';
@@ -115,7 +116,7 @@ export default function Navbar() {
           aria-label="Mi perfil"
           className="w-[34px] h-[34px] rounded-full bg-amber flex items-center justify-center font-bold text-sm text-forest flex-shrink-0"
         >
-          {initialOf(user?.name)}
+          {user && avatarSrc(user) ? <Avatar person={user} className="w-[34px] h-[34px] text-sm" /> : initialOf(user?.name)}
         </Link>
         </div>
       </nav>

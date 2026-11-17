@@ -1,4 +1,5 @@
 // Utilidades de presentación: nombres, avatares y fechas.
+import { API_URL } from './api';
 
 const AVATAR_COLORS = ['#1B4332', '#2D6A4F', '#2E74B5', '#7C3AED', '#9F1239', '#0369A1', '#B45309'];
 
@@ -7,6 +8,16 @@ export function colorFor(seed = '') {
   let hash = 0;
   for (const char of String(seed)) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
+/**
+ * Enlace a la foto de perfil, o null si la persona no tiene. El parámetro `v` cambia con cada foto
+ * nueva, así el navegador puede guardarla en caché sin mostrar una versión vieja.
+ */
+export function avatarSrc(person) {
+  if (!person?.id || !person.avatarUpdatedAt) return null;
+  const version = Date.parse(person.avatarUpdatedAt);
+  return `${API_URL}/avatars/${person.id}${Number.isNaN(version) ? '' : `?v=${version}`}`;
 }
 
 export function initialOf(name = '') {

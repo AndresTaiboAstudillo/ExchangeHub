@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../lib/api';
-import { colorFor, initialOf, profileHref, shortName, timeAgo } from '../../lib/format';
+import { profileHref, shortName, timeAgo } from '../../lib/format';
+import Avatar from '../Avatar';
 import { formatRating } from '../../lib/map';
 import Badge from '../Badge';
 import StarInput, { StarsDisplay } from '../StarRating';
@@ -34,12 +35,7 @@ function ReviewItem({ review, onDelete, busy }) {
   const { author } = review;
   const who = (
     <>
-      <div
-        className="w-7 h-7 rounded-full flex items-center justify-center text-xs text-white flex-shrink-0"
-        style={{ background: colorFor(author.id ?? 'anonimo') }}
-      >
-        {initialOf(author.name)}
-      </div>
+      <Avatar person={author} className="w-7 h-7 text-xs" />
       <span className="text-[13px] font-semibold truncate">
         {shortName(author.name)}
         {author.countryOfOrigin && <span className="text-muted font-normal"> · {author.countryOfOrigin}</span>}
@@ -82,6 +78,7 @@ function ReviewItem({ review, onDelete, busy }) {
 const REVIEW_API = {
   place: { list: (...args) => api.placeReviews(...args), save: (...args) => api.savePlaceReview(...args) },
   listing: { list: (...args) => api.listingReviews(...args), save: (...args) => api.saveListingReview(...args) },
+  zone: { list: (...args) => api.zoneReviews(...args), save: (...args) => api.saveZoneReview(...args) },
 };
 
 /**

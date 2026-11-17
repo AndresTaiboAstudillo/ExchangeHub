@@ -338,6 +338,7 @@ describe('Funcionalidades sociales (PostgreSQL real)', () => {
         id: ana.id,
         name: 'Ana',
         countryOfOrigin: null,
+        avatarUpdatedAt: null,
       });
 
       const list = await api().get('/posts').set(ana.auth).expect(200);

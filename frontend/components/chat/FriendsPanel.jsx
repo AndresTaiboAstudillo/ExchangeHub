@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { colorFor, initialOf } from '../../lib/format';
+import Avatar from '../Avatar';
 import { previewOf } from '../../lib/chat';
 import { useChat } from './ChatProvider';
 
@@ -37,11 +37,7 @@ export default function FriendsPanel({ onClose }) {
               }}
               className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-2 transition-colors"
             >
-              <span
-                className="relative w-10 h-10 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0"
-                style={{ background: colorFor(c.friend.id) }}
-              >
-                {initialOf(c.friend.name)}
+              <Avatar person={c.friend} className="relative w-10 h-10 text-base">
                 <span
                   role="img"
                   aria-label={c.online ? 'En línea' : 'Desconectado'}
@@ -49,7 +45,7 @@ export default function FriendsPanel({ onClose }) {
                     c.online ? 'bg-emerald-500' : 'bg-gray-300'
                   }`}
                 />
-              </span>
+              </Avatar>
               <span className="flex-1 min-w-0">
                 <span className="block text-sm font-semibold truncate">{c.friend.name}</span>
                 <span className={`block text-xs truncate ${c.unreadCount > 0 ? 'text-ink font-medium' : 'text-muted'}`}>

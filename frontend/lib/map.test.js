@@ -7,6 +7,9 @@ import {
   fromPlace,
   fromUniversity,
   fromZone,
+  ZONE_UNRATED_COLOR,
+  zoneColorFor,
+  zoneLevel,
   matchesQuery,
   ratingLabel,
   starsText,
@@ -50,9 +53,44 @@ describe('adaptadores', () => {
     expect(fromPlace({ id: 'q', category: 'rara', name: 'X', latitude: 0, longitude: 0 }).emoji).toBe('📍');
   });
 
-  it('zona: color, radio y horario seguro', () => {
-    const z = fromZone({ id: 'z', name: 'Puerto', safetyLevel: 'caution', latCenter: -33, lngCenter: -71, radiusM: 350, safeHours: 'Evitar después de las 21:00' });
-    expect(z).toMatchObject({ kind: 'zona', radius: 350, zoneColor: '#D97706', badge: { text: 'Precaución nocturna' } });
+  it('zona: radio fijo, color y nivel según las estrellas, y horario', () => {
+    const z = fromZone({ id: 'z', name: 'Puerto', latCenter: -33, lngCenter: -71, radiusM: 400, safeHours: 'Hasta las 21:00', ratingAverage: 1.2, ratingCount: 3 });
+    expect(z).toMatchObject({
+      kind: 'zona',
+      reviewTarget: 'zone',
+      radius: 400,
+      zoneColor: zoneColorFor(1.2),
+      badge: { text: 'Mal valorada', color: 'rose' },
+      footer: '🕐 Hasta las 21:00',
+      rating: { average: 1.2, count: 3 },
+    });
+    expect(fromZone({ id: 'y', name: 'Y', latCenter: 0, lngCenter: 0, radiusM: 400 })).toMatchObject({
+      zoneColor: ZONE_UNRATED_COLOR,
+      badge: { text: 'Sin reseñas' },
+    });
+  });
+
+  it('el color de la zona va de rojo a amarillo a verde con las estrellas', () => {
+    const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    const [r1, g1] = rgb(zoneColorFor(1));
+    const [r5, g5] = rgb(zoneColorFor(5));
+    expect(r1).toBeGreaterThan(g1 * 3); // 1★: rojo
+    expect(g5).toBeGreaterThan(r5 * 3); // 5★: verde
+    // verde dominante en 5★, rojo en 1★, y amarillo (rojo y verde altos, azul bajo) en 3★
+    const [r3, g3, b3] = [1, 3, 5].map((i) => parseInt(zoneColorFor(3).slice(i, i + 2), 16));
+    expect(r3).toBeGreaterThan(120);
+    expect(g3).toBeGreaterThan(120);
+    expect(b3).toBeLessThan(40);
+    expect(new Set([1, 2, 3, 4, 5].map(zoneColorFor)).size).toBe(5);
+    expect(zoneColorFor(0)).toBe(zoneColorFor(1)); // se acota al rango 1–5
+    expect(zoneColorFor(null)).toBe(ZONE_UNRATED_COLOR);
+  });
+
+  it('el nivel de la zona tiene tres tramos', () => {
+    expect(zoneLevel(4.6).label).toBe('Bien valorada');
+    expect(zoneLevel(3).label).toBe('Valoración regular');
+    expect(zoneLevel(2.4).label).toBe('Mal valorada');
+    expect(zoneLevel(null).label).toBe('Sin reseñas');
   });
 });
 
@@ -142,7 +180,7 @@ describe('reseñas', () => {
     expect(fromPlace(base).rating).toEqual({ average: null, count: 0 });
   });
 
-  it('el globo ofrece reseñar comercios y alojamientos (no zonas) y no usa HTML del texto', () => {
+  it('el globo ofrece reseñar comercios, alojamientos y zonas, y no usa HTML del texto', () => {
     const onReviews = vi.fn();
     const item = { kind: 'comercio', id: 'p1', emoji: '🛒', name: '<img src=x onerror=alert(1)>', lat: 0, lng: 0, rating: { average: 4, count: 2 } };
     const node = buildPopup(item, { onReviews });
@@ -153,7 +191,8 @@ describe('reseñas', () => {
     button.click();
     expect(onReviews).toHaveBeenCalledWith('p1');
     expect(buildPopup({ ...item, kind: 'alojamiento' }, { onReviews }).querySelector('button')).not.toBeNull();
-    expect(buildPopup({ ...item, kind: 'zona' }, { onReviews }).querySelector('button')).toBeNull();
+    expect(buildPopup({ ...item, kind: 'zona' }, { onReviews }).querySelector('button')).not.toBeNull();
+    expect(buildPopup({ ...item, kind: 'universidad' }, { onReviews }).querySelector('button')).toBeNull();
     expect(buildPopup({ ...item, rating: { average: null, count: 0 } }, { onReviews }).querySelector('button').textContent).toBe('Reseñar');
   });
 });

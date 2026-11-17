@@ -22,6 +22,7 @@ export default function MapPanel({
   picking = false,
   onPick,
   pickedPoint = null,
+  pickedRadius = null,
   status,
 }) {
   const containerRef = useRef(null);
@@ -94,7 +95,7 @@ export default function MapPanel({
       }
       const icon = L.divIcon({
         className: 'eh-pin',
-        html: `<span class="eh-pin-body eh-pin-${item.color}"><span class="eh-pin-emoji">${item.emoji}</span></span>`,
+        html: `<span class="eh-pin-body eh-pin-${item.color}"${item.zoneColor ? ` style="background:${item.zoneColor}"` : ''}><span class="eh-pin-emoji">${item.emoji}</span></span>`,
         iconSize: [32, 32],
         iconAnchor: [16, 32],
         popupAnchor: [0, -30],
@@ -144,8 +145,23 @@ export default function MapPanel({
       interactive: false,
       keyboard: false,
     }).addTo(map);
-    return () => marker.remove();
-  }, [pickedPoint, ready]);
+    // Las zonas tienen un área fija: se muestra cuánto cubrirá el punto elegido.
+    const area = pickedRadius
+      ? L.circle([pickedPoint.lat, pickedPoint.lng], {
+          radius: pickedRadius,
+          color: '#E11D48',
+          fillColor: '#E11D48',
+          fillOpacity: 0.1,
+          weight: 2,
+          dashArray: '6 6',
+          interactive: false,
+        }).addTo(map)
+      : null;
+    return () => {
+      marker.remove();
+      area?.remove();
+    };
+  }, [pickedPoint, pickedRadius, ready]);
 
   const locate = () => {
     const ctx = leaflet.current;
@@ -203,17 +219,20 @@ export default function MapPanel({
         <div className="text-[11px] font-bold text-ink-mid">Leyenda</div>
         <LegendItem color="bg-forest-mid" label="Alojamiento" />
         <LegendItem color="bg-amber" label="Comercio o servicio" />
-        <LegendItem color="bg-emerald-600" label="Zona" />
+        <LegendItem
+          style={{ background: 'linear-gradient(90deg, #aa1818, #aaaa18, #18aa18)' }}
+          label="Zona: de rojo (1★) a verde (5★)"
+        />
         <LegendItem color="bg-blue-600" label="Universidad" />
       </div>
     </div>
   );
 }
 
-function LegendItem({ color, label }) {
+function LegendItem({ color = '', style, label }) {
   return (
     <div className="flex items-center gap-2 text-xs">
-      <div className={`w-3 h-3 rounded-full flex-shrink-0 ${color}`} />
+      <div className={`w-3 h-3 rounded-full flex-shrink-0 ${color}`} style={style} />
       {label}
     </div>
   );

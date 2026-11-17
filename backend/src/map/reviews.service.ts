@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { ListReviewsDto, UpsertReviewDto } from './dto/review.dto.js';
 
-export type ReviewTarget = 'place' | 'listing';
+export type ReviewTarget = 'place' | 'listing' | 'zone';
 
 const reviewSelect = {
   id: true,
@@ -11,7 +11,13 @@ const reviewSelect = {
   createdAt: true,
   updatedAt: true,
   author: {
-    select: { id: true, name: true, countryOfOrigin: true, isVisible: true },
+    select: {
+      id: true,
+      name: true,
+      countryOfOrigin: true,
+      isVisible: true,
+      avatarUpdatedAt: true,
+    },
   },
 } as const;
 
@@ -26,6 +32,7 @@ type ReviewRow = {
     name: string;
     countryOfOrigin: string | null;
     isVisible: boolean;
+    avatarUpdatedAt: Date | null;
   };
 };
 
@@ -186,27 +193,32 @@ export class ReviewsService {
             id: row.author.id,
             name: row.author.name,
             countryOfOrigin: row.author.countryOfOrigin,
+            avatarUpdatedAt: row.author.avatarUpdatedAt,
           }
-        : { id: null, name: 'Estudiante', countryOfOrigin: null },
+        : {
+            id: null,
+            name: 'Estudiante',
+            countryOfOrigin: null,
+            avatarUpdatedAt: null,
+          },
     };
   }
 
   private async assertTarget(target: ReviewTarget, id: string) {
+    const where = { where: { id }, select: { id: true } };
     const found =
       target === 'place'
-        ? await this.prisma.place.findUnique({
-            where: { id },
-            select: { id: true },
-          })
-        : await this.prisma.listing.findUnique({
-            where: { id },
-            select: { id: true },
-          });
+        ? await this.prisma.place.findUnique(where)
+        : target === 'zone'
+          ? await this.prisma.zone.findUnique(where)
+          : await this.prisma.listing.findUnique(where);
     if (!found) {
       throw new NotFoundException(
         target === 'place'
           ? 'Comercio no encontrado'
-          : 'Alojamiento no encontrado',
+          : target === 'zone'
+            ? 'Zona no encontrada'
+            : 'Alojamiento no encontrado',
       );
     }
   }

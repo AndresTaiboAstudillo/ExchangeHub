@@ -12,7 +12,15 @@ import { NotificationsService } from '../notifications/notifications.service.js'
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ListFriendshipsDto } from './dto/list-friendships.dto.js';
 
-const person = { select: { id: true, name: true } } as const;
+const person = {
+  select: {
+    id: true,
+    name: true,
+    career: true,
+    countryOfOrigin: true,
+    avatarUpdatedAt: true,
+  },
+} as const;
 
 @Injectable()
 export class FriendshipsService {
