@@ -320,3 +320,5 @@ Requisitos, configuración de producción y límites: [`docs/android.md`](docs/a
   <img width="402" height="652" alt="reseñamapa drawio" src="https://github.com/user-attachments/assets/90a6abd8-49c1-427b-856f-1fe05b47ea61" />
   
 Cuenta de administrador: admin@correo.cl | Admin123
+
+

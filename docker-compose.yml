@@ -28,12 +28,12 @@ services:
     environment:
       # Se incluye en el User-Agent de las descargas a Mineduc y Wikidata.
       PIPELINE_CONTACT: ${PIPELINE_CONTACT:-sin-contacto-configurado}
-      MINEDUC_CATALOG_FILE: /data/ies_vigentes.xlsx
-      PIPELINE_READ_TIMEOUT: "10"
-      PIPELINE_RETRIES: "1"
       LOG_LEVEL: ${LOG_LEVEL:-info}
-    volumes:
-      - ./datos/ies_vigentes.xlsx:/data/ies_vigentes.xlsx:ro
+      # Si el Ministerio no permite la descarga automática (robots.txt), descarga el Excel a mano,
+      # móntalo en el contenedor (volumes) y descomenta la línea:
+      # MINEDUC_CATALOG_FILE: /data/ies_vigentes.xlsx
+    # volumes:
+    #   - ./datos/ies_vigentes.xlsx:/data/ies_vigentes.xlsx:ro
 
   backend:
     build: ./backend
@@ -45,10 +45,20 @@ services:
       JWT_EXPIRES_IN_SECONDS: ${JWT_EXPIRES_IN_SECONDS:-3600}
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
       PYTHON_SERVICE_URL: http://python-service:8001
+      LOG_LEVEL: ${LOG_LEVEL:-info}
       PYTHON_PIPELINE_TIMEOUT_MS: ${PYTHON_PIPELINE_TIMEOUT_MS:-120000}
       # 0 = solo manual. 168 = revisar las fuentes una vez por semana.
       INGESTION_INTERVAL_HOURS: ${INGESTION_INTERVAL_HOURS:-0}
-      LOG_LEVEL: ${LOG_LEVEL:-info}
+      # Correo de recuperación de contraseña. Por defecto va al buzón de pruebas Mailpit (abajo);
+      # en producción apunta a tu proveedor SMTP real. Si TRUST_PROXY está detrás de un proxy: 1.
+      FRONTEND_URL: ${FRONTEND_URL:-}
+      SMTP_HOST: ${SMTP_HOST-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-ExchangeHub <no-reply@exchangehub.local>}
+      TRUST_PROXY: ${TRUST_PROXY:-}
     ports:
       - "8000:8000"
     depends_on:
@@ -56,6 +66,29 @@ services:
         condition: service_healthy
       python-service:
         condition: service_started
+
+  # Buzón de pruebas: recibe los correos del backend sin enviarlos a nadie.
+  # Bandeja en http://localhost:8025 (solo desde tu máquina). Quítalo al usar un SMTP real.
+  mailpit:
+    image: axllent/mailpit:v1.21
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8025:8025"
+    expose:
+      - "1025"
+
+  # Punto de entrada único (opcional) para exponer la app con un solo túnel (ngrok, etc.): las páginas
+  # van al frontend y la API y el chat al backend. Ver docs/pruebas-con-usuarios.md. Solo local: 127.0.0.1:8080.
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./infra/proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - backend
+      - frontend
 
   frontend:
     build:

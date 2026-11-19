@@ -129,6 +129,19 @@
         ],
         "type": "object"
       },
+      "ForgotPasswordDto": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "type": "object"
+      },
       "LoginDto": {
         "properties": {
           "email": {
@@ -171,6 +184,25 @@
         "required": [
           "name",
           "email",
+          "password"
+        ],
+        "type": "object"
+      },
+      "ResetPasswordDto": {
+        "properties": {
+          "password": {
+            "maxLength": 72,
+            "minLength": 8,
+            "type": "string"
+          },
+          "token": {
+            "description": "Token del enlace del correo (43 caracteres en base64url).",
+            "pattern": "^[A-Za-z0-9_-]{20,100}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
           "password"
         ],
         "type": "object"
@@ -425,6 +457,32 @@
         ]
       }
     },
+    "/auth/forgot-password": {
+      "post": {
+        "description": "Responde siempre lo mismo, exista o no el correo. Si la cuenta existe, se envía un enlace de un solo uso que vale 30 minutos.",
+        "operationId": "AuthController_forgotPassword",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Pedir un enlace para restablecer la contraseña",
+        "tags": [
+          "Autenticación"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "AuthController_login",
@@ -490,6 +548,32 @@
           }
         },
         "summary": "Registrar un usuario",
+        "tags": [
+          "Autenticación"
+        ]
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "description": "Consume el token y cierra las sesiones abiertas de la cuenta.",
+        "operationId": "AuthController_resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Elegir una contraseña nueva con el enlace del correo",
         "tags": [
           "Autenticación"
         ]

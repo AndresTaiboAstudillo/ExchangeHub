@@ -27,6 +27,12 @@ describe('LandingPage', () => {
     expect((await screen.findByRole('alert')).textContent).toBe('Credenciales inválidas');
   });
 
+  it('ofrece recuperar la contraseña y muestra el aviso de un cambio reciente', () => {
+    setup({ notice: 'Tu contraseña cambió. Inicia sesión con la nueva.' });
+    expect(screen.getByRole('link', { name: '¿Olvidaste tu contraseña?' }).getAttribute('href')).toBe('/recuperar');
+    expect(screen.getByRole('status').textContent).toMatch(/Tu contraseña cambió/);
+  });
+
   it('solo ofrece ingresar con correo y contraseña (sin acceso con cuenta universitaria)', () => {
     setup();
     expect(screen.queryByText(/Cuenta universitaria/)).toBeNull();

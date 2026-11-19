@@ -1,13 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import LandingPage from '../../components/LandingPage';
 import { useApp } from '../providers';
 
-export default function LoginPage() {
+function LoginScreen() {
   const { login, register, loggedIn, hydrated } = useApp();
   const router = useRouter();
+  const params = useSearchParams();
+  const notice =
+    params.get('restablecida') === '1'
+      ? 'Tu contraseña cambió. Inicia sesión con la nueva.'
+      : '';
 
   // Si ya hay sesión, no tiene sentido mostrar el login.
   useEffect(() => {
@@ -24,5 +29,13 @@ export default function LoginPage() {
     router.push('/inicio');
   };
 
-  return <LandingPage onLogin={handleLogin} onRegister={handleRegister} />;
+  return <LandingPage onLogin={handleLogin} onRegister={handleRegister} notice={notice} />;
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginScreen />
+    </Suspense>
+  );
 }

@@ -1,0 +1,22 @@
+# Punto de entrada único para exponer ExchangeHub con UN solo túnel (ngrok gratis permite un dominio).
+# Reparte por ruta: la API y el chat van al backend; todo lo demás (las páginas) al frontend.
+# Solo se publican las rutas que usa la aplicación: /metrics, /python y /docs no salen por aquí.
+{
+	auto_https off
+	servers {
+		# ngrok llega desde la máquina anfitriona (red privada de Docker): se respeta su X-Forwarded-For.
+		trusted_proxies static private_ranges
+	}
+}
+
+:8080 {
+	@api path /admin /admin/* /auth /auth/* /avatars/* /chat /chat/* /friendships /friendships/* /health /map /map/* /notifications /notifications/* /posts /posts/* /universities /universities/* /users /users/* /socket.io/*
+
+	handle @api {
+		reverse_proxy backend:8000
+	}
+
+	handle {
+		reverse_proxy frontend:3000
+	}
+}

@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     globals: true,
+    // El límite de intentos se prueba aparte, activándolo en la propia prueba.
+    env: { RATE_LIMIT_DISABLED: 'true' },
     root: './',
     include: ['**/*.int-spec.ts'],
     fileParallelism: false,
