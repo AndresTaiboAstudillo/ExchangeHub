@@ -23,7 +23,7 @@ Detrás de un proxy inverso, define `TRUST_PROXY=1`; si no, todas las personas c
 ## Recuperación de contraseña
 1. **Pedir el enlace** (`/recuperar` → `POST /auth/forgot-password`). La respuesta es idéntica exista o no el
    correo, y el envío no se espera, para no revelar qué cuentas existen. Si la cuenta existe se crea un token
-   aleatorio de 256 bits (`randomBytes(32)`); en la base solo se guarda su **hash SHA-256**
+   aleatorio de 256 bits (`randomBytes(32)`); en la base solo se guarda su **huella HMAC-SHA256** (con una clave derivada de `JWT_SECRET`; si la cambias, los enlaces pendientes dejan de valer)
    (`password_reset_tokens`). Un solo enlace vigente por cuenta: pedir otro anula el anterior.
 2. **Correo** con el enlace `…/restablecer?token=…`, de **30 minutos** y un solo uso.
 3. **Elegir la contraseña** (`/restablecer` → `POST /auth/reset-password`). El token se consume con un

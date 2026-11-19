@@ -1,4 +1,4 @@
--- Recuperación de contraseña por correo. Del token solo se guarda su hash (SHA-256): quien lea la base
+-- Recuperación de contraseña por correo. Del token solo se guarda su huella (HMAC-SHA256): quien lea la base
 -- no puede usar los enlaces pendientes. users.password_changed_at invalida las sesiones anteriores.
 ALTER TABLE "users" ADD COLUMN "password_changed_at" TIMESTAMP(3);
 

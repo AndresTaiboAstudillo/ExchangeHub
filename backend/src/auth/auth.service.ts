@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { createHmac, randomBytes } from 'node:crypto';
 import {
   BadRequestException,
   ConflictException,
@@ -24,9 +24,15 @@ export const RESET_TOKEN_TTL_MINUTES = 30;
 
 const INVALID_RESET_LINK = 'El enlace no es válido o ya venció. Pide uno nuevo.';
 
-/** De cada token solo se guarda este hash: leer la base no permite usar enlaces pendientes. */
+/**
+ * De cada token solo se guarda esta huella: leer la base no permite usar enlaces pendientes. El token
+ * son 256 bits aleatorios (no una contraseña elegida por una persona), por eso basta un HMAC rápido;
+ * la clave del servidor impide además verificar candidatos con solo un volcado de la base.
+ */
 export const hashResetToken = (token: string) =>
-  createHash('sha256').update(token).digest('hex');
+  createHmac('sha256', process.env.JWT_SECRET ?? '')
+    .update(token)
+    .digest('hex');
 
 /** Dirección base del frontend para armar el enlace del correo. */
 function frontendBaseUrl(): string {
