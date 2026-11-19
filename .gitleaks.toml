@@ -9,4 +9,12 @@ regexes = [
   '''clave-segura-123''',
   '''otra-clave-123''',
   '''abc123def456''',
+  # Contraseñas ficticias de las pruebas de recuperación de contraseña
+  '''otra-clave-nueva-456''',
+  '''una-tercera-clave-789''',
+  '''uno-clave-1234''',
+  '''dos-clave-5678''',
+  '''clave-nueva-123''',
+  '''clave-nueva-124''',
+  '''incorrecta-123''',
 ]
