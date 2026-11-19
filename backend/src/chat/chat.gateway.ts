@@ -1,3 +1,4 @@
+import { isSessionRevoked } from '../auth/session.js';
 import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -74,11 +75,14 @@ export class ChatGateway
     try {
       if (typeof token !== 'string' || !token) throw new Error('sin token');
       const payload = await this.jwt.verifyAsync<JwtPayload>(token);
-      const exists = await this.prisma.user.findUnique({
+      const account = await this.prisma.user.findUnique({
         where: { id: payload.sub },
-        select: { id: true },
+        select: { id: true, passwordChangedAt: true },
       });
-      if (!exists) throw new Error('la cuenta ya no existe');
+      if (!account) throw new Error('la cuenta ya no existe');
+      if (isSessionRevoked(payload.iat, account.passwordChangedAt)) {
+        throw new Error('la contraseña cambió');
+      }
       client.data.userId = payload.sub;
     } catch {
       client.emit('chat:error', { message: 'Token inválido o expirado' });

@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { AuthenticatedRequest, JwtPayload } from './auth.types.js';
+import { isSessionRevoked } from './session.js';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -27,11 +28,17 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('Token inválido o expirado');
     }
     // Un token firmado sigue valiendo hasta expirar: si la cuenta fue eliminada, se rechaza de inmediato.
-    const exists = await this.prisma.user.findUnique({
+    const account = await this.prisma.user.findUnique({
       where: { id: request.user.sub },
-      select: { id: true },
+      select: { id: true, passwordChangedAt: true },
     });
-    if (!exists) throw new UnauthorizedException('La cuenta ya no existe');
+    if (!account) throw new UnauthorizedException('La cuenta ya no existe');
+    // Tras cambiar la contraseña, las sesiones anteriores se cierran aunque su token no haya vencido.
+    if (isSessionRevoked(request.user.iat, account.passwordChangedAt)) {
+      throw new UnauthorizedException(
+        'Tu contraseña cambió: inicia sesión de nuevo',
+      );
+    }
     return true;
   }
 }

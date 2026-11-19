@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useId, useState } from 'react';
 
 const FEATURES = [
@@ -10,7 +11,7 @@ const FEATURES = [
 
 const MIN_PASSWORD = 8;
 
-export default function LandingPage({ onLogin, onRegister }) {
+export default function LandingPage({ onLogin, onRegister, notice = '' }) {
   const [mode, setMode] = useState('login');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -141,6 +142,11 @@ export default function LandingPage({ onLogin, onRegister }) {
                 value={login.password}
                 onChange={(e) => setLogin((v) => ({ ...v, password: e.target.value }))}
               />
+              {notice && (
+                <p role="status" className="text-[13px] text-forest-mid bg-forest-mid/10 rounded-lg px-3 py-2">
+                  {notice}
+                </p>
+              )}
               <ErrorMessage text={error} />
               <button
                 type="submit"
@@ -149,6 +155,9 @@ export default function LandingPage({ onLogin, onRegister }) {
               >
                 {busy ? 'Iniciando sesión…' : 'Iniciar sesión'}
               </button>
+              <Link href="/recuperar" className="text-center text-[13px] text-forest-mid hover:underline">
+                ¿Olvidaste tu contraseña?
+              </Link>
             </form>
           ) : (
             <form onSubmit={submitRegister} className="flex flex-col gap-4">

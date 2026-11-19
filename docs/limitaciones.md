@@ -2,6 +2,14 @@
 
 Resumen de los límites conocidos del proyecto. El detalle de cada uno está en el documento indicado.
 
+## Autenticación (`docs/autenticacion.md`)
+- **Sin verificación del correo al registrarse.** Se puede crear una cuenta con un correo ajeno; la recuperación
+  de contraseña solo prueba que quien la pide controla el correo de la cuenta.
+- **Límite de intentos en memoria.** Vale para una sola instancia del backend y se reinicia al reiniciarlo; con
+  varias instancias haría falta un almacén compartido (p. ej. Redis). Detrás de un proxy exige `TRUST_PROXY`.
+- **Sin cierre de sesión en el servidor.** Un token robado vale hasta que vence (1 h) salvo que la persona cambie
+  su contraseña. El token se guarda en `localStorage`, expuesto a un XSS.
+
 ## Fuentes y datos (`docs/fuentes-de-datos.md`)
 - **Permisos de la fuente principal por confirmar.** El `robots.txt` del sitio del Ministerio de Educación
   no pudo leerse y la licencia CC BY 2.0 Chile del archivo debe confirmarse. Mientras tanto, el pipeline
