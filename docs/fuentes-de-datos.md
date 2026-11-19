@@ -1,8 +1,5 @@
 # Fuentes de información web
 
-Estado: octubre de 2026. Lo marcado como **POR CONFIRMAR** es algo que no pude verificar desde mi entorno
-de trabajo (no tenía acceso a esos sitios) y que conviene revisar antes de entregar.
-
 ## 1. Resumen
 
 ExchangeHub orienta a estudiantes internacionales en Chile. La pantalla **Universidades** necesita datos
@@ -121,18 +118,3 @@ descarga nada que no esté permitido; si el archivo está bloqueado, el camino p
 | Retiro | Si una institución pidiera retirar su contenido, se elimina y se excluye de futuras recuperaciones. |
 | Honestidad hacia el usuario | La pantalla indica las fuentes y avisa que Wikidata cubre solo una parte de las instituciones y puede contener errores. |
 
-## 8. Pendientes
-
-1. Abrir `robots.txt` de `ayudamineduc.cl` y confirmar si se puede descargar el archivo de forma automática.
-2. Confirmar el alcance de la licencia de F1.
-3. Ejecutar `python -m scripts.run_pipeline` en tu máquina para conocer la cobertura real de Wikidata.
-4. Decidir si se implementa F3 (lista de URL, `robots.txt` y términos de cada una).
-
-## 9. Anexo: OpenStreetMap (mapa de Inicio)
-- **Qué se usa:** mosaicos del mapa y comercios/servicios (ferias, supermercados, minimarkets, panaderías,
-  verdulerías, farmacias, lavanderías) y alojamientos turísticos (hoteles, hostales, hospedajes) de Valparaíso y Viña del Mar, obtenidos por la API Overpass.
-- **Licencia:** ODbL 1.0, © colaboradores de OpenStreetMap. La atribución se muestra en el mapa y en la lista.
-- **Método:** una sola consulta por actualización (política de uso de Overpass), con `User-Agent` que
-  identifica al proyecto; los datos se guardan en la tabla `places` y el mapa nunca consulta a OSM por
-  cada visita (solo descarga mosaicos).
-- **Privacidad:** son lugares comerciales; no se recogen datos personales.

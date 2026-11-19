@@ -27,8 +27,3 @@
 - Usa `GET /friendships?status=accepted`, que ahora incluye carrera, país y foto de cada amigo.
 - Para quitar a alguien de los amigos sigue sirviendo su tarjeta en Comunidad → Encontrar amigos.
 
-## Limitaciones
-
-- Una foto no se revisa: no hay moderación de contenido. Un administrador puede eliminar la cuenta (y con ella la foto).
-- Cualquiera que conozca el id de una persona puede pedir su foto aunque no tenga sesión (los ids no son adivinables y la
-  API no los entrega para perfiles ocultos en las reseñas, pero sí en el foro y los listados).
