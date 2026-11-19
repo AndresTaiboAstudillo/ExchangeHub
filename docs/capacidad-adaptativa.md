@@ -1,7 +1,5 @@
 # Especificación preliminar de la capacidad adaptativa
 
-Documento de diseño para el Módulo 3. No exige implementar el modelo de usuario, el motor de decisión
-ni la adaptación final; fija qué se construirá y cómo se evaluará.
 
 ## 1. Resumen
 
@@ -109,10 +107,4 @@ reales, solo con consentimiento explícito.
 - Los pesos fijos son una simplificación. La versión con aprendizaje queda como línea futura.
 - El estudiante debe poder desactivar la adaptación en cualquier momento.
 
-## 11. Trabajo para el Módulo 3
 
-1. Migración: campo `destination_university_id` y preferencias del estudiante.
-2. Servicio de puntaje (NestJS) con pruebas unitarias de cada término y de las degradaciones.
-3. Endpoint de alojamientos ordenados con la explicación de cada posición.
-4. Interfaz: selector de destino, prioridades y etiquetas de explicación.
-5. Evaluación según la sección 9.

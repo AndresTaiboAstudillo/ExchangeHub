@@ -106,12 +106,3 @@ Para destruirlo: `terraform destroy` en `infra/terraform`.
 | El script falla en `/health/ready` con Python `down` | El contenedor de Python no arrancó; revisa sus registros en el paso «Registros si algo falló» |
 | La ingesta de `compose-smoke` falla | Mira el campo `error` de la respuesta y los registros del servicio Python; ver `docs/pipeline-de-datos.md` |
 
-## 6. Limitaciones
-
-- Con el ejecutor de GitHub, el staging no permanece disponible tras el job.
-- Staging usa el Docker del propio ejecutor: no es una máquina remota ni protege contra fallos de
-  esa máquina.
-- La prueba de integración reproduce la ingesta con el Excel de pruebas del repositorio si las fuentes
-  públicas no responden; no mide la disponibilidad real de esas fuentes.
-- Trivy solo bloquea las vulnerabilidades CRITICAL con corrección disponible; las de gravedad alta se
-  informan sin bloquear.

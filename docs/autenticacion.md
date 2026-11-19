@@ -42,6 +42,4 @@ Detrás de un proxy inverso, define `TRUST_PROXY=1`; si no, todas las personas c
 - Sin `SMTP_HOST` no se envía nada: se deja un aviso en el registro (y, fuera de producción, el contenido del correo).
   Los registros nunca incluyen el token y enmascaran el correo (`a***@dominio.cl`).
 
-## Límites
-Ver [`limitaciones.md`](limitaciones.md): sin verificación del correo al registrarse, límite de intentos en memoria
-y sin cierre de sesión en el servidor.
+
