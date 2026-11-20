@@ -1,0 +1,10 @@
+# Ajustes SOLO para la prueba de carga (se combina con docker-compose.yml):
+#   docker compose -f docker-compose.yml -f loadtest/docker-compose.carga.yml up -d --build
+# - El backend usa una base APARTE (exchange_carga), para no mezclar los datos de prueba con los reales.
+# - Desactiva el límite de intentos (si no, la carga de un solo equipo recibiría casi solo errores 429).
+# No uses este archivo en un servidor real.
+services:
+  backend:
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/exchange_carga
+      RATE_LIMIT_DISABLED: "true"
