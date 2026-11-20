@@ -17,4 +17,7 @@ regexes = [
   '''clave-nueva-123''',
   '''clave-nueva-124''',
   '''incorrecta-123''',
+  # Usuarios y datos de las pruebas de carga (loadtest/): la clave y su hash bcrypt son ficticios
+  '''carga-prueba-123''',
+  '''\$2b\$10\$f1UFrENJoYa/jo55mKLDKumJpgUCGO08L3zg0qCMkLNEU57Er9EBq''',
 ]
