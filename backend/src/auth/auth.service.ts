@@ -66,8 +66,9 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     const passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
+    let user;
     try {
-      return await this.prisma.user.create({
+      user = await this.prisma.user.create({
         // El rol nunca viene del cliente: se asigna el valor por defecto.
         data: {
           name: dto.name,
@@ -89,6 +90,23 @@ export class AuthService {
       }
       throw error;
     }
+
+    // No se espera el envío y cualquier fallo (incluso uno síncrono) solo se registra:
+    // un SMTP lento o caído no debe afectar el registro.
+    const registered = user;
+    void Promise.resolve()
+      .then(() =>
+        this.mail.sendWelcome(registered, `${frontendBaseUrl()}/login`),
+      )
+      .catch((error: unknown) => {
+        this.logger.error(
+          `No se pudo enviar el correo de bienvenida a ${maskEmail(registered.email)}: ${
+            error instanceof Error ? error.message : 'error desconocido'
+          }`,
+        );
+      });
+
+    return user;
   }
 
   async login(dto: LoginDto) {

@@ -109,4 +109,27 @@ export class MailService {
 <p>Si no fuiste tú, pide un nuevo enlace de recuperación de inmediato y avisa al equipo.</p>`,
     });
   }
+
+  sendWelcome(
+    user: { name: string; email: string },
+    loginLink: string,
+  ): Promise<void> {
+    const name = escapeHtml(user.name);
+    return this.send({
+      to: user.email,
+      subject: '¡Bienvenido a ExchangeHub!',
+      text: [
+        `Hola ${user.name},`,
+        '',
+        'Tu cuenta de ExchangeHub se creó correctamente. Ya puedes iniciar sesión:',
+        loginLink,
+        '',
+        'Si no creaste esta cuenta, puedes ignorar este mensaje.',
+      ].join('\n'),
+      html: `<p>Hola ${name},</p>
+<p>Tu cuenta de ExchangeHub se creó correctamente.</p>
+<p><a href="${escapeHtml(loginLink)}" style="display:inline-block;padding:10px 18px;background:#1B4332;color:#fff;border-radius:8px;text-decoration:none">Iniciar sesión</a></p>
+<p>Si no creaste esta cuenta, puedes ignorar este mensaje.</p>`,
+    });
+  }
 }

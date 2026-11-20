@@ -27,6 +27,7 @@ describe('Recuperación de contraseña (PostgreSQL real)', () => {
   const mail = {
     sendPasswordReset: vi.fn().mockResolvedValue(undefined),
     sendPasswordChanged: vi.fn().mockResolvedValue(undefined),
+    sendWelcome: vi.fn().mockResolvedValue(undefined),
   };
   const api = () => request(app.getHttpServer());
   const created: string[] = [];
