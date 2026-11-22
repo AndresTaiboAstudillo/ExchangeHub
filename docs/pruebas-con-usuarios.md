@@ -25,7 +25,7 @@ persona ──https──► ngrok ──► localhost:8080 (proxy) ──┬─
    con un botón «Visit Site»; después no vuelve a aparecer en ese navegador.
 
 ## Qué queda público y qué no
-- Salen por el túnel solo las rutas que usa la app. `/metrics`, `/python` y la documentación `/docs` no.
+- Salen por el túnel solo las rutas que usa la app (incluidas `/health` y `/health/ready`). `/metrics`, `/python` y la documentación `/docs` no: para esas, usa `http://localhost:8000` en tu propio equipo.
 - Los correos (recuperar contraseña) siguen yendo a Mailpit (`http://localhost:8025`, solo tu computador) salvo que
   configures un SMTP real (`SMTP_*`). No expongas Mailpit: cualquiera podría leer los enlaces de recuperación.
 - Mientras el túnel esté abierto, cualquiera con la dirección puede registrarse y usar la app. Ciérralo al terminar.

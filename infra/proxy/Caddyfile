@@ -10,7 +10,7 @@
 }
 
 :8080 {
-	@api path /admin /admin/* /auth /auth/* /avatars/* /chat /chat/* /friendships /friendships/* /health /map /map/* /notifications /notifications/* /posts /posts/* /universities /universities/* /users /users/* /socket.io/*
+	@api path /admin /admin/* /auth /auth/* /avatars/* /chat /chat/* /friendships /friendships/* /health /health/* /map /map/* /notifications /notifications/* /posts /posts/* /universities /universities/* /users /users/* /socket.io/*
 
 	handle @api {
 		reverse_proxy backend:8000

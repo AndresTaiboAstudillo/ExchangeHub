@@ -319,6 +319,6 @@ Requisitos, configuración de producción y límites: [`docs/android.md`](docs/a
   <img width="402" height="652" alt="publicarforo drawio" src="https://github.com/user-attachments/assets/34684d22-afb2-475e-9d79-3e873c34f556" />
   <img width="402" height="652" alt="reseñamapa drawio" src="https://github.com/user-attachments/assets/90a6abd8-49c1-427b-856f-1fe05b47ea61" />
   
-Cuenta de administrador: admin@correo.cl | Admin123
+Cuenta de administrador: admin@correo.com | Admin123
 
 
